@@ -1,0 +1,9 @@
+hexo-generator-archive
+hexo-generator-category
+hexo-generator-index
+hexo-generator-tag
+hexo-renderer-ejs
+hexo-renderer-marked
+hexo-renderer-stylus
+hexo-server
+hexo-theme-landscape
