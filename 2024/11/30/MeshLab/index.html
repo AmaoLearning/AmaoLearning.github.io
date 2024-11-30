@@ -22,7 +22,7 @@
 
   
 
-  <title>test | 阿毛的空书桌</title>
+  <title>通过外界调用MeshLab的两种方法 | 阿毛的空书桌</title>
 
   
 
@@ -99,17 +99,12 @@
     <div class="header-content">
       <div class="post-text layout-block">
         <div class="layout-margin">
-          <h1 class="title-wrap">test</h1>
+          <h1 class="title-wrap">通过外界调用MeshLab的两种方法</h1>
           <h2 class="title-sub-wrap">
             <strong>MaoCaiMao</strong>
             <span>发布于</span>
-            <time  class="article-date" datetime="2024-11-14T13:57:20.000Z" itemprop="datePublished">2024-11-14</time>
+            <time  class="article-date" datetime="2024-11-29T16:00:00.000Z" itemprop="datePublished">2024-11-30</time>
           </h2>
-          
-            <h2 class="last-time">
-              <span>最后更新于</span>
-              <time  class="article-updated" datetime="2024-11-17T12:19:28.272Z" itemprop="dateUpdated">2024-11-17</time>
-            </h2>
           
           
           <ul class="wrap-list dark">
@@ -117,7 +112,7 @@
 </ul>
           <ul class="wrap-list dark">
   
-    <li><a href="/tags/First-Try/">🏷️ First Try</a></li>
+    <li><a href="/tags/%E9%A1%B9%E7%9B%AE%E7%BB%8F%E9%AA%8C/">🏷️ 项目经验</a></li>
   
 </ul>
         </div>
@@ -141,30 +136,60 @@
       
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
-        <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alert(&#x27;Hello World!&#x27;);</span><br></pre></td></tr></table></figure>
+        <h2 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h2><p>如题，我在自己尝试自动化调用<strong>MeshLab</strong>时，通过网络搜索，发现了两种手段：</p>
+<ul>
+<li>使用批量化工具 <strong>meshlabserver</strong>;</li>
+<li>使用官方Python库 <strong>pymeshlab</strong>.</li>
+</ul>
+<p>这两种方法按时间顺序先后是官方提供的批量化调用MeshLab程序的方式，其中，<strong>meshlabserver</strong> 自从在官方发布的<strong>MeshLab 2020.12</strong>版本中被删除，之后再也没有被提供过。因此要使用的话必须安装较低的版本的MeshLab，我使用的版本是 <strong>MeshLab 2020.09</strong>。<br><strong>MeshLab</strong> 官方各版本发布仓库: <a target="_blank" rel="noopener" href="https://github.com/cnr-isti-vclab/meshlab/releases"><em><u>点此跳转</u></em></a></p>
+<h3 id="两种方法各自的优势和缺点"><a href="#两种方法各自的优势和缺点" class="headerlink" title="两种方法各自的优势和缺点"></a>两种方法各自的优势和缺点</h3><ul>
+<li><strong>meshlabserver</strong><ul>
+<li>优势：支持命令行调用或者cmd脚本，同时理论上支持原MeshLab软件支持的所有功能.</li>
+<li>缺点：每种功能都必须导入对应的，且较新版本meshlab不支持。</li>
+</ul>
+</li>
+<li><strong>PyMeshLab</strong><ul>
+<li>优势：打包成python库方便使用python脚本进行批量且较复杂的操作，官方文档比较全面。</li>
+<li>缺点：我一开始有点没弄清楚文件类型，比如nvm文件应该作为project导入，但我很长一段时间都没有发现这点。</li>
+</ul>
+</li>
+</ul>
+<h2 id="1-meshlabserver"><a href="#1-meshlabserver" class="headerlink" title="1. meshlabserver"></a>1. meshlabserver</h2><ul>
+<li><p>文件位置： 通常与meshlab.exe同级，同样是executable</p>
+</li>
+<li><p>调用方法（二选一）：</p>
+<ul>
+<li>将meshlabserver.exe加入环境变量</li>
+<li>直接用文件路径</li>
+</ul>
+</li>
+</ul>
+<p>以下假设已将meshlabserver.exe加入环境变量：</p>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><ol>
+<li><p>完成已导出的脚本功能（批处理脚本如何导出参见<a target="_blank" rel="noopener" href="https://blog.csdn.net/sxf1061926959/article/details/53869429"><em><u>此篇CSDN博客</u></em></a>）</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ meshlabserver -p path/to/meshlab/project -i mesh/file/to/be/loaded -o output/filename [optional args such as vc(vertex color)] -s path/to/script</span><br></pre></td></tr></table></figure>
+
+<p> <strong>-o</strong> 的参数有很多，下面给出常用的：</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vc -&gt; vertex colors,</span><br><span class="line"><span class="built_in">fc</span> -&gt; face colors,</span><br><span class="line">fn-&gt; face normals,</span><br><span class="line">sa -&gt; save <span class="keyword">in</span> ascii format</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>exe的帮助功能中给出了完整的调用方法，可作为参考</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ meshlabserver --<span class="built_in">help</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>如果直接使用文件路径，把上述指令中的<code>meshlabserver</code>改成<code>PATH/TO/YOUR/MESHLABSERVER</code>即可。</p>
+<h2 id="2-pymeshlab"><a href="#2-pymeshlab" class="headerlink" title="2. pymeshlab"></a>2. pymeshlab</h2><p>官方github仓库：<a target="_blank" rel="noopener" href="https://github.com/cnr-isti-vclab/PyMeshLab"><em><u>点此进入</u></em></a><br>详细的技术文档可见PyMeshLab官方网站：<a target="_blank" rel="noopener" href="https://pymeshlab.readthedocs.io/en/latest/"><em><u>点此进入</u></em></a></p>
+<ol>
+<li><p>安装方法</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pip3 pymeshlab</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用示例</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pymeshlab <span class="keyword">as</span> ml</span><br><span class="line"></span><br><span class="line">ms = ml.MeshSet()</span><br><span class="line">ms.load_new_raster(<span class="string">&#x27;path_to_your_raster&#x27;</span>)        <span class="comment">#加载纹理文件</span></span><br><span class="line">ms.load_new_mesh(<span class="string">&#x27;path_to_your_mesh&#x27;</span>)            <span class="comment">#加载网格</span></span><br><span class="line">ms.load_filter_script(<span class="string">&#x27;path_to_your_mlx_script&#x27;</span>) <span class="comment">#加载脚本文件</span></span><br><span class="line">ms.apply_filter_script()                         <span class="comment">#执行脚本文件</span></span><br><span class="line"><span class="comment"># 也可以直接执行封装好的方法如generate_convex_hull()</span></span><br><span class="line">ms.save_current_mesh(<span class="string">&#x27;output_filename&#x27;</span>)          <span class="comment">#导出</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h2><p>原本是为了自动化某项目中纹理映射步骤，没想到直到翻阅官方文档、查看meshlabserver的help信息才发现nvm文件应该作为工程导入:joy:，不过也算学到一点教训咯。最后有请樱小姐帮我表达当时的心情：</p>
+
 
       </section>
 
       
-      
-        <nav class="article-nav">
-          
-            <div class="article-nav-item layout-padding">
-  <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
-    
-    <div class="card-text">
-      
-        <a href="/2024/11/17/hello-world/" itemprop="url">
-          <h2 class="card-text--title text-ellipsis">Hello World</h2>
-        </a>
-      
-      <div class="card-text--row">Newer</div>
-    </div>
-  </article>
-</div>
-          
-          
-        </nav>
       
 
       <section class="page-message-container layout-padding">
@@ -198,7 +223,7 @@
         <svg class="icon icon-article" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
   <path d="M240.51564747 647.74217627h196.07203239c16.59071043 0 30.16492806-13.57421762 30.16492805-30.16492806V165.10332731c0-33.18142087-30.16492806-60.32985613-60.32985612-60.32985611H245.04038668C225.43318342 104.7734712 210.35071939 119.85593522 210.35071939 139.46313845V617.57724821c0 16.59071043 13.57421762 30.16492806 30.16492808 30.16492806z m663.62841731-452.47392089v482.63884894c0 33.18142087-27.14843525 60.32985613-60.32985612 60.32985613H180.18579134c-33.18142087 0-60.32985613-27.14843525-60.32985612-60.32985613V195.26825538c-49.77213131 0-90.49478418 40.72265287-90.49478417 90.49478417v452.4739209c0 49.77213131 40.72265287 90.49478418 90.49478417 90.49478417h286.56681657c16.59071043 0 30.16492806 13.57421762 30.16492807 30.16492807s13.57421762 30.16492806 30.16492805 30.16492806h90.49478418c16.59071043 0 30.16492806-13.57421762 30.16492805-30.16492806s13.57421762-30.16492806 30.16492807-30.16492807h286.56681657c49.77213131 0 90.49478418-40.72265287 90.49478417-90.49478417V285.76303955c0-49.77213131-40.72265287-90.49478418-90.49478417-90.49478417zM587.41232014 647.74217627h191.54729318c19.60720323 0 34.68966726-15.08246403 34.68966729-34.68966727V134.93839925c0-16.59071043-13.57421762-30.16492806-30.16492808-30.16492805H617.57724821c-30.16492806 0-60.32985613 27.14843525-60.32985612 60.32985611v452.4739209c0 16.59071043 13.57421762 30.16492806 30.16492805 30.16492806z" fill="currentColor"></path>
 </svg>
-        <span>2</span>
+        <span>1</span>
       </div>
       <div class="count-box--item">
         <svg class="icon icon-categories" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -255,7 +280,7 @@
   </div>
   <div class="widget-body">
     <div class="tags-cloud">
-      <a href="/tags/First-Try/" style="font-size: 10px;" class="tags-cloud-0">First Try</a>
+      <a href="/tags/%E9%A1%B9%E7%9B%AE%E7%BB%8F%E9%AA%8C/" style="font-size: 10px;" class="tags-cloud-0">项目经验</a>
     </div>
   </div>
 </section>
