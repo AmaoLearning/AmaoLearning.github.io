@@ -22,7 +22,7 @@
 
   
 
-  <title>通过外界调用MeshLab的两种方法 | 阿毛的空书桌</title>
+  <title>通过外界调用MeshLab的两种方法 | 阿毛的小书桌</title>
 
   
 
@@ -46,7 +46,7 @@
 <!-- header container -->
 <header class="header-container post">
   
-    <div class="post-image" style="background-image: url(https://qiniu.sukoshi.xyz/src/images/68686407_p0.jpg)"></div>
+    <div class="post-image" style="background-image: url(/images/2024/meshlab.png)"></div>
   
 
   <!-- navbar -->
@@ -56,7 +56,7 @@
     <div class="navbar-logo">
       <a href="/">
         
-          阿毛的空书桌
+          阿毛的小书桌
         
       </a>
     </div>
@@ -71,7 +71,7 @@
         
           <li class="navbar-list-item"><a href="/">首页</a></li>
         
-          <li class="navbar-list-item"><a href="/links">友链</a></li>
+          <li class="navbar-list-item"><a target="_blank" rel="noopener" href="https://baizhanxu.github.io/">友链</a></li>
         
       </ul>
     </div>
@@ -101,6 +101,11 @@
             <span>发布于</span>
             <time  class="article-date" datetime="2024-11-29T16:00:00.000Z" itemprop="datePublished">2024-11-30</time>
           </h2>
+          
+            <h2 class="last-time">
+              <span>最后更新于</span>
+              <time  class="article-updated" datetime="2024-11-30T16:00:46.304Z" itemprop="dateUpdated">2024-12-01</time>
+            </h2>
           
           
           <ul class="wrap-list dark">
@@ -137,7 +142,8 @@
 <li>使用批量化工具 <strong>meshlabserver</strong>;</li>
 <li>使用官方Python库 <strong>pymeshlab</strong>.</li>
 </ul>
-<p>这两种方法按时间顺序先后是官方提供的批量化调用MeshLab程序的方式，其中，<strong>meshlabserver</strong> 自从在官方发布的<strong>MeshLab 2020.12</strong>版本中被删除，之后再也没有被提供过。因此要使用的话必须安装较低的版本的MeshLab，我使用的版本是 <strong>MeshLab 2020.09</strong>。<br><strong>MeshLab</strong> 官方各版本发布仓库: <a target="_blank" rel="noopener" href="https://github.com/cnr-isti-vclab/meshlab/releases"><em><u>点此跳转</u></em></a></p>
+<p>这两种方法按时间顺序先后是官方提供的批量化调用MeshLab程序的方式，其中，<strong>meshlabserver</strong> 自从在官方发布的<strong>MeshLab 2020.12</strong>版本中被删除，之后再也没有被提供过。因此要使用的话必须安装较低的版本的MeshLab，我使用的版本是 <strong>MeshLab 2020.09</strong>。</p>
+<p><strong>MeshLab</strong> 官方各版本发布仓库: <a target="_blank" rel="noopener" href="https://github.com/cnr-isti-vclab/meshlab/releases"><em><u>点此跳转</u></em></a></p>
 <h3 id="两种方法各自的优势和缺点"><a href="#两种方法各自的优势和缺点" class="headerlink" title="两种方法各自的优势和缺点"></a>两种方法各自的优势和缺点</h3><ul>
 <li><strong>meshlabserver</strong><ul>
 <li>优势：支持命令行调用或者cmd脚本，同时理论上支持原MeshLab软件支持的所有功能.</li>
@@ -160,7 +166,10 @@
 </ul>
 </li>
 </ul>
-<p>以下假设已将meshlabserver.exe加入环境变量：</p>
+<div style="border-left: 5px solid skyblue; padding: 6px;">
+<strong>📘</strong> 以下假设已将meshlabserver.exe加入环境变量：
+</div>
+
 <h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><ol>
 <li><p>完成已导出的脚本功能（批处理脚本如何导出参见<a target="_blank" rel="noopener" href="https://blog.csdn.net/sxf1061926959/article/details/53869429"><em><u>此篇CSDN博客</u></em></a>）</p>
  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ meshlabserver -p path/to/meshlab/project -i mesh/file/to/be/loaded -o output/filename [optional args such as vc(vertex color)] -s path/to/script</span><br></pre></td></tr></table></figure>
@@ -171,7 +180,11 @@
 <li><p>exe的帮助功能中给出了完整的调用方法，可作为参考</p>
  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ meshlabserver --<span class="built_in">help</span></span><br></pre></td></tr></table></figure></li>
 </ol>
-<p>如果直接使用文件路径，把上述指令中的<code>meshlabserver</code>改成<code>PATH/TO/YOUR/MESHLABSERVER</code>即可。</p>
+<div style="border-left: 5px solid skyblue; padding: 6px;">
+<strong>📘</strong> 如果直接使用文件路径，把上述指令中的 meshlabserver 改成 PATH/TO/YOUR/MESHLABSERVER 即可。
+</div>
+
+
 <h2 id="2-pymeshlab"><a href="#2-pymeshlab" class="headerlink" title="2. pymeshlab"></a>2. pymeshlab</h2><p>官方github仓库：<a target="_blank" rel="noopener" href="https://github.com/cnr-isti-vclab/PyMeshLab"><em><u>点此进入</u></em></a><br>详细的技术文档可见PyMeshLab官方网站：<a target="_blank" rel="noopener" href="https://pymeshlab.readthedocs.io/en/latest/"><em><u>点此进入</u></em></a></p>
 <ol>
 <li><p>安装方法</p>
@@ -180,8 +193,13 @@
 <li><p>使用示例</p>
  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pymeshlab <span class="keyword">as</span> ml</span><br><span class="line"></span><br><span class="line">ms = ml.MeshSet()</span><br><span class="line">ms.load_new_raster(<span class="string">&#x27;path_to_your_raster&#x27;</span>)        <span class="comment">#加载纹理文件</span></span><br><span class="line">ms.load_new_mesh(<span class="string">&#x27;path_to_your_mesh&#x27;</span>)            <span class="comment">#加载网格</span></span><br><span class="line">ms.load_filter_script(<span class="string">&#x27;path_to_your_mlx_script&#x27;</span>) <span class="comment">#加载脚本文件</span></span><br><span class="line">ms.apply_filter_script()                         <span class="comment">#执行脚本文件</span></span><br><span class="line"><span class="comment"># 也可以直接执行封装好的方法如generate_convex_hull()</span></span><br><span class="line">ms.save_current_mesh(<span class="string">&#x27;output_filename&#x27;</span>)          <span class="comment">#导出</span></span><br></pre></td></tr></table></figure></li>
 </ol>
-<h2 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h2><p>原本是为了自动化某项目中纹理映射步骤，没想到直到翻阅官方文档、查看meshlabserver的help信息才发现nvm文件应该作为工程导入:joy:，不过也算学到一点教训咯。最后有请樱小姐帮我表达当时的心情：</p>
+<h2 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h2><p>原本是为了自动化某项目中纹理映射步骤，没想到直到翻阅官方文档、查看meshlabserver的help信息才发现nvm文件应该作为工程导入(╯°口°)╯(┴—┴，不过也算学到一点教训咯。最后有请樱小姐帮我表达当时的心情😇：</p>
 
+    <figure class="figure-image">
+      <img src="/images/2024/sakura.jpg" alt="激情互动的佐仓和大西" loading="lazy" />
+      <figcaption>激情互动的佐仓和大西</figcaption>
+    </figure>
+  
 
       </section>
 
@@ -211,7 +229,7 @@
         visitor: true,
         recordIP: true,
         enableQQ: false,
-        meta: ['nick', 'mail', 'link'],
+        meta: ['nick', 'mail'],
         requiredFields: ['nick'],
         
         // Bilibili 表情包插件
@@ -413,7 +431,7 @@
       <section class="widget-author widget-item layout-margin content-padding--primary soft-size--large soft-style--box">
   <div class="widget-body">
     
-      <img src="https://gravatar.com/amaolovewa2" class="soft-size--round soft-style--box" alt="猫才毛">
+      <img src="/images/const/avatar.png" class="soft-size--round soft-style--box" alt="猫才毛">
     
     
       <h2>猫才毛</h2>
