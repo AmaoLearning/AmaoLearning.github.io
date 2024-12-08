@@ -24,7 +24,7 @@
 
   
 
-  <title>通过外界调用MeshLab的两种方法 | 阿毛的小书桌</title>
+  <title>已实现的数据结构（持续更新） | 阿毛的小书桌</title>
 
   
 
@@ -51,7 +51,7 @@
 <!-- header container -->
 <header class="header-container post">
   
-    <div class="post-image" style="background-image: url(/images/2024/meshlab.png)"></div>
+    <div class="post-image" style="background-image: url(https://imagepphcloud.thepaper.cn/pph/image/125/608/217.jpg)"></div>
   
 
   <!-- navbar -->
@@ -102,27 +102,22 @@
     <div class="header-content">
       <div class="post-text layout-block">
         <div class="layout-margin">
-          <h1 class="title-wrap">通过外界调用MeshLab的两种方法</h1>
+          <h1 class="title-wrap">已实现的数据结构（持续更新）</h1>
           <h2 class="title-sub-wrap">
             <strong>MaoCaiMao</strong>
             <span>发布于</span>
-            <time  class="article-date" datetime="2024-11-29T16:00:00.000Z" itemprop="datePublished">2024-11-30</time>
+            <time  class="article-date" datetime="2024-12-07T16:00:00.000Z" itemprop="datePublished">2024-12-08</time>
           </h2>
-          
-            <h2 class="last-time">
-              <span>最后更新于</span>
-              <time  class="article-updated" datetime="2024-12-08T05:19:49.218Z" itemprop="dateUpdated">2024-12-08</time>
-            </h2>
           
           
           <ul class="wrap-list dark">
   
-    <li><a href="/categories/MeshLab/">📒 MeshLab</a></li>
+    <li><a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">📒 数据结构</a></li>
     
 </ul>
           <ul class="wrap-list dark">
   
-    <li><a href="/tags/%E9%A1%B9%E7%9B%AE%E7%BB%8F%E9%AA%8C/">🏷️ 项目经验</a></li>
+    <li><a href="/tags/%E8%B5%9B%E5%8D%9A%E5%85%AB%E8%82%A1/">🏷️ 赛博八股</a></li>
   
 </ul>
         </div>
@@ -146,69 +141,83 @@
       
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
-        <h2 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h2><p>如题，我在自己尝试自动化调用<strong>MeshLab</strong>时，通过网络搜索，发现了两种手段：</p>
-<ul>
-<li>使用批量化工具 <strong>meshlabserver</strong>;</li>
-<li>使用官方Python库 <strong>pymeshlab</strong>.</li>
-</ul>
-<p>这两种方法按时间顺序先后是官方提供的批量化调用MeshLab程序的方式，其中，<strong>meshlabserver</strong> 自从在官方发布的<strong>MeshLab 2020.12</strong>版本中被删除，之后再也没有被提供过。因此要使用的话必须安装较低的版本的MeshLab，我使用的版本是 <strong>MeshLab 2020.09</strong>。</p>
-<p><strong>MeshLab</strong> 官方各版本发布仓库: <a target="_blank" rel="noopener" href="https://github.com/cnr-isti-vclab/meshlab/releases"><em><u>点此跳转</u></em></a></p>
-<h3 id="两种方法各自的优势和缺点"><a href="#两种方法各自的优势和缺点" class="headerlink" title="两种方法各自的优势和缺点"></a>两种方法各自的优势和缺点</h3><ul>
-<li><strong>meshlabserver</strong><ul>
-<li>优势：支持命令行调用或者cmd脚本，同时理论上支持原MeshLab软件支持的所有功能.</li>
-<li>缺点：每种功能都必须导入对应的，且较新版本meshlab不支持。</li>
-</ul>
-</li>
-<li><strong>PyMeshLab</strong><ul>
-<li>优势：打包成python库方便使用python脚本进行批量且较复杂的操作，官方文档比较全面。</li>
-<li>缺点：我一开始有点没弄清楚文件类型，比如nvm文件应该作为project导入，但我很长时间都没有发现这点。</li>
-</ul>
-</li>
-</ul>
-<h2 id="1-meshlabserver"><a href="#1-meshlabserver" class="headerlink" title="1. meshlabserver"></a>1. meshlabserver</h2><ul>
-<li><p>文件位置： 通常与meshlab.exe同级，同样是executable</p>
-</li>
-<li><p>调用方法（二选一）：</p>
-<ul>
-<li>将meshlabserver.exe加入环境变量</li>
-<li>直接用文件路径</li>
-</ul>
-</li>
-</ul>
-<div style="border-left: 5px solid skyblue; padding: 6px;">
-<strong>📘</strong> 以下假设已将meshlabserver.exe加入环境变量：
+        <div class="admonition info"><p class="admonition-title">写在前面的
+</p><p>本学期以<strong>数据结构</strong>这门课为契机实现了不少数据结构，也算是一种码力的积累叭。下面列出已实现的和将来需要实现的两部分，比较重要的数据类型会给出api。</p>
 </div>
 
-<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><ol>
-<li><p>完成已导出的脚本功能（批处理脚本如何导出参见<a target="_blank" rel="noopener" href="https://blog.csdn.net/sxf1061926959/article/details/53869429"><em><u>此篇CSDN博客</u></em></a>）</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ meshlabserver -p path/to/meshlab/project -i mesh/file/to/be/loaded -o output/filename [optional args such as vc(vertex color)] -s path/to/script<br></code></pre></td></tr></table></figure>
-
-<p> <strong>-o</strong> 的参数有很多，下面给出常用的：</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">vc -&gt; vertex colors,<br><span class="hljs-built_in">fc</span> -&gt; face colors,<br>fn-&gt; face normals,<br>sa -&gt; save <span class="hljs-keyword">in</span> ascii format<br></code></pre></td></tr></table></figure>
+<h2 id="已实现的"><a href="#已实现的" class="headerlink" title="已实现的"></a>已实现的</h2><h3 id="1-列表"><a href="#1-列表" class="headerlink" title="1. 列表"></a>1. 列表</h3><ul>
+<li><p><strong>顺序表</strong>有一个比较重要的优化点是<strong>空出列表地址为0的位置作为“哨兵位”</strong>，这样查找时先把需要查找的元素放到“哨兵位”上，接着从后往前依次查找，如果没有找到就会返回0，确保不会越界。此外，<strong>doubleSpace</strong>函数的写法也要熟练。</p>
 </li>
-<li><p>exe的帮助功能中给出了完整的调用方法，可作为参考</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ meshlabserver --<span class="hljs-built_in">help</span><br></code></pre></td></tr></table></figure></li>
-</ol>
-<div style="border-left: 5px solid skyblue; padding: 6px;">
-<strong>📘</strong> 如果直接使用文件路径，把上述指令中的 meshlabserver 改成 PATH/TO/YOUR/MESHLABSERVER 即可。
-</div>
-
-
-<h2 id="2-pymeshlab"><a href="#2-pymeshlab" class="headerlink" title="2. pymeshlab"></a>2. pymeshlab</h2><p>官方github仓库：<a target="_blank" rel="noopener" href="https://github.com/cnr-isti-vclab/PyMeshLab"><em><u>点此进入</u></em></a><br>详细的技术文档可见PyMeshLab官方网站：<a target="_blank" rel="noopener" href="https://pymeshlab.readthedocs.io/en/latest/"><em><u>点此进入</u></em></a></p>
-<ol>
-<li><p>安装方法</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ pip3 pymeshlab<br></code></pre></td></tr></table></figure>
+<li><p>链表似乎没有什么好说的，双链表通过判断查找元素位于列表前后部来优化查找时间。</p>
 </li>
-<li><p>使用示例</p>
- <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> pymeshlab <span class="hljs-keyword">as</span> ml<br><br>ms = ml.MeshSet()<br>ms.load_new_raster(<span class="hljs-string">&#x27;path_to_your_raster&#x27;</span>)        <span class="hljs-comment">#加载纹理文件</span><br>ms.load_new_mesh(<span class="hljs-string">&#x27;path_to_your_mesh&#x27;</span>)            <span class="hljs-comment">#加载网格</span><br>ms.load_filter_script(<span class="hljs-string">&#x27;path_to_your_mlx_script&#x27;</span>) <span class="hljs-comment">#加载脚本文件</span><br>ms.apply_filter_script()                         <span class="hljs-comment">#执行脚本文件</span><br><span class="hljs-comment"># 也可以直接执行封装好的方法如generate_convex_hull()</span><br>ms.save_current_mesh(<span class="hljs-string">&#x27;output_filename&#x27;</span>)          <span class="hljs-comment">#导出</span><br></code></pre></td></tr></table></figure></li>
-</ol>
-<h2 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h2><p>原本是为了自动化某项目中纹理映射步骤，没想到直到翻阅官方文档、查看meshlabserver的help信息才发现nvm文件应该作为工程导入(╯°口°)╯(┴—┴，不过也算学到一点教训咯。最后有请樱小姐帮我表达当时的心情😇：</p>
-
+<li><p>字符串使用顺序表来实现，关于模式匹配有两个比较重要的算法：</p>
+<ul>
+<li><p><strong>BF算法</strong>：逐次移动模式首位下标，每次移动后逐个检查模式每位。最差时间复杂度为**O(n)**。</p>
+</li>
+<li><p><strong>KMP算法</strong>：若逐位比较模式不成功，跳过匹配成功的主串字符，失配函数</p>
+<figure class="highlight c++"><figcaption><span>KMP算法</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">/*找每一位的最长前缀，前缀：首尾相同的部分，abjab中最长前缀为ab*/</span><br><span class="hljs-function"><span class="hljs-type">int</span>* <span class="hljs-title">nextValue</span><span class="hljs-params">(<span class="hljs-type">const</span> sstring &amp;t)</span> </span>&#123;<br>    <span class="hljs-type">int</span> tlen = t.<span class="hljs-built_in">length</span>();<br>    <span class="hljs-type">int</span> *next = <span class="hljs-keyword">new</span> <span class="hljs-type">int</span>[tlen];<br>    <span class="hljs-type">int</span> iterator, len, str_pointer, maxLen;<br><br>    <span class="hljs-keyword">for</span> (iterator = <span class="hljs-number">0</span>; iterator &lt; tlen; iterator++) &#123;<br>        maxLen = <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">for</span> (len = iterator; len &gt; <span class="hljs-number">0</span>; len--) &#123;<br>            maxLen = len;<br>            <span class="hljs-keyword">for</span> (str_pointer = <span class="hljs-number">0</span>; str_pointer &lt; len; str_pointer++) &#123;<br>                <span class="hljs-keyword">if</span> (t.str[str_pointer] != t.str[iterator - len + str_pointer]) <br>                    &#123;maxLen = <span class="hljs-number">0</span>; <span class="hljs-keyword">break</span>;&#125;<br>            &#125;<br>            <span class="hljs-keyword">if</span> (maxLen) <span class="hljs-keyword">break</span>;            <br>        &#125;<br>        next[iterator] = maxLen;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> next;<br>&#125;<br><br><span class="hljs-comment">/*每次发生失配时，模式指针回退到最长前缀的下一位，拟成功匹配位置为现主串指针位置 - 最长前缀长度*/</span><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">sstring::KMP_find</span><span class="hljs-params">(<span class="hljs-type">const</span> sstring &amp;t, <span class="hljs-type">int</span> start)</span> <span class="hljs-type">const</span> </span>&#123;<br>    <span class="hljs-type">int</span> *next = <span class="hljs-built_in">nextValue</span>(t);<br>    <span class="hljs-type">int</span> tlen = t.<span class="hljs-built_in">length</span>();<br>    <span class="hljs-type">int</span> truelen = <span class="hljs-built_in">length</span>() - tlen;<br>    <span class="hljs-type">int</span> pos;<br>    <span class="hljs-type">int</span> iterator = start, substr_pointer = <span class="hljs-number">0</span>;<br><br>    <span class="hljs-keyword">while</span> (iterator &lt;= truelen) &#123;<br>        pos = iterator;<br>        <span class="hljs-keyword">while</span> ((substr_pointer &lt; tlen) &amp;&amp;<br>        str[iterator] == t.str[substr_pointer]) &#123;iterator++; substr_pointer++;&#125;<br>        <br>        <span class="hljs-comment">// 处理两种情况</span><br>        <span class="hljs-comment">// 第一种是substr_pointer == tlen，即匹配成功；</span><br>        <span class="hljs-comment">// 另一种情况是匹配出错，substr_pointer回退，iterator进一位；</span><br>        <span class="hljs-keyword">if</span> (substr_pointer == tlen) &#123;<br>            <span class="hljs-keyword">break</span>;<br>        &#125;<br>        <span class="hljs-keyword">else</span> &#123;<br>            substr_pointer = next[substr_pointer];<br>            iterator++;<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>稀疏矩阵</p>
+<ul>
+<li>矩阵形式</li>
+<li>链表形式：转置后若要将链表以行列顺序排列，可以以行、列顺序比较进行排序</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-栈和队列"><a href="#2-栈和队列" class="headerlink" title="2. 栈和队列"></a>2. 栈和队列</h3><ul>
+<li><p>顺序栈和链式栈都比较容易实现</p>
+</li>
+<li><p>顺序循环队列，下面几个元素比较重要：</p>
+  <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">class</span> <span class="hljs-title class_">seqQueue</span> &#123;<br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-comment">/*每次pop时，Front前进一位且%maxSize;</span><br><span class="hljs-comment">     *push时，Rear前进一位且%maxSize;*/</span><br>    <span class="hljs-type">int</span> maxSize;<br>    <span class="hljs-type">int</span> Front, Rear;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">doubleSpace</span><span class="hljs-params">()</span></span>;<br>&#125;<br><br><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">elemType</span>&gt;<br><span class="hljs-type">void</span> seqQueue&lt;elemType&gt;::<span class="hljs-built_in">doubleSpace</span>() &#123;<br>    elemType *newArray;<br>    <span class="hljs-type">int</span> i, j;<br><br>    newArray = <span class="hljs-keyword">new</span> elemType[<span class="hljs-number">2</span>*maxSize];<br>    <br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>, j = Front; j != Rear; i++, j=(j<span class="hljs-number">+1</span>)%maxSize) <br>        newArray[i] = array[j];<br><br>    <span class="hljs-keyword">delete</span> [] array;<br>    array = newArray;<br>    Front = <span class="hljs-number">0</span>;<br>    Rear = j;<br>    maxSize *= <span class="hljs-number">2</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+</li>
+<li><p><strong>优先队列</strong>：使用<strong>最小化堆或最大化堆</strong>来构筑，每次pop只需要除去顶端元素，push时就需要对堆进行调整，由于顶端位置永远为下标0，所以不需要使用循环队列。</p>
+  <figure class="highlight c++"><figcaption><span>priorityQueue.h</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">T</span>&gt;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">priorityQueue</span> &#123;<br>    <span class="hljs-keyword">private</span>:<br>        <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">adjust</span><span class="hljs-params">(<span class="hljs-type">int</span> i)</span></span>;<br>    <span class="hljs-keyword">public</span>:<br>        <span class="hljs-built_in">priorityQueue</span>(T a[], <span class="hljs-type">int</span> n);<br>        <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">enQueue</span><span class="hljs-params">(<span class="hljs-type">const</span> T &amp;x)</span></span>;<br>        <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">deQueue</span><span class="hljs-params">()</span></span>;<br>&#125;;<br><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">T</span>&gt;<br>priorityQueue&lt;T&gt;::<span class="hljs-built_in">priorityQueue</span>(T a[], <span class="hljs-type">int</span> n) &#123;<br>    <span class="hljs-type">int</span> i, j;<br>    T temp;<br><br>    array = <span class="hljs-keyword">new</span> T[n + <span class="hljs-number">10</span>];<br>    maxSize = n<span class="hljs-number">+10</span>;<br>    Rear = n - <span class="hljs-number">1</span>;<br><br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; n; i++)    array[i] = a[i];<br>    <span class="hljs-keyword">for</span> (i = (n<span class="hljs-number">-1</span>)/<span class="hljs-number">2</span>; i&gt;=<span class="hljs-number">0</span>; i--) &#123;<br>        <span class="hljs-built_in">adjust</span>(i);<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">T</span>&gt;<br><span class="hljs-type">void</span> priorityQueue&lt;T&gt;::<span class="hljs-built_in">enQueue</span>(<span class="hljs-type">const</span> T &amp;x) &#123;<br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">isFull</span>()) <span class="hljs-built_in">doubleSpace</span>();<br>    Rear++;<br>    <span class="hljs-type">int</span> hole; <span class="hljs-comment">// 从队尾开始，寻找插入元素最合适的位置，每次都只需要与父节点进行比较</span><br>    <span class="hljs-keyword">for</span> (hole= Rear; hole &gt; <span class="hljs-number">0</span> &amp;&amp; x &lt; array[ hole/ <span class="hljs-number">2</span> ]; hole /= <span class="hljs-number">2</span> )<br>            array[ hole ] = array[ hole / <span class="hljs-number">2</span> ];<br>    array[hole] = x;<br>&#125;<br><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">T</span>&gt;<br><span class="hljs-type">void</span> priorityQueue&lt;T&gt;::<span class="hljs-built_in">deQueue</span>() &#123;<br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">isEmpty</span>()) <span class="hljs-keyword">throw</span> <span class="hljs-built_in">outOfBound</span>();<br>    <span class="hljs-comment">// 把队尾元素放到首位，然后调整</span><br>    array[<span class="hljs-number">0</span>] = array[Rear];<br>    Rear--;<br>    <br>    <span class="hljs-built_in">adjust</span>(<span class="hljs-number">0</span>);<br>&#125;<br><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">T</span>&gt;<br><span class="hljs-type">void</span> priorityQueue&lt;T&gt;::<span class="hljs-built_in">adjust</span>(<span class="hljs-type">int</span> i) &#123;<br>    <span class="hljs-type">int</span> maxChild;<br>    T temp;<br>    <span class="hljs-comment">// 调整小的往上，小顶堆</span><br>    <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>        maxChild = <span class="hljs-number">2</span>*i<span class="hljs-number">+1</span>;<br><br>        <span class="hljs-keyword">if</span> (maxChild &gt; Rear) <span class="hljs-keyword">return</span>;<br>        <span class="hljs-keyword">if</span> (maxChild<span class="hljs-number">+1</span> &lt;= Rear) &#123;<br>            <span class="hljs-keyword">if</span> (array[maxChild + <span class="hljs-number">1</span>] &lt;= array[maxChild]) maxChild++;<br>        &#125;<br>        <span class="hljs-keyword">if</span> (array[i] &lt; array[maxChild]) <span class="hljs-keyword">return</span>;<br>        <br>        temp = array[i];<br>        array[i] = array[maxChild];<br>        array[maxChild] = temp;<br>        i = maxChild;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="3-树和二叉树"><a href="#3-树和二叉树" class="headerlink" title="3. 树和二叉树"></a>3. 树和二叉树</h3><ul>
+<li><strong>二叉树</strong><ul>
+<li><strong>满二叉树或完全二叉树</strong>可以使用数组来构筑。</li>
+<li>三种遍历方式都需要用到栈，其中只有前序遍历不需要额外的辅助标记栈。</li>
+<li><strong>二叉线索树</strong>通过对非满节点的孩子命为直接前驱或直接后继，摆脱了中序遍历时对栈的依赖。</li>
+<li><strong>哈夫曼树</strong>的构建：总结点数为原结点数的<strong>2n-1</strong>倍，每次把最小的两个权重加和构筑新结点并作为它们的父结点。</li>
+<li><strong>并查集</strong>以根节点为特征，每个节点都有一个父节点字段，根节点的父节点为不存在的位置如-1，可以用数组构建。</li>
+</ul>
+</li>
+<li>树与二叉树转换：二叉树可以通过<strong>孩子兄弟表示法</strong>来表示树，该算法中每个二叉树节点的字段有树中该节点的第一个孩子、数据和下一个兄弟节点。</li>
+</ul>
+<h3 id="4-图"><a href="#4-图" class="headerlink" title="4. 图"></a>4. 图</h3><ul>
+<li>邻接矩阵</li>
+<li>邻接表<ul>
+<li>标准形式
     <figure class="figure-image">
-      <img src="/images/2024/sakura.jpg" alt="激情互动的佐仓和大西" loading="lazy" />
-      <figcaption>激情互动的佐仓和大西</figcaption>
+      <img src="/images/2024/data_structure/link.jpg" alt="邻接表表示" loading="lazy" />
+      <figcaption>邻接表表示</figcaption>
     </figure>
-  
+  </li>
+<li><strong>邻接多重表</strong>
+    <figure class="figure-image">
+      <img src="/images/2024/data_structure/multiple.jpg" alt="邻接多重表表示" loading="lazy" />
+      <figcaption>邻接多重表表示</figcaption>
+    </figure>
+  </li>
+<li><strong>十字链表</strong>
+    <figure class="figure-image">
+      <img src="/images/2024/data_structure/cross.jpg" alt="十字链表表示" loading="lazy" />
+      <figcaption>十字链表表示</figcaption>
+    </figure>
+  </li>
+</ul>
+</li>
+<li>遍历方式<ul>
+<li>深度优先遍历<strong>BFS</strong>：用栈，先访问先进节点的邻节点</li>
+<li>广度优先遍历<strong>DFS</strong>：用队列，先访问邻节点</li>
+</ul>
+</li>
+</ul>
+<div class="admonition warning"><p class="admonition-title">未实现的
+</p><p>平衡二叉树（AVL）、红黑树、B树、B+树......</p>
+</div>
+
 
       </section>
 
@@ -216,22 +225,22 @@
       
         <nav class="article-nav">
           
+          
             <div class="article-nav-item layout-padding">
   <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
     
-      <div class="card-cover" background-image-lazy data-img="https://imagepphcloud.thepaper.cn/pph/image/125/608/217.jpg"></div>
+      <div class="card-cover" background-image-lazy data-img="/images/2024/meshlab.png"></div>
     
     <div class="card-text">
       
-        <a href="/posts/55213/" itemprop="url">
-          <h2 class="card-text--title text-ellipsis">已实现的数据结构（持续更新）</h2>
+        <a href="/posts/50306/" itemprop="url">
+          <h2 class="card-text--title text-ellipsis">通过外界调用MeshLab的两种方法</h2>
         </a>
       
-      <div class="card-text--row">Newer</div>
+      <div class="card-text--row">Older</div>
     </div>
   </article>
 </div>
-          
           
         </nav>
       
