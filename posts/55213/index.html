@@ -7,6 +7,18 @@
   <meta name="theme-color" content="#3367D6"/>
   <link rel="apple-touch-icon" href="/icons-192.png">
   <link rel="manifest" href="/manifest.json">
+
+  <!--将该代码放入博客模板的head中即可-->
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+  tex2jax: {
+  inlineMath: [['$','$'], ['\\(','\\)']],
+  processEscapes: true
+  }
+  });
+  </script>
+  <!--latex数学显示公式-->
+  <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
   
   <meta name="generator" content="Hexo 7.3.0">
 
@@ -44,14 +56,18 @@
   
 <link rel="stylesheet" href="/css/style.css">
 
-</head>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
 <body>
   <div class="root-container">
     
 <!-- header container -->
 <header class="header-container post">
   
-    <div class="post-image" style="background-image: url(https://imagepphcloud.thepaper.cn/pph/image/125/608/217.jpg)"></div>
+    <div class="post-image" style="background-image: url(/images/2024/data_structure/217.jpg)"></div>
   
 
   <!-- navbar -->
@@ -109,6 +125,11 @@
             <time  class="article-date" datetime="2024-12-07T16:00:00.000Z" itemprop="datePublished">2024-12-08</time>
           </h2>
           
+            <h2 class="last-time">
+              <span>最后更新于</span>
+              <time  class="article-updated" datetime="2025-01-05T15:07:33.620Z" itemprop="dateUpdated">2025-01-05</time>
+            </h2>
+          
           
           <ul class="wrap-list dark">
   
@@ -146,16 +167,14 @@
 </div>
 
 <h2 id="已实现的"><a href="#已实现的" class="headerlink" title="已实现的"></a>已实现的</h2><h3 id="1-列表"><a href="#1-列表" class="headerlink" title="1. 列表"></a>1. 列表</h3><ul>
-<li><p><strong>顺序表</strong>有一个比较重要的优化点是<strong>空出列表地址为0的位置作为“哨兵位”</strong>，这样查找时先把需要查找的元素放到“哨兵位”上，接着从后往前依次查找，如果没有找到就会返回0，确保不会越界。此外，<strong>doubleSpace</strong>函数的写法也要熟练。</p>
-</li>
-<li><p>链表似乎没有什么好说的，双链表通过判断查找元素位于列表前后部来优化查找时间。</p>
-</li>
+<li><strong>顺序表</strong>有一个比较重要的优化点是<strong>空出列表地址为0的位置作为“哨兵位”</strong>，这样查找时先把需要查找的元素放到“哨兵位”上，接着从后往前依次查找，如果没有找到就会返回0，确保不会越界。此外，<strong>doubleSpace</strong>函数的写法也要熟练。</li>
+<li>链表似乎没有什么好说的，双链表通过判断查找元素位于列表前后部来优化查找时间。</li>
 <li><p>字符串使用顺序表来实现，关于模式匹配有两个比较重要的算法：</p>
 <ul>
-<li><p><strong>BF算法</strong>：逐次移动模式首位下标，每次移动后逐个检查模式每位。最差时间复杂度为**O(n)**。</p>
-</li>
+<li><strong>BF算法</strong>：逐次移动模式首位下标，每次移动后逐个检查模式每位。最差时间复杂度为<strong>O(n)</strong>。</li>
 <li><p><strong>KMP算法</strong>：若逐位比较模式不成功，跳过匹配成功的主串字符，失配函数</p>
-<figure class="highlight c++"><figcaption><span>KMP算法</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">/*找每一位的最长前缀，前缀：首尾相同的部分，abjab中最长前缀为ab*/</span><br><span class="hljs-function"><span class="hljs-type">int</span>* <span class="hljs-title">nextValue</span><span class="hljs-params">(<span class="hljs-type">const</span> sstring &amp;t)</span> </span>&#123;<br>    <span class="hljs-type">int</span> tlen = t.<span class="hljs-built_in">length</span>();<br>    <span class="hljs-type">int</span> *next = <span class="hljs-keyword">new</span> <span class="hljs-type">int</span>[tlen];<br>    <span class="hljs-type">int</span> iterator, len, str_pointer, maxLen;<br><br>    <span class="hljs-keyword">for</span> (iterator = <span class="hljs-number">0</span>; iterator &lt; tlen; iterator++) &#123;<br>        maxLen = <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">for</span> (len = iterator; len &gt; <span class="hljs-number">0</span>; len--) &#123;<br>            maxLen = len;<br>            <span class="hljs-keyword">for</span> (str_pointer = <span class="hljs-number">0</span>; str_pointer &lt; len; str_pointer++) &#123;<br>                <span class="hljs-keyword">if</span> (t.str[str_pointer] != t.str[iterator - len + str_pointer]) <br>                    &#123;maxLen = <span class="hljs-number">0</span>; <span class="hljs-keyword">break</span>;&#125;<br>            &#125;<br>            <span class="hljs-keyword">if</span> (maxLen) <span class="hljs-keyword">break</span>;            <br>        &#125;<br>        next[iterator] = maxLen;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> next;<br>&#125;<br><br><span class="hljs-comment">/*每次发生失配时，模式指针回退到最长前缀的下一位，拟成功匹配位置为现主串指针位置 - 最长前缀长度*/</span><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">sstring::KMP_find</span><span class="hljs-params">(<span class="hljs-type">const</span> sstring &amp;t, <span class="hljs-type">int</span> start)</span> <span class="hljs-type">const</span> </span>&#123;<br>    <span class="hljs-type">int</span> *next = <span class="hljs-built_in">nextValue</span>(t);<br>    <span class="hljs-type">int</span> tlen = t.<span class="hljs-built_in">length</span>();<br>    <span class="hljs-type">int</span> truelen = <span class="hljs-built_in">length</span>() - tlen;<br>    <span class="hljs-type">int</span> pos;<br>    <span class="hljs-type">int</span> iterator = start, substr_pointer = <span class="hljs-number">0</span>;<br><br>    <span class="hljs-keyword">while</span> (iterator &lt;= truelen) &#123;<br>        pos = iterator;<br>        <span class="hljs-keyword">while</span> ((substr_pointer &lt; tlen) &amp;&amp;<br>        str[iterator] == t.str[substr_pointer]) &#123;iterator++; substr_pointer++;&#125;<br>        <br>        <span class="hljs-comment">// 处理两种情况</span><br>        <span class="hljs-comment">// 第一种是substr_pointer == tlen，即匹配成功；</span><br>        <span class="hljs-comment">// 另一种情况是匹配出错，substr_pointer回退，iterator进一位；</span><br>        <span class="hljs-keyword">if</span> (substr_pointer == tlen) &#123;<br>            <span class="hljs-keyword">break</span>;<br>        &#125;<br>        <span class="hljs-keyword">else</span> &#123;<br>            substr_pointer = next[substr_pointer];<br>            iterator++;<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure></li>
+<figure class="highlight c++"><figcaption><span>KMP算法</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">/*找每一位的最长前缀，前缀：首尾相同的部分，abjab中最长前缀为ab*/</span><br><span class="hljs-function"><span class="hljs-type">int</span>* <span class="hljs-title">nextValue</span><span class="hljs-params">(<span class="hljs-type">const</span> sstring &amp;t)</span> </span>&#123;<br>    <span class="hljs-type">int</span> tlen = t.<span class="hljs-built_in">length</span>();<br>    <span class="hljs-type">int</span> *next = <span class="hljs-keyword">new</span> <span class="hljs-type">int</span>[tlen];<br>    <span class="hljs-type">int</span> iterator, len, str_pointer, maxLen;<br><br>    <span class="hljs-keyword">for</span> (iterator = <span class="hljs-number">0</span>; iterator &lt; tlen; iterator++) &#123;<br>        maxLen = <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">for</span> (len = iterator; len &gt; <span class="hljs-number">0</span>; len--) &#123;<br>            maxLen = len;<br>            <span class="hljs-keyword">for</span> (str_pointer = <span class="hljs-number">0</span>; str_pointer &lt; len; str_pointer++) &#123;<br>                <span class="hljs-keyword">if</span> (t.str[str_pointer] != t.str[iterator - len + str_pointer]) <br>                    &#123;maxLen = <span class="hljs-number">0</span>; <span class="hljs-keyword">break</span>;&#125;<br>            &#125;<br>            <span class="hljs-keyword">if</span> (maxLen) <span class="hljs-keyword">break</span>;            <br>        &#125;<br>        next[iterator] = maxLen;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> next;<br>&#125;<br><br><span class="hljs-comment">/*每次发生失配时，模式指针回退到最长前缀的下一位，拟成功匹配位置为现主串指针位置 - 最长前缀长度*/</span><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">sstring::KMP_find</span><span class="hljs-params">(<span class="hljs-type">const</span> sstring &amp;t, <span class="hljs-type">int</span> start)</span> <span class="hljs-type">const</span> </span>&#123;<br>    <span class="hljs-type">int</span> *next = <span class="hljs-built_in">nextValue</span>(t);<br>    <span class="hljs-type">int</span> tlen = t.<span class="hljs-built_in">length</span>();<br>    <span class="hljs-type">int</span> truelen = <span class="hljs-built_in">length</span>() - tlen;<br>    <span class="hljs-type">int</span> pos;<br>    <span class="hljs-type">int</span> iterator = start, substr_pointer = <span class="hljs-number">0</span>;<br><br>    <span class="hljs-keyword">while</span> (iterator &lt;= truelen) &#123;<br>        pos = iterator;<br>        <span class="hljs-keyword">while</span> ((substr_pointer &lt; tlen) &amp;&amp;<br>        str[iterator] == t.str[substr_pointer]) &#123;iterator++; substr_pointer++;&#125;<br>        <br>        <span class="hljs-comment">// 处理两种情况</span><br>        <span class="hljs-comment">// 第一种是substr_pointer == tlen，即匹配成功；</span><br>        <span class="hljs-comment">// 另一种情况是匹配出错，substr_pointer回退，iterator进一位；</span><br>        <span class="hljs-keyword">if</span> (substr_pointer == tlen) &#123;<br>            <span class="hljs-keyword">break</span>;<br>        &#125;<br>        <span class="hljs-keyword">else</span> &#123;<br>            substr_pointer = next[substr_pointer];<br>            iterator++;<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+</li>
 </ul>
 </li>
 <li><p>稀疏矩阵</p>
@@ -166,13 +185,13 @@
 </li>
 </ul>
 <h3 id="2-栈和队列"><a href="#2-栈和队列" class="headerlink" title="2. 栈和队列"></a>2. 栈和队列</h3><ul>
-<li><p>顺序栈和链式栈都比较容易实现</p>
-</li>
+<li>顺序栈和链式栈都比较容易实现</li>
 <li><p>顺序循环队列，下面几个元素比较重要：</p>
   <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">class</span> <span class="hljs-title class_">seqQueue</span> &#123;<br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-comment">/*每次pop时，Front前进一位且%maxSize;</span><br><span class="hljs-comment">     *push时，Rear前进一位且%maxSize;*/</span><br>    <span class="hljs-type">int</span> maxSize;<br>    <span class="hljs-type">int</span> Front, Rear;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">doubleSpace</span><span class="hljs-params">()</span></span>;<br>&#125;<br><br><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">elemType</span>&gt;<br><span class="hljs-type">void</span> seqQueue&lt;elemType&gt;::<span class="hljs-built_in">doubleSpace</span>() &#123;<br>    elemType *newArray;<br>    <span class="hljs-type">int</span> i, j;<br><br>    newArray = <span class="hljs-keyword">new</span> elemType[<span class="hljs-number">2</span>*maxSize];<br>    <br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>, j = Front; j != Rear; i++, j=(j<span class="hljs-number">+1</span>)%maxSize) <br>        newArray[i] = array[j];<br><br>    <span class="hljs-keyword">delete</span> [] array;<br>    array = newArray;<br>    Front = <span class="hljs-number">0</span>;<br>    Rear = j;<br>    maxSize *= <span class="hljs-number">2</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
 </li>
 <li><p><strong>优先队列</strong>：使用<strong>最小化堆或最大化堆</strong>来构筑，每次pop只需要除去顶端元素，push时就需要对堆进行调整，由于顶端位置永远为下标0，所以不需要使用循环队列。</p>
-  <figure class="highlight c++"><figcaption><span>priorityQueue.h</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">T</span>&gt;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">priorityQueue</span> &#123;<br>    <span class="hljs-keyword">private</span>:<br>        <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">adjust</span><span class="hljs-params">(<span class="hljs-type">int</span> i)</span></span>;<br>    <span class="hljs-keyword">public</span>:<br>        <span class="hljs-built_in">priorityQueue</span>(T a[], <span class="hljs-type">int</span> n);<br>        <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">enQueue</span><span class="hljs-params">(<span class="hljs-type">const</span> T &amp;x)</span></span>;<br>        <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">deQueue</span><span class="hljs-params">()</span></span>;<br>&#125;;<br><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">T</span>&gt;<br>priorityQueue&lt;T&gt;::<span class="hljs-built_in">priorityQueue</span>(T a[], <span class="hljs-type">int</span> n) &#123;<br>    <span class="hljs-type">int</span> i, j;<br>    T temp;<br><br>    array = <span class="hljs-keyword">new</span> T[n + <span class="hljs-number">10</span>];<br>    maxSize = n<span class="hljs-number">+10</span>;<br>    Rear = n - <span class="hljs-number">1</span>;<br><br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; n; i++)    array[i] = a[i];<br>    <span class="hljs-keyword">for</span> (i = (n<span class="hljs-number">-1</span>)/<span class="hljs-number">2</span>; i&gt;=<span class="hljs-number">0</span>; i--) &#123;<br>        <span class="hljs-built_in">adjust</span>(i);<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">T</span>&gt;<br><span class="hljs-type">void</span> priorityQueue&lt;T&gt;::<span class="hljs-built_in">enQueue</span>(<span class="hljs-type">const</span> T &amp;x) &#123;<br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">isFull</span>()) <span class="hljs-built_in">doubleSpace</span>();<br>    Rear++;<br>    <span class="hljs-type">int</span> hole; <span class="hljs-comment">// 从队尾开始，寻找插入元素最合适的位置，每次都只需要与父节点进行比较</span><br>    <span class="hljs-keyword">for</span> (hole= Rear; hole &gt; <span class="hljs-number">0</span> &amp;&amp; x &lt; array[ hole/ <span class="hljs-number">2</span> ]; hole /= <span class="hljs-number">2</span> )<br>            array[ hole ] = array[ hole / <span class="hljs-number">2</span> ];<br>    array[hole] = x;<br>&#125;<br><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">T</span>&gt;<br><span class="hljs-type">void</span> priorityQueue&lt;T&gt;::<span class="hljs-built_in">deQueue</span>() &#123;<br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">isEmpty</span>()) <span class="hljs-keyword">throw</span> <span class="hljs-built_in">outOfBound</span>();<br>    <span class="hljs-comment">// 把队尾元素放到首位，然后调整</span><br>    array[<span class="hljs-number">0</span>] = array[Rear];<br>    Rear--;<br>    <br>    <span class="hljs-built_in">adjust</span>(<span class="hljs-number">0</span>);<br>&#125;<br><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">T</span>&gt;<br><span class="hljs-type">void</span> priorityQueue&lt;T&gt;::<span class="hljs-built_in">adjust</span>(<span class="hljs-type">int</span> i) &#123;<br>    <span class="hljs-type">int</span> maxChild;<br>    T temp;<br>    <span class="hljs-comment">// 调整小的往上，小顶堆</span><br>    <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>        maxChild = <span class="hljs-number">2</span>*i<span class="hljs-number">+1</span>;<br><br>        <span class="hljs-keyword">if</span> (maxChild &gt; Rear) <span class="hljs-keyword">return</span>;<br>        <span class="hljs-keyword">if</span> (maxChild<span class="hljs-number">+1</span> &lt;= Rear) &#123;<br>            <span class="hljs-keyword">if</span> (array[maxChild + <span class="hljs-number">1</span>] &lt;= array[maxChild]) maxChild++;<br>        &#125;<br>        <span class="hljs-keyword">if</span> (array[i] &lt; array[maxChild]) <span class="hljs-keyword">return</span>;<br>        <br>        temp = array[i];<br>        array[i] = array[maxChild];<br>        array[maxChild] = temp;<br>        i = maxChild;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure></li>
+  <figure class="highlight c++"><figcaption><span>priorityQueue.h</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">T</span>&gt;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">priorityQueue</span> &#123;<br>    <span class="hljs-keyword">private</span>:<br>        <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">adjust</span><span class="hljs-params">(<span class="hljs-type">int</span> i)</span></span>;<br>    <span class="hljs-keyword">public</span>:<br>        <span class="hljs-built_in">priorityQueue</span>(T a[], <span class="hljs-type">int</span> n);<br>        <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">enQueue</span><span class="hljs-params">(<span class="hljs-type">const</span> T &amp;x)</span></span>;<br>        <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">deQueue</span><span class="hljs-params">()</span></span>;<br>&#125;;<br><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">T</span>&gt;<br>priorityQueue&lt;T&gt;::<span class="hljs-built_in">priorityQueue</span>(T a[], <span class="hljs-type">int</span> n) &#123;<br>    <span class="hljs-type">int</span> i, j;<br>    T temp;<br><br>    array = <span class="hljs-keyword">new</span> T[n + <span class="hljs-number">10</span>];<br>    maxSize = n<span class="hljs-number">+10</span>;<br>    Rear = n - <span class="hljs-number">1</span>;<br><br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; n; i++)    array[i] = a[i];<br>    <span class="hljs-keyword">for</span> (i = (n<span class="hljs-number">-1</span>)/<span class="hljs-number">2</span>; i&gt;=<span class="hljs-number">0</span>; i--) &#123;<br>        <span class="hljs-built_in">adjust</span>(i);<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">T</span>&gt;<br><span class="hljs-type">void</span> priorityQueue&lt;T&gt;::<span class="hljs-built_in">enQueue</span>(<span class="hljs-type">const</span> T &amp;x) &#123;<br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">isFull</span>()) <span class="hljs-built_in">doubleSpace</span>();<br>    Rear++;<br>    <span class="hljs-type">int</span> hole; <span class="hljs-comment">// 从队尾开始，寻找插入元素最合适的位置，每次都只需要与父节点进行比较</span><br>    <span class="hljs-keyword">for</span> (hole= Rear; hole &gt; <span class="hljs-number">0</span> &amp;&amp; x &lt; array[ hole/ <span class="hljs-number">2</span> ]; hole /= <span class="hljs-number">2</span> )<br>            array[ hole ] = array[ hole / <span class="hljs-number">2</span> ];<br>    array[hole] = x;<br>&#125;<br><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">T</span>&gt;<br><span class="hljs-type">void</span> priorityQueue&lt;T&gt;::<span class="hljs-built_in">deQueue</span>() &#123;<br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">isEmpty</span>()) <span class="hljs-keyword">throw</span> <span class="hljs-built_in">outOfBound</span>();<br>    <span class="hljs-comment">// 把队尾元素放到首位，然后调整</span><br>    array[<span class="hljs-number">0</span>] = array[Rear];<br>    Rear--;<br>    <br>    <span class="hljs-built_in">adjust</span>(<span class="hljs-number">0</span>);<br>&#125;<br><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">T</span>&gt;<br><span class="hljs-type">void</span> priorityQueue&lt;T&gt;::<span class="hljs-built_in">adjust</span>(<span class="hljs-type">int</span> i) &#123;<br>    <span class="hljs-type">int</span> maxChild;<br>    T temp;<br>    <span class="hljs-comment">// 调整小的往上，小顶堆</span><br>    <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>        maxChild = <span class="hljs-number">2</span>*i<span class="hljs-number">+1</span>;<br><br>        <span class="hljs-keyword">if</span> (maxChild &gt; Rear) <span class="hljs-keyword">return</span>;<br>        <span class="hljs-keyword">if</span> (maxChild<span class="hljs-number">+1</span> &lt;= Rear) &#123;<br>            <span class="hljs-keyword">if</span> (array[maxChild + <span class="hljs-number">1</span>] &lt;= array[maxChild]) maxChild++;<br>        &#125;<br>        <span class="hljs-keyword">if</span> (array[i] &lt; array[maxChild]) <span class="hljs-keyword">return</span>;<br>        <br>        temp = array[i];<br>        array[i] = array[maxChild];<br>        array[maxChild] = temp;<br>        i = maxChild;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+</li>
 </ul>
 <h3 id="3-树和二叉树"><a href="#3-树和二叉树" class="headerlink" title="3. 树和二叉树"></a>3. 树和二叉树</h3><ul>
 <li><strong>二叉树</strong><ul>
@@ -188,7 +207,7 @@
 <h3 id="4-图"><a href="#4-图" class="headerlink" title="4. 图"></a>4. 图</h3><ul>
 <li>邻接矩阵</li>
 <li>邻接表<ul>
-<li>标准形式
+<li>标准形式，有个小窍门是每次插入新边时插到离节点最近的位置，使时间复杂度减为O(n)，但对于邻接多重表和十字链表显然不适用
     <figure class="figure-image">
       <img src="/images/2024/data_structure/link.jpg" alt="邻接表表示" loading="lazy" />
       <figcaption>邻接表表示</figcaption>
@@ -209,13 +228,16 @@
 </ul>
 </li>
 <li>遍历方式<ul>
-<li>深度优先遍历<strong>BFS</strong>：用栈，先访问先进节点的邻节点</li>
-<li>广度优先遍历<strong>DFS</strong>：用队列，先访问邻节点</li>
+<li>深度优先遍历<strong>BFS</strong>：用栈，先访问先进节点的邻节点。</li>
+<li>广度优先遍历<strong>DFS</strong>：用队列，先访问邻节点。</li>
 </ul>
 </li>
 </ul>
+<h3 id="5-其他"><a href="#5-其他" class="headerlink" title="5. 其他"></a>5. 其他</h3><ul>
+<li><strong>哈希集合</strong>：顺序表，插入位置由<code>待插入数据 % 质数</code>计算得到，每个位置存储一个链表的首节点。</li>
+</ul>
 <div class="admonition warning"><p class="admonition-title">未实现的
-</p><p>平衡二叉树（AVL）、红黑树、B树、B+树......</p>
+</p><p>平衡二叉树（AVL）、红黑树、B树、B+树…</p>
 </div>
 
 
@@ -224,6 +246,22 @@
       
       
         <nav class="article-nav">
+          
+            <div class="article-nav-item layout-padding">
+  <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
+    
+      <div class="card-cover" background-image-lazy data-img="/images/2025/杂谈.jpg"></div>
+    
+    <div class="card-text">
+      
+        <a href="/posts/17101/" itemprop="url">
+          <h2 class="card-text--title text-ellipsis">2025新年闲谈</h2>
+        </a>
+      
+      <div class="card-text--row">Newer</div>
+    </div>
+  </article>
+</div>
           
           
             <div class="article-nav-item layout-padding">
@@ -266,7 +304,7 @@
         pageSize: 10,
         lang: "zh-cn",
         visitor: true,
-        recordIP: true,
+        recordIP: false,
         enableQQ: false,
         meta: ['nick', 'mail'],
         requiredFields: ['nick'],
@@ -484,13 +522,13 @@
         <svg class="icon icon-article" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
   <path d="M240.51564747 647.74217627h196.07203239c16.59071043 0 30.16492806-13.57421762 30.16492805-30.16492806V165.10332731c0-33.18142087-30.16492806-60.32985613-60.32985612-60.32985611H245.04038668C225.43318342 104.7734712 210.35071939 119.85593522 210.35071939 139.46313845V617.57724821c0 16.59071043 13.57421762 30.16492806 30.16492808 30.16492806z m663.62841731-452.47392089v482.63884894c0 33.18142087-27.14843525 60.32985613-60.32985612 60.32985613H180.18579134c-33.18142087 0-60.32985613-27.14843525-60.32985612-60.32985613V195.26825538c-49.77213131 0-90.49478418 40.72265287-90.49478417 90.49478417v452.4739209c0 49.77213131 40.72265287 90.49478418 90.49478417 90.49478417h286.56681657c16.59071043 0 30.16492806 13.57421762 30.16492807 30.16492807s13.57421762 30.16492806 30.16492805 30.16492806h90.49478418c16.59071043 0 30.16492806-13.57421762 30.16492805-30.16492806s13.57421762-30.16492806 30.16492807-30.16492807h286.56681657c49.77213131 0 90.49478418-40.72265287 90.49478417-90.49478417V285.76303955c0-49.77213131-40.72265287-90.49478418-90.49478417-90.49478417zM587.41232014 647.74217627h191.54729318c19.60720323 0 34.68966726-15.08246403 34.68966729-34.68966727V134.93839925c0-16.59071043-13.57421762-30.16492806-30.16492808-30.16492805H617.57724821c-30.16492806 0-60.32985613 27.14843525-60.32985612 60.32985611v452.4739209c0 16.59071043 13.57421762 30.16492806 30.16492805 30.16492806z" fill="currentColor"></path>
 </svg>
-        <span>2</span>
+        <span>3</span>
       </div>
       <div class="count-box--item">
         <svg class="icon icon-categories" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
   <path d="M900.3614811 257.09082106h-339.81629553l-67.96326003-101.9448889c-19.41807444-29.12711113-48.54518557-43.69066667-82.52681443-43.69066667H123.6385189c-53.39970333 0-97.09036999 43.69066667-97.09037113 97.09036999v582.54222222c0 53.39970333 43.69066667 97.09036999 97.09037113 97.09037002h776.7229622c53.39970333 0 97.09036999-43.69066667 97.09037113-97.09037002V354.18119104c0-53.39970333-43.69066667-97.09036999-97.09037113-97.09036998z m-97.09036999 242.72592554H220.72888889c-24.27259221 0-48.54518557-24.27259221-48.54518556-48.54518556s24.27259221-48.54518557 48.54518556-48.54518444h582.54222222c24.27259221 0 48.54518557 24.27259221 48.54518556 48.54518444s-24.27259221 48.54518557-48.54518556 48.54518556z" fill="currentColor"></path>
 </svg>
-        2
+        3
       </div>
       <div class="count-box--item">
         <svg class="icon icon-tags" viewBox="0 0 1098 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -540,6 +578,12 @@
           </a>
         </li>
         
+        <li class="categories-list-item">
+          <a href="/categories/%E6%9D%82%E8%B0%88/">
+            杂谈 (1)
+          </a>
+        </li>
+        
     </ul>
   </div>
 </section>
@@ -585,7 +629,7 @@
       
     </div>
      
-    <p>&copy; 2024 <a href="/" target="_blank">MaoCaiMao</a></p>
+    <p>&copy; 2025 <a href="/" target="_blank">MaoCaiMao</a></p>
 
     
 

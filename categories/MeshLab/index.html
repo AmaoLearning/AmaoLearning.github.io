@@ -7,6 +7,18 @@
   <meta name="theme-color" content="#3367D6"/>
   <link rel="apple-touch-icon" href="/icons-192.png">
   <link rel="manifest" href="/manifest.json">
+
+  <!--将该代码放入博客模板的head中即可-->
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+  tex2jax: {
+  inlineMath: [['$','$'], ['\\(','\\)']],
+  processEscapes: true
+  }
+  });
+  </script>
+  <!--latex数学显示公式-->
+  <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
   
   <meta name="generator" content="Hexo 7.3.0">
 
@@ -44,7 +56,11 @@
   
 <link rel="stylesheet" href="/css/style.css">
 
-</head>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
 <body>
   <div class="root-container">
     
@@ -138,7 +154,7 @@
             
               <div class="last-time">
                 <span>更新于</span>
-                <time  class="article-updated" datetime="2024-12-08T05:19:49.218Z" itemprop="dateUpdated">2024-12-08</time>
+                <time  class="article-updated" datetime="2024-12-27T14:08:55.409Z" itemprop="dateUpdated">2024-12-27</time>
               </div>
             
             <ul class="wrap-list dark">
@@ -186,7 +202,7 @@
       
     </div>
      
-    <p>&copy; 2024 <a href="/" target="_blank">MaoCaiMao</a></p>
+    <p>&copy; 2025 <a href="/" target="_blank">MaoCaiMao</a></p>
 
     
 

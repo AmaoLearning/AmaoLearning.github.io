@@ -36,7 +36,7 @@
 
   
 
-  <title>通过外界调用MeshLab的两种方法 | 阿毛的小书桌</title>
+  <title>2025新年闲谈 | 阿毛的小书桌</title>
 
   
 
@@ -67,7 +67,7 @@
 <!-- header container -->
 <header class="header-container post">
   
-    <div class="post-image" style="background-image: url(/images/2024/meshlab.png)"></div>
+    <div class="post-image" style="background-image: url(/images/2025/杂谈.jpg)"></div>
   
 
   <!-- navbar -->
@@ -118,27 +118,25 @@
     <div class="header-content">
       <div class="post-text layout-block">
         <div class="layout-margin">
-          <h1 class="title-wrap">通过外界调用MeshLab的两种方法</h1>
+          <h1 class="title-wrap">2025新年闲谈</h1>
           <h2 class="title-sub-wrap">
             <strong>MaoCaiMao</strong>
             <span>发布于</span>
-            <time  class="article-date" datetime="2024-11-29T16:00:00.000Z" itemprop="datePublished">2024-11-30</time>
+            <time  class="article-date" datetime="2025-01-04T16:00:00.000Z" itemprop="datePublished">2025-01-05</time>
           </h2>
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2024-12-27T14:08:55.409Z" itemprop="dateUpdated">2024-12-27</time>
+              <time  class="article-updated" datetime="2025-01-05T18:02:25.861Z" itemprop="dateUpdated">2025-01-06</time>
             </h2>
           
           
           <ul class="wrap-list dark">
   
-    <li><a href="/categories/MeshLab/">📒 MeshLab</a></li>
+    <li><a href="/categories/%E6%9D%82%E8%B0%88/">📒 杂谈</a></li>
     
 </ul>
           <ul class="wrap-list dark">
-  
-    <li><a href="/tags/%E9%A1%B9%E7%9B%AE%E7%BB%8F%E9%AA%8C/">🏷️ 项目经验</a></li>
   
 </ul>
         </div>
@@ -162,74 +160,64 @@
       
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
-        <h2 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h2><p>如题，我在自己尝试自动化调用<strong>MeshLab</strong>时，通过网络搜索，发现了两种手段：</p>
-<ul>
-<li>使用批量化工具 <strong>meshlabserver</strong>;</li>
-<li>使用官方Python库 <strong>pymeshlab</strong>.</li>
+        <h2 id="2025年新年快乐！🎍🎊🎆"><a href="#2025年新年快乐！🎍🎊🎆" class="headerlink" title="2025年新年快乐！🎍🎊🎆"></a>2025年新年快乐！🎍🎊🎆</h2><h3 id="1-简单测试下Latex"><a href="#1-简单测试下Latex" class="headerlink" title="1. 简单测试下Latex"></a>1. 简单测试下Latex</h3><p>首先测试一下新增的Latex语句渲染，说实话我是最近才知道vscode的matlab插件可以直接使用语法<code>$</code>包围来渲染Latex，真是学到了，Word终于能退休啦！！</p>
+<script type="math/tex; mode=display">\int_2^{10}||\frac{1}{2^2}\mathbb{x} ||_2^2 dx</script><h3 id="2-期末考试将至，在前一段时间的复习中，我深刻地体会到了我有两个缺点"><a href="#2-期末考试将至，在前一段时间的复习中，我深刻地体会到了我有两个缺点" class="headerlink" title="2. 期末考试将至，在前一段时间的复习中，我深刻地体会到了我有两个缺点"></a>2. 期末考试将至，在前一段时间的复习中，我深刻地体会到了我有两个缺点</h3><ul>
+<li><strong>临近期末复习我会变得很浪费时间</strong><br>  今年复习期末从期末周前两周就开始了，一直没有做具体到每天完成什么任务的计划，每天都是想到可以干什么就干什么。就算这样竟然也把每一门的知识点进行了简单的梳理，大部分还做了卷子。<del>其实是时间留得足够多吧，除了复习其实基本没干别的</del> 有时候想着晚上就做一套卷子，结果真就只做了一套，做的过程中几乎隔几分钟就会看一次手机（b站、鹅或者推），尤其是待在宿舍里时。唉——这能有什么效率呢，也难怪会有第二点。</li>
+<li><strong>知识梳理时我会忽略非常基础的知识点</strong><br>  这一点真不可置否，举个非常显著的例子：<code>散列表其实就是哈希表</code>，概率统计中<code>置信度是1-alpha而非alpha</code>。其实也得怪我在前面的学习中没有建立比较深的理解，这是我的学习中非常致命的一点——<strong>对知识点不追求理解，对于不理解处一旦受阻就以简单记忆敷衍</strong>。然而实际上因为大部分课程的知识点都很多，单纯靠记只能记住某些重难点，对于基础的地方反而容易忘记。如果真正能理解的话，看到某些关键词就能回忆起这个知识点及其相关重难点，同时也就不会出现见到题动不了笔的情况了。再举个例子：</li>
 </ul>
-<p>这两种方法按时间顺序先后是官方提供的批量化调用MeshLab程序的方式，其中，<strong>meshlabserver</strong> 自从在官方发布的<strong>MeshLab 2020.12</strong>版本中被删除，之后再也没有被提供过。因此要使用的话必须安装较低的版本的MeshLab，我使用的版本是 <strong>MeshLab 2020.09</strong>。</p>
-<p><strong>MeshLab</strong> 官方各版本发布仓库: <a target="_blank" rel="noopener" href="https://github.com/cnr-isti-vclab/meshlab/releases"><em><u>点此跳转</u></em></a></p>
-<h3 id="两种方法各自的优势和缺点"><a href="#两种方法各自的优势和缺点" class="headerlink" title="两种方法各自的优势和缺点"></a>两种方法各自的优势和缺点</h3><ul>
-<li><strong>meshlabserver</strong><ul>
-<li>优势：支持命令行调用或者cmd脚本，同时理论上支持原MeshLab软件支持的所有功能.</li>
-<li>缺点：每种功能都必须导入对应的，且较新版本meshlab不支持。</li>
-</ul>
-</li>
-<li><strong>PyMeshLab</strong><ul>
-<li>优势：打包成python库方便使用python脚本进行批量且较复杂的操作，官方文档比较全面。</li>
-<li>缺点：我一开始有点没弄清楚文件类型，比如nvm文件应该作为project导入，但我很长时间都没有发现这点。</li>
-</ul>
-</li>
-</ul>
-<h2 id="1-meshlabserver"><a href="#1-meshlabserver" class="headerlink" title="1. meshlabserver"></a>1. meshlabserver</h2><ul>
-<li>文件位置： 通常与meshlab.exe同级，同样是executable</li>
-<li><p>调用方法（二选一）：</p>
-<ul>
-<li>将meshlabserver.exe加入环境变量</li>
-<li>直接用文件路径</li>
-</ul>
-</li>
-</ul>
-<div style="border-left: 5px solid skyblue; padding: 6px;">
-<strong>📘</strong> 以下假设已将meshlabserver.exe加入环境变量：
+<div class="admonition note"><p class="admonition-title">概率统计中估计量哪些是一致性估计量呢？
+</p><p>我记得的：当n趋近于正无穷时，A的估计量a会依概率收敛于A。所以是a趋近于A（doge）。</p>
+<p><strong>实际上</strong>：依概率收敛是指<br>
+$$ \lim_{n \to \infty } P(|\hat{a} - A| &lt; \epsilon) = 1$$ $$ \hat{a} \xrightarrow{P} A$$依概率收敛的定义与切比雪夫不等式有关，在一致性中，可以写出下面不等式$$ P(|\hat{a} - A| \leq \epsilon) \geq 1- \frac{D(\hat{a})}{\epsilon^2} $$显然一致性只需满足方差趋近于0即可，而这其实也是书上有关一致性的一个性质，也印证了我复习不够全面的问题。</p>
 </div>
 
-<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><ol>
-<li><p>完成已导出的脚本功能（批处理脚本如何导出参见<a target="_blank" rel="noopener" href="https://blog.csdn.net/sxf1061926959/article/details/53869429"><em><u>此篇CSDN博客</u></em></a>）</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ meshlabserver -p path/to/meshlab/project -i mesh/file/to/be/loaded -o output/filename [optional args such as vc(vertex color)] -s path/to/script<br></code></pre></td></tr></table></figure>
-<p> <strong>-o</strong> 的参数有很多，下面给出常用的：</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">vc -&gt; vertex colors,<br><span class="hljs-built_in">fc</span> -&gt; face colors,<br>fn-&gt; face normals,<br>sa -&gt; save <span class="hljs-keyword">in</span> ascii format<br></code></pre></td></tr></table></figure>
-</li>
-<li><p>exe的帮助功能中给出了完整的调用方法，可作为参考</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ meshlabserver --<span class="hljs-built_in">help</span><br></code></pre></td></tr></table></figure>
-</li>
+<p>这两个缺点虽然不致命，却是顽疾，需要改，但如何改呢。</p>
+<h3 id="3-聊聊最近发生的事以及还没完成的事吧"><a href="#3-聊聊最近发生的事以及还没完成的事吧" class="headerlink" title="3. 聊聊最近发生的事以及还没完成的事吧"></a>3. 聊聊最近发生的事以及还没完成的事吧</h3><ol>
+<li><strong>爱好方面</strong>，我无可救药地沉迷了偶像一段时间，具体来说是<code>莲之空女子学院学园偶像俱乐部</code>。</li>
 </ol>
-<div style="border-left: 5px solid skyblue; padding: 6px;">
-<strong>📘</strong> 如果直接使用文件路径，把上述指令中的 meshlabserver 改成 PATH/TO/YOUR/MESHLABSERVER 即可。
-</div>
-
-
-<h2 id="2-pymeshlab"><a href="#2-pymeshlab" class="headerlink" title="2. pymeshlab"></a>2. pymeshlab</h2><p>官方github仓库：<a target="_blank" rel="noopener" href="https://github.com/cnr-isti-vclab/PyMeshLab"><em><u>点此进入</u></em></a><br>详细的技术文档可见PyMeshLab官方网站：<a target="_blank" rel="noopener" href="https://pymeshlab.readthedocs.io/en/latest/"><em><u>点此进入</u></em></a></p>
-<ol>
-<li><p>安装方法</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ pip3 pymeshlab<br></code></pre></td></tr></table></figure>
-</li>
-<li><p>使用示例</p>
- <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> pymeshlab <span class="hljs-keyword">as</span> ml<br><br>ms = ml.MeshSet()<br>ms.load_new_raster(<span class="hljs-string">&#x27;path_to_your_raster&#x27;</span>)        <span class="hljs-comment">#加载纹理文件</span><br>ms.load_new_mesh(<span class="hljs-string">&#x27;path_to_your_mesh&#x27;</span>)            <span class="hljs-comment">#加载网格</span><br>ms.load_filter_script(<span class="hljs-string">&#x27;path_to_your_mlx_script&#x27;</span>) <span class="hljs-comment">#加载脚本文件</span><br>ms.apply_filter_script()                         <span class="hljs-comment">#执行脚本文件</span><br><span class="hljs-comment"># 也可以直接执行封装好的方法如generate_convex_hull()</span><br>ms.save_current_mesh(<span class="hljs-string">&#x27;output_filename&#x27;</span>)          <span class="hljs-comment">#导出</span><br></code></pre></td></tr></table></figure>
-</li>
-</ol>
-<h2 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h2><p>原本是为了自动化某项目中纹理映射步骤，没想到直到翻阅官方文档、查看meshlabserver的help信息才发现nvm文件应该作为工程导入(╯°口°)╯(┴—┴，不过也算学到一点教训咯。最后有请樱小姐帮我表达当时的心情😇：<br>
+<div class="admonition info"><p class="admonition-title">莲之空女学院学园偶像俱乐部
+</p><p>
     <figure class="figure-image">
-      <img src="/images/2024/sakura.jpg" alt="激情互动的佐仓和大西" loading="lazy" />
-      <figcaption>激情互动的佐仓和大西</figcaption>
+      <img src="/images/2025/Hasuno.png<br>" alt="" loading="lazy" />
+      <figcaption></figcaption>
     </figure>
   </p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%93%AE%E4%B9%8B%E7%A9%BA%E5%A5%B3%E5%AD%B8%E9%99%A2%E5%AD%B8%E5%9C%92%E5%81%B6%E5%83%8F%E4%BF%B1%E6%A8%82%E9%83%A8">莲之空女学院学园偶像俱乐部</a>（日语：蓮ノ空女学院スクールアイドルクラブ；英语：Hasu no Sora Jogakuin School Idol Club），简称莲之空，是Love Live!系列旗下以手机游戏《Link! Like! Love Live!》中所公布的女性校园虚拟偶像团体，也是声优在现实中组成的组合。团体名称源自于莲之空成员所在的社团名。</p>
+</div>
+
+<p>   2023年启动的Lovelive企划，与Bangdream同样是能够从女声优身上同时获得虚拟人设、本人形象双重乐趣的二次元声优企划。这个企划强就强在报刊、广播、综艺、虚拟剧情、套皮直播和Live、三次元Live等等多种多样的互动方式，因此短短不到两年内就产出了大量内容，再加上声优颜值普遍在线，只要接触过的声优吃基本很容易陷进去（<del>我也不例外</del>）。其实看这些内容挺浪费时间的，不过也算是消磨时间的爱好吧，新的一年我希望能够在现实生活中结识偶像厨同好，能够相约去现地看Live，能够一起去Anikura玩。</p>
+<ol>
+<li><p><strong>从暑假开始接手的项目到如今仍在继续</strong>，但其实技术上已经跟我没多大关系了。我想尽快润掉，这个项目目前看来对我没多少益处，COLMAP模型跟我导师和我想学习的图形学方向都没什么关系，我个人也没什么兴趣。尤其是期末前两周还来频繁打扰我，给了我一定的工作负荷，也一定程度上打乱了我的复习节奏。<br>从这个项目中我学到了什么呢？从思想观念上只有<code>通过命令行或其他API调用可执行程序来达成集成目的</code>，实践上我尝试过Windows cmd脚本、python相关包、C#线程等方法，使用这几种方法可以调用许多成熟的软件直接完成指定任务，并且可以相互串联，把工作成果层层传递。</p>
+</li>
+<li><p><strong>寒假里做什么呢？</strong></p>
+</li>
+</ol>
+<div class="admonition warning"><p class="admonition-title">强制性事务：
+</p><ul>
+<li><input type="checkbox" checked></input> 项目这边肯定还会耗掉一部分时间；</li>
+<li><input type="checkbox" checked></input> 导师交的论文还有3篇没有读完。</li>
+</ul>
+<p><strong>这些希望能在校时就完成</strong>。</p>
+</div>
+
+<div class="admonition note"><p class="admonition-title">自愿性事务：
+</p><ul>
+<li><input type="checkbox" checked></input> 想揭开图形学的面纱，通过Games 101以及相关课程对这个领域形成基本的认识，再决定是否要往相关方向发展。其实导师所在研究所的相关方向听说基本都很吃香，这方面我在下学期提前一年选了这个方向的选修课，是骡子是马拉出来溜溜！</li>
+</ul>
+</div>
+
+<ul>
+<li style="list-style: none"><input type="checkbox"></input> 项目这边肯定还会耗掉一部分时间；</li>
+<li style="list-style: none"><input type="checkbox" checked></input> 导师交的论文还有3篇没有读完。</li>
+</ul>
+<h3 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h3><p>最后，希望2025年能对我好一点吧。找到心仪的发展方向、结识更多亲密的伙伴是我新年的两个愿望，我需要也必须付出更多时间来完成我的心愿。<br>也祝福看到本篇博客的你在新的一年里实现你的心愿，我们一起加油💪！</p>
 
       </section>
 
       
       
         <nav class="article-nav">
+          
           
             <div class="article-nav-item layout-padding">
   <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
@@ -242,11 +230,10 @@
           <h2 class="card-text--title text-ellipsis">已实现的数据结构（持续更新）</h2>
         </a>
       
-      <div class="card-text--row">Newer</div>
+      <div class="card-text--row">Older</div>
     </div>
   </article>
 </div>
-          
           
         </nav>
       
