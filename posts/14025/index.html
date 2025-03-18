@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-03-18T14:28:19.532Z" itemprop="dateUpdated">2025-03-18</time>
+              <time  class="article-updated" datetime="2025-03-18T15:34:32.257Z" itemprop="dateUpdated">2025-03-18</time>
             </h2>
           
           
@@ -296,9 +296,25 @@
 </div>
 <p>符号1通常占一个字节，其中符号1中的两个元素各占4位信息。高位表示该系数前零的数量，低位表示对x的值进行编码所需的位数。符号2即x的位表示。JPEG定义了两个特殊的霍夫曼码字。一个用于在剩余系数为零时提前结束序列（称为“块结束”或“EOB”）即<code>(0, 0)</code>，另一个用于在零的运行超过 15 个之前达到非零 AC 系数。在这种情况下，在给定的非零 AC 系数之前遇到 16 个零，符号 1被“特殊”编码为：<code>(15, 0)(0)</code>。</p>
 <p>因此，前面的序列会被编码成：<br>(0, 2)(-3); (1, 2)(-3); (0, 2)(-2); (0, 3)(-6); (0, 2)(2); (0, 3)(-4); (0, 1)(1); (0, 2)(-3); (0, 1)(1); (0, 1)(1);<br>(0, 3)(5); (0, 1)(1); (0, 2)(2); (0, 1)(-1); (0, 1)(1); (0, 1)(-1); (0, 2)(2); (5, 1)(-1); (0, 1)(-1); (0, 0);</p>
+<p>上面各项的符号1可以通过查表得到唯一的哈夫曼编码表示（标准JPEG表如下图所示，亮度和色度分量有不同的表，DC系数与AC系数的表也不同），重复的符号1则<strong>在查表结果的基础上加上重复次数</strong>；符号2（幅值）则<strong>直接以二进制格式</strong>接在符号1的哈夫曼编码后。示例：</p>
+<blockquote>
+<p>符号1：(run_length=2, size=3) → Huffman码字 1101（假设）。<br>符号2：幅值5 → 二进制 101（3位）。<br>完整编码：1101 101。</p>
+</blockquote>
+
+    <figure class="figure-image">
+      <img src="/images/2025/table.png" alt="亮度的DC系数表" loading="lazy" />
+      <figcaption>亮度的DC系数表</figcaption>
+    </figure>
+  
+
+    <figure class="figure-image">
+      <img src="/images/2025/table1.png" alt="亮度的AC系数表（节选）" loading="lazy" />
+      <figcaption>亮度的AC系数表（节选）</figcaption>
+    </figure>
+  
 <p>此外baseline JPEG还可以支持<code>渐进(progressive)</code>编码，渐进编码一次性对所有块中位置相似的一批系数进行编码（称为扫描），然后对下一批所有块的系数进行编码，依此类推。例如，如果将图像分成 N 个 8×8 块$B_0,B_1,…,B_{N-1}$，然后在第一次扫描中采用 3 扫描逐行编码对直流分量$B_i(0,0)$进行编码，在第二次扫描中可以对更多AC分量进行编码，如$B_i(0,1)$到$B_i(1,1)$，则编码顺序为：$B_0(0,1),B_0(1,0),B_0(1,1),B_1(0,1),B_1(1,0),…,B_{N-1}(2,0),B_{N-1}(1,1)$，接着继续后面的扫描。基线渐进式JPEG 编码通常比基线顺序式JPEG 提供更好的压缩率，因为它能够在每次“扫描”或“通过”（包括相似位置的系数）时使用针对不同频率量身定制的不同霍夫曼表，尽管差异不是太大。</p>
 <div class="admonition info"><p class="admonition-title">关于哈夫曼编码的拓展知识
-</p><p>根据<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Shannon%27s_source_coding_theorem">香农的信源编码理论</a>，给定分布的香农熵就是理论上表示该分布中所有符号的最少bit数，在下面的表中可以看出哈夫曼编码的bit期望非常接近其香农熵。JPEG中哈夫曼编码的具体细节可看<a target="_blank" rel="noopener" href="https://www.w3.org/Graphics/JPEG/itu-t81.pdf">专利书</a>，内容有点复杂，懒得看资料了(Q w Q)。</p>
+</p><p>根据<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Shannon%27s_source_coding_theorem">香农的信源编码理论</a>，给定分布的香农熵就是理论上表示该分布中所有符号的最少bit数，在下面的表中可以看出哈夫曼编码的bit期望非常接近其香农熵。JPEG中哈夫曼编码表构建的具体细节可看<a target="_blank" rel="noopener" href="https://www.w3.org/Graphics/JPEG/itu-t81.pdf">专利书</a>，内容有点复杂，看不懂了(Q w Q)。</p>
 </div>
 
 
