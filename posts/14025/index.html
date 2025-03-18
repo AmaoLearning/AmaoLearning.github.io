@@ -36,7 +36,7 @@
 
   
 
-  <title>通过外界调用MeshLab的两种方法 | 阿毛的小书桌</title>
+  <title>从JPEG开始学习的图像有损压缩 | 阿毛的小书桌</title>
 
   
 
@@ -67,7 +67,7 @@
 <!-- header container -->
 <header class="header-container post">
   
-    <div class="post-image" style="background-image: url(/images/2024/meshlab.png)"></div>
+    <div class="post-image" style="background-image: url(/images/2025/jpeg.png)"></div>
   
 
   <!-- navbar -->
@@ -118,27 +118,27 @@
     <div class="header-content">
       <div class="post-text layout-block">
         <div class="layout-margin">
-          <h1 class="title-wrap">通过外界调用MeshLab的两种方法</h1>
+          <h1 class="title-wrap">从JPEG开始学习的图像有损压缩</h1>
           <h2 class="title-sub-wrap">
             <strong>MaoCaiMao</strong>
             <span>发布于</span>
-            <time  class="article-date" datetime="2024-11-29T16:00:00.000Z" itemprop="datePublished">2024-11-30</time>
+            <time  class="article-date" datetime="2025-03-17T08:18:14.000Z" itemprop="datePublished">2025-03-17</time>
           </h2>
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2024-12-27T14:08:55.409Z" itemprop="dateUpdated">2024-12-27</time>
+              <time  class="article-updated" datetime="2025-03-18T14:28:19.532Z" itemprop="dateUpdated">2025-03-18</time>
             </h2>
           
           
           <ul class="wrap-list dark">
   
-    <li><a href="/categories/MeshLab/">📒 MeshLab</a></li>
+    <li><a href="/categories/%E6%95%B0%E6%8D%AE%E5%8E%8B%E7%BC%A9/">📒 数据压缩</a></li>
     
 </ul>
           <ul class="wrap-list dark">
   
-    <li><a href="/tags/%E9%A1%B9%E7%9B%AE%E7%BB%8F%E9%AA%8C/">🏷️ 项目经验</a></li>
+    <li><a href="/tags/%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86-%E5%8E%8B%E7%BC%A9/">🏷️ 数字图像处理 压缩</a></li>
   
 </ul>
         </div>
@@ -162,68 +162,164 @@
       
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
-        <h2 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h2><p>如题，我在自己尝试自动化调用<strong>MeshLab</strong>时，通过网络搜索，发现了两种手段：</p>
-<ul>
-<li>使用批量化工具 <strong>meshlabserver</strong>;</li>
-<li>使用官方Python库 <strong>pymeshlab</strong>.</li>
-</ul>
-<p>这两种方法按时间顺序先后是官方提供的批量化调用MeshLab程序的方式，其中，<strong>meshlabserver</strong> 自从在官方发布的<strong>MeshLab 2020.12</strong>版本中被删除，之后再也没有被提供过。因此要使用的话必须安装较低的版本的MeshLab，我使用的版本是 <strong>MeshLab 2020.09</strong>。</p>
-<p><strong>MeshLab</strong> 官方各版本发布仓库: <a target="_blank" rel="noopener" href="https://github.com/cnr-isti-vclab/meshlab/releases"><em><u>点此跳转</u></em></a></p>
-<h3 id="两种方法各自的优势和缺点"><a href="#两种方法各自的优势和缺点" class="headerlink" title="两种方法各自的优势和缺点"></a>两种方法各自的优势和缺点</h3><ul>
-<li><strong>meshlabserver</strong><ul>
-<li>优势：支持命令行调用或者cmd脚本，同时理论上支持原MeshLab软件支持的所有功能.</li>
-<li>缺点：每种功能都必须导入对应的，且较新版本meshlab不支持。</li>
-</ul>
-</li>
-<li><strong>PyMeshLab</strong><ul>
-<li>优势：打包成python库方便使用python脚本进行批量且较复杂的操作，官方文档比较全面。</li>
-<li>缺点：我一开始有点没弄清楚文件类型，比如nvm文件应该作为project导入，但我很长时间都没有发现这点。</li>
-</ul>
-</li>
-</ul>
-<h2 id="1-meshlabserver"><a href="#1-meshlabserver" class="headerlink" title="1. meshlabserver"></a>1. meshlabserver</h2><ul>
-<li>文件位置： 通常与meshlab.exe同级，同样是executable</li>
-<li><p>调用方法（二选一）：</p>
-<ul>
-<li>将meshlabserver.exe加入环境变量</li>
-<li>直接用文件路径</li>
-</ul>
-</li>
-</ul>
-<div style="border-left: 5px solid skyblue; padding: 6px;">
-<strong>📘</strong> 以下假设已将meshlabserver.exe加入环境变量：
-</div>
-
-<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><ol>
-<li><p>完成已导出的脚本功能（批处理脚本如何导出参见<a target="_blank" rel="noopener" href="https://blog.csdn.net/sxf1061926959/article/details/53869429"><em><u>此篇CSDN博客</u></em></a>）</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ meshlabserver -p path/to/meshlab/project -i mesh/file/to/be/loaded -o output/filename [optional args such as vc(vertex color)] -s path/to/script<br></code></pre></td></tr></table></figure>
-<p> <strong>-o</strong> 的参数有很多，下面给出常用的：</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash">vc -&gt; vertex colors,<br><span class="hljs-built_in">fc</span> -&gt; face colors,<br>fn-&gt; face normals,<br>sa -&gt; save <span class="hljs-keyword">in</span> ascii format<br></code></pre></td></tr></table></figure>
-</li>
-<li><p>exe的帮助功能中给出了完整的调用方法，可作为参考</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ meshlabserver --<span class="hljs-built_in">help</span><br></code></pre></td></tr></table></figure>
-</li>
-</ol>
-<div style="border-left: 5px solid skyblue; padding: 6px;">
-<strong>📘</strong> 如果直接使用文件路径，把上述指令中的 meshlabserver 改成 PATH/TO/YOUR/MESHLABSERVER 即可。
-</div>
-
-
-<h2 id="2-pymeshlab"><a href="#2-pymeshlab" class="headerlink" title="2. pymeshlab"></a>2. pymeshlab</h2><p>官方github仓库：<a target="_blank" rel="noopener" href="https://github.com/cnr-isti-vclab/PyMeshLab"><em><u>点此进入</u></em></a><br>详细的技术文档可见PyMeshLab官方网站：<a target="_blank" rel="noopener" href="https://pymeshlab.readthedocs.io/en/latest/"><em><u>点此进入</u></em></a></p>
+        <h2 id="从JPEG开始学习的图像处理"><a href="#从JPEG开始学习的图像处理" class="headerlink" title="从JPEG开始学习的图像处理"></a>从JPEG开始学习的图像处理</h2><p><code>JPEG</code>常用的简化编码格式为<code>JFIF(JPEG File Interchange Format)</code>，在编码时，它的流程一般为：</p>
 <ol>
-<li><p>安装方法</p>
- <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ pip3 pymeshlab<br></code></pre></td></tr></table></figure>
-</li>
-<li><p>使用示例</p>
- <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> pymeshlab <span class="hljs-keyword">as</span> ml<br><br>ms = ml.MeshSet()<br>ms.load_new_raster(<span class="hljs-string">&#x27;path_to_your_raster&#x27;</span>)        <span class="hljs-comment">#加载纹理文件</span><br>ms.load_new_mesh(<span class="hljs-string">&#x27;path_to_your_mesh&#x27;</span>)            <span class="hljs-comment">#加载网格</span><br>ms.load_filter_script(<span class="hljs-string">&#x27;path_to_your_mlx_script&#x27;</span>) <span class="hljs-comment">#加载脚本文件</span><br>ms.apply_filter_script()                         <span class="hljs-comment">#执行脚本文件</span><br><span class="hljs-comment"># 也可以直接执行封装好的方法如generate_convex_hull()</span><br>ms.save_current_mesh(<span class="hljs-string">&#x27;output_filename&#x27;</span>)          <span class="hljs-comment">#导出</span><br></code></pre></td></tr></table></figure>
+<li>颜色空间变换 $ RGB \rightarrow Y’C_BC_R $</li>
+<li>对色度降采样</li>
+<li>分块进行<strong>离散余弦变换DCT</strong></li>
+<li>量化减少高频信息</li>
+<li>熵编码</li>
+</ol>
+<h3 id="颜色空间变换"><a href="#颜色空间变换" class="headerlink" title="颜色空间变换"></a>颜色空间变换</h3><p>$Y’C_BC_R$（256 level）空间中，$Y’$表示像素的亮度，$C_B$和$C_R$分别表示红色和蓝色分量，这种表示方法常用于数据彩色电视和DVD中。</p>
+<p>具体从RGB向该空间的转换方式(ITU-R BT.601)如下：</p>
+<script type="math/tex; mode=display">\begin{equation}\begin{aligned}
+    Y &= 0.299 R + 0.587 G + 0.114 B \\
+    Cb &= - 0.1687 R - 0.3313 G + 0.5 B + 128 \\
+    Cr &= 0.5 R - 0.4187 G - 0.0813 B + 128
+\end{aligned}\end{equation}</script><p>反向转换方式如下：</p>
+<script type="math/tex; mode=display">\begin{equation}\begin{aligned}
+    R &= Y + 1.402 (Cr-128) \\
+    G &= Y - 0.34414 (Cb-128) - 0.71414 (Cr-128) \\
+    B &= Y + 1.772 (Cb-128)
+\end{aligned}\end{equation}</script><h3 id="降采样"><a href="#降采样" class="headerlink" title="降采样"></a>降采样</h3><p>我们使用该YCbCr系统的原因是人眼对色度的敏感度不及对亮度的敏感度，在压缩影像中，以4:2:2 $Y’CbCr$作例，它只需$R’G’B’$（4:4:4）三分之二的带宽。带宽的减少在肉眼上几乎没有影像上差别。</p>
+<p>具体来说4:2:2 $Y’CbCr$中Y信号的采样频率为13.5MHz，而其他两个信号的采样频率为6.75MHz，缺失的色度信息通过内插值或复制前一色度来补全。</p>
+<p>这里的比例（以J:a:b为例）更具体的解释如下：</p>
+<ul>
+<li>在一个可见区域内有J个像素宽且高为2个像素</li>
+<li>a：在第一行J个像素中色度采样次数。</li>
+<li>b：在第一行与第二行之间色度采样变化的次数（4:4:1和4:2:1不符合该规则）。</li>
+<li>Alpha：偶尔会出现，一般与J相等。</li>
+</ul>
+
+    <figure class="figure-image">
+      <img src="/images/2025/YCrCb.png" alt="降采样示例，容易看出4:4:4没有降采样" loading="lazy" />
+      <figcaption>降采样示例，容易看出4:4:4没有降采样</figcaption>
+    </figure>
+  
+<h3 id="分块离散余弦变换"><a href="#分块离散余弦变换" class="headerlink" title="分块离散余弦变换"></a>分块离散余弦变换</h3><p>每个通道都会被分块，分块后的最小单位称为<code>Minimum Coded Unit(MCU，在视频压缩中也被称作macroblock)</code>，具体来说各比例与分块方法的对应关系如下：</p>
+<ul>
+<li>4:4:4 —— 8 x 8</li>
+<li>4:2:2 —— 16 x 8</li>
+<li>4:2:0 —— 16 x 16</li>
+</ul>
+<p>如果出现了非整数倍的大小，需要向残缺的最小单元填充元素，通常填充与边缘元素相同的元素，很显然这样并不能完全消除瑕疵。</p>
+<p>接下来对每个最小单元进行<code>离散余弦变换</code>，我们使用normalized, two-dimensional type-II discrete cosine transform（逆变换为type-III DCT），以下面的8 x 8 8-bit 矩阵为例：</p>
+
+    <figure class="figure-image">
+      <img src="/images/2025/DCT.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+<p>首先将整个矩阵中心化，让中值变为0，在如上的8-bit图中，即把每个数减去128：</p>
+
+    <figure class="figure-image">
+      <img src="/images/2025/DCT1.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+<p>再计算离散余弦系数，8 x 8矩阵的计算公式如下：</p>
+<script type="math/tex; mode=display">\begin{equation} G_{u,v}= \frac{1}{4}\alpha(u)\alpha(v)\sum_{x=0}^7\sum_{y=0}^7g_{x,y}\cos[\frac{(2x+1)u\pi}{16}]\cos[\frac{(2y+1)v\pi}{16}] \end{equation}</script><p>上式中，</p>
+<ul>
+<li>$u,v$分别为水平、竖直方向的空间频率，范围为$[0, 8)$。</li>
+<li>$\begin{aligned}\alpha(u)=\begin{cases}\frac{1}{\sqrt{2}} &amp;if\;u=0 \\ 1 &amp;otherwise \end{cases}\end{aligned}$，用于将变换正交化。</li>
+<li>$g_{x,y}$为该坐标的像素值。</li>
+<li>$G_{u,v}$即该坐标的DCT系数。</li>
+</ul>
+
+    <figure class="figure-image">
+      <img src="/images/2025/DCT2.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+<p>可以看到左上角的低频分量、尤其是直流分量（坐标（0，0））相较右下角的高频分量的DCT系数大很多，这意味着大部分信息其实为低频信息，我们将会在量化步骤中除去人眼难以察觉的高频分量。</p>
+<p>此外，DCT计算会暂时性地增大数据存储空间，因为原本的8-bit信息被扩张为表示浮点数的11或更多bit（通常为16-bit）。这一点通常不被重视，因为在同一时间内通常只有图片的一小部分被进行DCT。</p>
+<h3 id="量化"><a href="#量化" class="headerlink" title="量化"></a>量化</h3><p>在图像处理领域，<code>量化</code>是一种将一定范围的值压缩成单个离散值的有损压缩技巧，用这种方法通常能减少需要表示的符号。</p>
+<p>常见的压缩应用有：</p>
+<ul>
+<li>颜色量化——减少用来表示图片的颜色数量</li>
+<li>灰度量化——减少灰度等级数，计算公式：
+    <figure class="figure-image">
+      <img src="/images/2025/Quantization.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+其中$Q(x)$是量化后的值，x是原始值，$\delta$是量化区间的大小，此处用区间的中间值表示该区间的所有量化值。</li>
+<li>图像压缩中的频率量化，我们在下面主要介绍这种量化方式。</li>
+</ul>
+<p>我们使用<code>量化矩阵</code>来控制DCT处理后的矩阵中的每个值，许多编码器允许自定义量化矩阵，在JPEG标准中常用的50%质量量化矩阵如下图：</p>
+
+    <figure class="figure-image">
+      <img src="/images/2025/Quantization1.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+<p>接着进行如下计算：</p>
+<script type="math/tex; mode=display">\begin{equation} B_{j,k}=round(\frac{G_{j,k}}{Q_{j,k}}) for\;j=0,1,2,...,7; k=0,1,2,...,7 \end{equation}</script>
+    <figure class="figure-image">
+      <img src="/images/2025/Quantization2.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+<p>可以注意到结果中高频分量大部分都被量化为0，这一部分是因为高频分量幅值小，另一部分原因是量化矩阵对高频分量的削减更狠，这是因为人眼对亮度的高频分量的强度差异感受较弱。</p>
+<p>增加或减少量化阶段使用的除数可以改变最终的压缩率，在存储精度足够高的情况下，量化是JFIF中唯一有损的步骤。</p>
+<h3 id="熵编码"><a href="#熵编码" class="headerlink" title="熵编码"></a>熵编码</h3><p>JPEG的熵编码采用<code>“之字形”(zigzag)</code>顺序、<code>游程编码(run-length encoding,RLE)算法</code>和<code>哈夫曼编码</code>。JPEG也可以使用压缩率稍好的<code>算术编码(arithmetic coding)</code>来替代哈夫曼编码，但前者编解码时间更长、使用需要专利费且压缩体积通常只比后者小5-7%。</p>
+<p>编码时，坐标为(0,0)的量化DC系数被编码为与上一个块相同坐标的系数的差，且与下面的游程编码方式不同，<strong>DC编码通常不含RUNLENGTH</strong>，其余坐标则不使用这种差分预测。</p>
+
+    <figure class="figure-image">
+      <img src="/images/2025/zigzag.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+
+    <figure class="figure-image">
+      <img src="/images/2025/zigzag2.png" alt="使用了之字形排列的实例" loading="lazy" />
+      <figcaption>使用了之字形排列的实例</figcaption>
+    </figure>
+  
+<p>这种编码方式称为基线<code>顺序(sequential)</code>编码，它一次对单个块的系数进行编码（以锯齿状方式），JPEG 标准提供了通用的 Huffman 表；编码器还可以选择生成针对正在编码的图像中的实际频率分布进行优化的 Huffman 表。</p>
+<p>游程编码的工作原理是检查每个非零 AC 系数x，并确定前一个 AC 系数之前有多少个零。利用此信息，可以创建两个符号：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>符号1</th>
+<th>符号2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(RUNLENGTH, SIZE)</td>
+<td>AMPLITUDE</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>符号1通常占一个字节，其中符号1中的两个元素各占4位信息。高位表示该系数前零的数量，低位表示对x的值进行编码所需的位数。符号2即x的位表示。JPEG定义了两个特殊的霍夫曼码字。一个用于在剩余系数为零时提前结束序列（称为“块结束”或“EOB”）即<code>(0, 0)</code>，另一个用于在零的运行超过 15 个之前达到非零 AC 系数。在这种情况下，在给定的非零 AC 系数之前遇到 16 个零，符号 1被“特殊”编码为：<code>(15, 0)(0)</code>。</p>
+<p>因此，前面的序列会被编码成：<br>(0, 2)(-3); (1, 2)(-3); (0, 2)(-2); (0, 3)(-6); (0, 2)(2); (0, 3)(-4); (0, 1)(1); (0, 2)(-3); (0, 1)(1); (0, 1)(1);<br>(0, 3)(5); (0, 1)(1); (0, 2)(2); (0, 1)(-1); (0, 1)(1); (0, 1)(-1); (0, 2)(2); (5, 1)(-1); (0, 1)(-1); (0, 0);</p>
+<p>此外baseline JPEG还可以支持<code>渐进(progressive)</code>编码，渐进编码一次性对所有块中位置相似的一批系数进行编码（称为扫描），然后对下一批所有块的系数进行编码，依此类推。例如，如果将图像分成 N 个 8×8 块$B_0,B_1,…,B_{N-1}$，然后在第一次扫描中采用 3 扫描逐行编码对直流分量$B_i(0,0)$进行编码，在第二次扫描中可以对更多AC分量进行编码，如$B_i(0,1)$到$B_i(1,1)$，则编码顺序为：$B_0(0,1),B_0(1,0),B_0(1,1),B_1(0,1),B_1(1,0),…,B_{N-1}(2,0),B_{N-1}(1,1)$，接着继续后面的扫描。基线渐进式JPEG 编码通常比基线顺序式JPEG 提供更好的压缩率，因为它能够在每次“扫描”或“通过”（包括相似位置的系数）时使用针对不同频率量身定制的不同霍夫曼表，尽管差异不是太大。</p>
+<div class="admonition info"><p class="admonition-title">关于哈夫曼编码的拓展知识
+</p><p>根据<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Shannon%27s_source_coding_theorem">香农的信源编码理论</a>，给定分布的香农熵就是理论上表示该分布中所有符号的最少bit数，在下面的表中可以看出哈夫曼编码的bit期望非常接近其香农熵。JPEG中哈夫曼编码的具体细节可看<a target="_blank" rel="noopener" href="https://www.w3.org/Graphics/JPEG/itu-t81.pdf">专利书</a>，内容有点复杂，懒得看资料了(Q w Q)。</p>
+</div>
+
+
+    <figure class="figure-image">
+      <img src="/images/2025/huffman.png" alt="哈夫曼编码的实例，主要关注它与信息论的联系" loading="lazy" />
+      <figcaption>哈夫曼编码的实例，主要关注它与信息论的联系</figcaption>
+    </figure>
+  
+<h2 id="解码"><a href="#解码" class="headerlink" title="解码"></a>解码</h2><ol>
+<li>还原DC系数（即$S_{00}$）</li>
+<li>逐元素乘以量化矩阵（还原不了编码时的精度了）</li>
+<li>逆离散余弦变换：<script type="math/tex; mode=display">f_{x,y}=\frac{1}{4}\sum_{u=0}^7\sum_{v=0}^7\alpha(u)\alpha(v)F_{u,v}\cos[\frac{(2x+1)u\pi}{16}]\cos[\frac{(2y+1)v\pi}{16}]</script> 符号解释：<ul>
+<li>$x, y$分别是还原后像素的坐标；</li>
+<li>$\alpha(u)$与DCT相同；</li>
+<li>$F_{u,v}$是逆变换前矩阵的有损DCT系数；</li>
+<li>$f_{x,y}$即逆变换后的值；<br>再将逆变换后的值<strong>约到整数后加128</strong>，对于超出$[0,255]$范围的值则要做修剪处理；</li>
+</ul>
 </li>
 </ol>
-<h2 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h2><p>原本是为了自动化某项目中纹理映射步骤，没想到直到翻阅官方文档、查看meshlabserver的help信息才发现nvm文件应该作为工程导入(╯°口°)╯(┴—┴，不过也算学到一点教训咯。最后有请樱小姐帮我表达当时的心情😇：<br>
-    <figure class="figure-image">
-      <img src="/images/2024/sakura.jpg" alt="激情互动的佐仓和大西" loading="lazy" />
-      <figcaption>激情互动的佐仓和大西</figcaption>
-    </figure>
-  </p>
+<p>为了比较压缩前后的质量，可以计算残差矩阵（$original - uncompressed$），也可以用<strong>平均绝对值残差</strong>来衡量压缩还原后的图片质量。</p>
+<p>更多信息如已实现JPEG的库、其他JPEG版本等请见<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/JPEG">英文wiki</a>。</p>
 
       </section>
 
@@ -231,22 +327,22 @@
       
         <nav class="article-nav">
           
+          
             <div class="article-nav-item layout-padding">
   <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
     
-      <div class="card-cover" background-image-lazy data-img="/images/2024/data_structure/217.jpg"></div>
+      <div class="card-cover" background-image-lazy data-img="/images/2025/杂谈.jpg"></div>
     
     <div class="card-text">
       
-        <a href="/posts/55213/" itemprop="url">
-          <h2 class="card-text--title text-ellipsis">已实现的数据结构（持续更新）</h2>
+        <a href="/posts/17101/" itemprop="url">
+          <h2 class="card-text--title text-ellipsis">2025新年闲谈</h2>
         </a>
       
-      <div class="card-text--row">Newer</div>
+      <div class="card-text--row">Older</div>
     </div>
   </article>
 </div>
-          
           
         </nav>
       

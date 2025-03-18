@@ -833,6 +833,7 @@ html.show-mobile-nav .navbar-list {
 .markdown-body {
   line-height: 2;
   color: var(--theme-text-primary);
+  font-size: 18px;
 }
 .markdown-body:before,
 .markdown-body:after {
@@ -865,15 +866,18 @@ html.show-mobile-nav .navbar-list {
 .markdown-body ol ol {
   margin-top: 12px;
   margin-bottom: 12px;
+  font-size: 18px;
 }
 .markdown-body ul li,
 .markdown-body ol li {
   margin-top: 8px;
   margin-bottom: 8px;
+  font-size: 18px;
 }
 .markdown-body ul p,
 .markdown-body ol p {
   margin: 0;
+  font-size: 20px;
 }
 .markdown-body cite,
 .markdown-body em,
@@ -1288,8 +1292,8 @@ html.show-mobile-nav .navbar-list {
   flex-direction: column;
   position: sticky;
   top: 0;
-  width: 360px;
-  min-width: 360px;
+  width: 500px;
+  min-width: 500px;
   color: var(--theme-text-primary);
 }
 .content-container.post-container .widget-info .widget-title {
