@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-03-18T15:34:32.257Z" itemprop="dateUpdated">2025-03-18</time>
+              <time  class="article-updated" datetime="2025-03-25T07:05:04.536Z" itemprop="dateUpdated">2025-03-25</time>
             </h2>
           
           
@@ -233,6 +233,15 @@
   
 <p>可以看到左上角的低频分量、尤其是直流分量（坐标（0，0））相较右下角的高频分量的DCT系数大很多，这意味着大部分信息其实为低频信息，我们将会在量化步骤中除去人眼难以察觉的高频分量。</p>
 <p>此外，DCT计算会暂时性地增大数据存储空间，因为原本的8-bit信息被扩张为表示浮点数的11或更多bit（通常为16-bit）。这一点通常不被重视，因为在同一时间内通常只有图片的一小部分被进行DCT。</p>
+<div class="admonition info"><p class="admonition-title">离散余弦变换的拓展理解
+</p><p>离散傅里叶变换(DFT)系数的一维公式：<br>
+$$ \begin{aligned} \hat{x}[k] =\sum_{n=0}^{N-1}x[n]e^{-j\frac{2\pi}{N}nk} =\sum_{n=0}^{N-1}x[n]\cos(\frac{2\pi}{N}nk)-j\sin(\frac{2\pi}{N}nk) \end{aligned} $$</p>
+<p>DCT的一维公式：<br>
+$$ F_k=\sum_{n=0}^{N-1}f_n\cos(\frac{\pi k(z+\frac{1}{2})}{N}) \<br>
+f_n = \sum_{n=0}^{N-1}x[n]\cos(\frac{\pi k(z+\frac{1}{2})}{N})$$</p>
+<p>通过比较公式我们可以发现，DCT的信号周期约为DFT的两倍，且经过了半整数的采样位移，并且默认源函数为实偶函数，因此结果中只有余弦项。</p>
+</div>
+
 <h3 id="量化"><a href="#量化" class="headerlink" title="量化"></a>量化</h3><p>在图像处理领域，<code>量化</code>是一种将一定范围的值压缩成单个离散值的有损压缩技巧，用这种方法通常能减少需要表示的符号。</p>
 <p>常见的压缩应用有：</p>
 <ul>
