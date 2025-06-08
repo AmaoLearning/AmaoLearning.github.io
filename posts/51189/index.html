@@ -36,7 +36,7 @@
 
   
 
-  <title>哈基LZ77，不对，是PNG | 阿毛的小书桌</title>
+  <title>计算机网络学习笔记 | 阿毛的小书桌</title>
 
   
 
@@ -67,7 +67,7 @@
 <!-- header container -->
 <header class="header-container post">
   
-    <div class="post-image" style="background-image: url(/images/2025/png_cover.png)"></div>
+    <div class="post-image" style="background-image: url(/images/2025/计网.png)"></div>
   
 
   <!-- navbar -->
@@ -118,27 +118,20 @@
     <div class="header-content">
       <div class="post-text layout-block">
         <div class="layout-margin">
-          <h1 class="title-wrap">哈基LZ77，不对，是PNG</h1>
+          <h1 class="title-wrap">计算机网络学习笔记</h1>
           <h2 class="title-sub-wrap">
             <strong>MaoCaiMao</strong>
             <span>发布于</span>
-            <time  class="article-date" datetime="2025-03-23T15:29:16.000Z" itemprop="datePublished">2025-03-23</time>
+            <time  class="article-date" datetime="2025-06-07T16:00:00.000Z" itemprop="datePublished">2025-06-08</time>
           </h2>
-          
-            <h2 class="last-time">
-              <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-03-24T13:11:48.625Z" itemprop="dateUpdated">2025-03-24</time>
-            </h2>
           
           
           <ul class="wrap-list dark">
   
-    <li><a href="/categories/%E6%95%B0%E6%8D%AE%E5%8E%8B%E7%BC%A9/">📒 数据压缩</a></li>
+    <li><a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">📒 学习笔记</a></li>
     
 </ul>
           <ul class="wrap-list dark">
-  
-    <li><a href="/tags/%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86-%E5%8E%8B%E7%BC%A9/">🏷️ 数字图像处理 压缩</a></li>
   
 </ul>
         </div>
@@ -162,87 +155,357 @@
       
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
-        <h2 id="因为没有专利权就被用于PNG是吧，哈基LZ77，你这家伙"><a href="#因为没有专利权就被用于PNG是吧，哈基LZ77，你这家伙" class="headerlink" title="因为没有专利权就被用于PNG是吧，哈基LZ77，你这家伙"></a>因为没有专利权就被用于PNG是吧，哈基LZ77，你这家伙</h2><p>详细内容都在<a target="_blank" rel="noopener" href="https://www.w3.org/TR/png/">W3C提供的网页上了</a>，自己看吧，我都还没看完呢QAQ。</p>
-<p>编码流程如下：</p>
+        <p><strong>资料</strong>：《计算机网络：自顶向下》第七版和上课PPT</p>
+<h2 id="复习计划"><a href="#复习计划" class="headerlink" title="复习计划"></a>复习计划</h2><ol>
+<li>阅读PPT<ul>
+<li style="list-style: none"><input type="checkbox" checked></input> Introduction/Application Layer 6.5</li>
+<li style="list-style: none"><input type="checkbox" checked></input> Transport Layer/Network Layer-Data Plane 6.6</li>
+<li style="list-style: none"><input type="checkbox" checked></input> Network Layer-Control Plane/Link Layer 6.7</li>
+</ul>
+</li>
+</ol>
 <ul>
-<li><p>通道提取</p>
-<ul>
-<li><p>Reduced images提取方法：<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Adam7_algorithm">Adam7</a></p>
-
-    <figure class="figure-image">
-      <img src="/images/2025/PNG_Adam7.gif" alt="Adam7算法提取出的各层子图，可以看到在图片早期显示中屏幕像素间有明显的从左往右的内插" loading="lazy" />
-      <figcaption>Adam7算法提取出的各层子图，可以看到在图片早期显示中屏幕像素间有明显的从左往右的内插</figcaption>
-    </figure>
-  
+<li style="list-style: none"><input type="checkbox" checked></input> 复习作业，对答案：每天读完PPT后；二编：6.7\6.8一起看</li>
+<li style="list-style: none"><input type="checkbox" checked></input> 熟悉Cheating Paper</li>
+</ul>
+<h3 id="Chapter-1-Introduction"><a href="#Chapter-1-Introduction" class="headerlink" title="Chapter 1 Introduction"></a>Chapter 1 Introduction</h3><ol>
+<li>网络结构：<ol>
+<li>网络边缘：服务器、用户主机等终端</li>
+<li>连接网络与物理媒介：<ol>
+<li>有线：同双绞线、同轴电缆、光纤；无线；广播：地面微波、WiFi、广域网、卫星</li>
+<li>物理媒介决定带宽$B$，进一步决定数据率$R$（比特率）：香农定理$R=B\log_2(1+S/N)$，$S/N$信噪比</li>
+</ol>
+</li>
+<li>网络核心：<ol>
+<li>回路交换：专用、无共享，频分或时分使用</li>
+<li>包交换</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>延迟=节点内部处理延迟+排队延迟+发送延迟+传输延迟<ol>
+<li>发送延迟=包数据量L/宽带R</li>
+<li>传输延迟=链路长度d/传输速度s</li>
+</ol>
+</li>
+<li>吞吐量（throughput）：每个比特传输速率bits/sec<ol>
+<li>平均吞吐量</li>
+<li>瞬时吞吐量：各链路最小传输速率</li>
+</ol>
+</li>
+<li>层次结构：应用层、传输层、网络层、链路层、物理层</li>
+</ol>
+<h3 id="Chapter-2-Application-Layer"><a href="#Chapter-2-Application-Layer" class="headerlink" title="Chapter 2 Application Layer"></a>Chapter 2 Application Layer</h3><ol>
+<li>应用结构：<ol>
+<li>服务器-客户：服务器IP几乎永久，用户IP可以动态</li>
+<li>P2P(Peer to Peer)</li>
+</ol>
+</li>
+<li>进程间通信：<ol>
+<li>同一主机内：OS控制的进程间沟通</li>
+<li>不同主机间：主机间交换讯息，通过套接字，<strong>Round Trip Time</strong>(RTT)为从客户到服务器来回传输一次包的时间</li>
+</ol>
+</li>
+<li>HTTP（Hypertext Transfer Protocol）：服务器-客户模型，使用TCP连接，端口80<ol>
+<li>非永久HTTP：一个TCP连接最多传输一个对象，需要<strong>2RTT+文件发送时间</strong>，经常并行TCP连接<ol>
+<li>客户向域名服务器发送连接请求</li>
+<li>服务器在端口80接受TCP连接，通知客户</li>
+<li>客户通过TCP套接字发送请求对象的路径信息</li>
+<li>服务器发送含有对象的响应信息</li>
+<li>服务器关闭TCP连接</li>
+<li>客户接收相应信息，自己处理</li>
+<li>重复该过程</li>
+</ol>
+</li>
+<li>永久HTTP：一个TCP连接传输多个对象<ol>
+<li>without pipelining：每个请求完成后才发送下一个请求，每个对象需要1RTT</li>
+<li>with pipelining：只要有请求就发送，最快所有对象只需要1RTT</li>
+</ol>
+</li>
+<li>调用方法：GET、POST、HEAD【、PUT、DELETE】（new）</li>
+<li>响应状态码：200-OK，301-Moved Permanently，400-Bad Request（服务器没理解请求信息），404-Not Found，505-HTTP Version Not Supported</li>
+</ol>
+</li>
+<li>Cookies工作流程：<ol>
+<li>服务器接受HTTP连接请求，并生成专属ID，在响应中含Set-cookie：ID</li>
+<li>ID保存在用户的Cookie文件和服务器数据库里</li>
+<li>用户再次发送HTTP请求时，在服务器端就能够通过认证并访问服务器数据库里的用户状态</li>
+</ol>
+</li>
+<li>网络缓存（代理服务器）：一般用户的HTTP请求首先由代理服务器解决，否则代理服务器向根服务器请求</li>
+<li>FTP（File Transfer Protocol）：服务器-客户模型，TCP，端口21<ol>
+<li>通过认证后，客户通过发送控制命令来浏览FTP服务器中的文件夹，命令如（USER，PASS，LIST列出文件夹内文件，RETR下载，STOR上传）</li>
+<li>服务器接收到命令就开启TCP连接，每传输完一个文件就关闭连接，但是保存当前文件夹、先前的认证等状态</li>
+<li>响应状态码：331-用户名OK需要密码，125-连接已开启，425-无法开启连接，452-书写文件错误</li>
+</ol>
+</li>
+<li>Email：<ol>
+<li>邮件服务器：有用户待收收件箱、待发送邮件队列</li>
+<li>用户agent：查看收件箱、编写和发送邮件</li>
+<li>SMTP：永久TCP连接，端口25，7-bit ASCII码，CRLF结束标识<ol>
+<li>传输过程：握手、传输信息、关闭</li>
+</ol>
+</li>
+<li>Multimedia Mail Extension（MIME）：支持附件</li>
+<li>访问邮件协议：<ol>
+<li>POP：agent-server认证和下载</li>
+<li>IMAP：在服务器上操作讯息</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>DNS（Domain Name System）：UDP<ol>
+<li>服务器类型：Root name servers、Top-Level domain（TLD） servers、Authoritative DNS servers、Local name servers</li>
+<li>两种查询方式：（以LNS为中心）迭代查询、递归查询</li>
+<li>会缓存映射关系，但一段时候后会删除</li>
+<li>Resource Records（RR）：（name，value，type，ttl）<ol>
+<li>Type=A：name=主机名，value=IP地址</li>
+<li>Type=CNAME：name=域别名（如www.ibm.com for servereast.backup2.ibm.com），value=真实域名</li>
+<li>Type=NS：name=域名，value=域中签名服务器的主机名</li>
+<li>Type=MX：value=name相关的邮件服务器的名称</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="Chapter-4-Network-Layer-Data-Plane"><a href="#Chapter-4-Network-Layer-Data-Plane" class="headerlink" title="Chapter 4 Network Layer-Data Plane"></a>Chapter 4 Network Layer-Data Plane</h3><ol>
+<li>平面概念：<ol>
+<li>数据平面即每台路由器的功能，决定到达路由器输入链路之一的数据报如何转发到它的输出链路之一</li>
+<li>控制平面即网络范围的逻辑，控制数据报端到端发送路径中路由器之间的路由方式</li>
+</ol>
+</li>
+<li>路由器架构<ol>
+<li>输入端口：含物理层、链路层处理，以及排队缓存<ol>
+<li>通用转发</li>
+<li>基于目的地（IP地址）转发：维护一张转发表，一定的地址范围对应一条链路，使用最长前缀匹配</li>
+</ol>
+</li>
+<li>交换结构：<ol>
+<li>内存式：内存带宽限制</li>
+<li>总线式：总线带宽限制</li>
+<li>互联网络式：更好</li>
+</ol>
+</li>
+<li>输出端口<ol>
+<li>排队缓存</li>
+<li>优先级规则：先进先出、优先权排队、循环排队、加权公平排队（有权值的循环排队）</li>
+</ol>
+</li>
+<li>路由选择处理器</li>
+</ol>
+</li>
+<li>IP协议，在路由器中对应的Interface指路由器的链路口，即1，2，3，4等<ol>
+<li>文件头：40字节+选项</li>
+<li>CIDR：如200.23.16.0/23</li>
+<li>Dynamic Host Configuration Protocol（DHCP）：DHCP discover/offer/request/ack，使用流程即客户与服务器两次对话，封装在UDP数据报中</li>
+<li>NAT：含有（源IP，端口）-（内部IP，端口）翻译表，对外表现为唯一IP</li>
+<li>IPv6：<ul>
+<li>无选项和检验和，固定40字节</li>
+<li>网络不支持IPv6时IPv6数据报会被包装在IPv4中</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="Chapter-5-Network-Layer-Control-Plane"><a href="#Chapter-5-Network-Layer-Control-Plane" class="headerlink" title="Chapter 5 Network Layer-Control Plane"></a>Chapter 5 Network Layer-Control Plane</h3><ol>
+<li>路由协议：<ol>
+<li>link-state：Dijsktra算法，复杂度最优为$O(n\log n)$。每个节点通过广播得到完整的网络视图，自己计算整张表。</li>
+<li>Distance vector：Bellman-Ford算法，对于每个节点维护其与其他所有节点之间的距离，节点间通过互相通知以不断更新。当某条链路突然变大时，因为路由会广播不正确的路径，所以与它相关的路由变化很慢。解决方法是毒性逆转技术。</li>
+</ol>
+</li>
+<li>AS内路由或Interior Gateway Protocol(IGP)：<ol>
+<li>Routing Information Protocol(RIP)</li>
+<li>Open Shortest Path First(OSPF)：link-state，允许多条相同代价路径，信息加密。使单个AS内部可分层，即分为与外界沟通的主干区域和非主干区域。</li>
+<li>Interior Gateway Routing Protocol(IGRP)</li>
+</ol>
+</li>
+<li>AS间路由Border Gateway Protocol（BGP）：网关即AS间存在链路的路由器<ol>
+<li>AS内链路称为iBGP连接，AS间为eBGP连接</li>
+<li>网关会广播可达路径（如AS2、AS3、X）</li>
+<li>在AS内存在多个网关都可达目标时有多种选择策略：<ol>
+<li>网关偏好</li>
+<li>最短AS路径</li>
+<li>最近的网关：热土豆路由</li>
+</ol>
+</li>
+<li>AS可通过不向其他AS广播自己向其他AS的可达路径来避免其他AS经过自己</li>
+</ol>
+</li>
+<li>因特网控制信息协议ICMP：通知网络信息如发生错误、目标不可达等。ping使用80 echo request和00 echo reply</li>
+<li>简单网络管理协议SNMP：应用层协议<ol>
+<li>请求响应模式</li>
+<li>陷阱报文：代理通知管理信息库（MIB）某个对象值改变</li>
+</ol>
+</li>
+</ol>
+<h2 id="第三章-运输层"><a href="#第三章-运输层" class="headerlink" title="第三章 运输层"></a>第三章 运输层</h2><ol>
+<li>网络层提供<strong>主机</strong>间的逻辑通信，运输层提供<strong>不同主机上的进程</strong>间的逻辑通信。</li>
+<li>因特网的运输层提供了UDP (User Data-gram Protocol) 和 TCP (Transport Control Protocol)，它们基于因特网网络层的IP协议，该协议是尽力而为交付服务 (best-effort delivery service)，即不可靠服务。</li>
+</ol>
+<h3 id="多路分解与多路复用"><a href="#多路分解与多路复用" class="headerlink" title="多路分解与多路复用"></a>多路分解与多路复用</h3><ol>
+<li><strong>套接字</strong> (socket) 在运输层的报文段中，<strong>多路分解</strong> (demultiplexing) 即将运输层报文段中的数据交付到正确的套接字，<strong>多路复用</strong> (multiplexing) 从套接字中收集数据块后将数据块加上header、生成报文段并传递给网络层。</li>
+<li>运输层Header中含有源端口号和目的端口号，它们是用来唯一地标识用于处理该报文段的套接字的，是16比特数。<strong>周知端口号</strong>用于表示通用的周知应用层协议，大小在 $0 \;to \;1023$。通常，应用的客户端让运输层自动地分配端口号，而服务器端分配一个特定的端口号。</li>
+<li>UDP是无连接的多路复用与多路分解。UDP套接字是一个二元组，包含<strong>目的IP地址和目的端口号</strong>，所以UDP报文段只要这两个信息相同就会被定向到同一进程。</li>
+<li>TCP是面向连接的多路复用与多路分解。TCP套接字是一个四元组，除了UDP的目的IP和端口外，还含有源IP和端口，所以就算目的IP和端口相同，只要源IP或端口不同就会被定位到不同的套接字，进而为来自不同源的报文段定向到不同的进程。</li>
+</ol>
+<h3 id="UDP"><a href="#UDP" class="headerlink" title="UDP"></a>UDP</h3><p>用于DNS、SNMP、NFS、流媒体、网络电话等应用中。</p>
+<ol>
+<li>优势<ul>
+<li>无拥塞控制，所以无发送延迟</li>
+<li>无须握手建立连接</li>
+<li>无需维护连接状态</li>
+<li>仅8字节，开销小</li>
+</ul>
+</li>
+<li>报文段构成：四个字段，每个2字节<ul>
+<li>源端口号、目的端口号</li>
+<li>header加data的字节数、检验和</li>
+</ul>
+</li>
+<li>检验和 (checksum): 将所有的16比特字加在一起，首位进位溢出被回卷到尾位，再进行反码运算。接收方只要将所有的16比特字加和，结果为16个1时说明无差错。意义在于如果端到端的应用层协议要进行差错检测，UDP也必须提供端到端的差错检测。</li>
+</ol>
+<h3 id="可靠数据传输"><a href="#可靠数据传输" class="headerlink" title="可靠数据传输"></a>可靠数据传输</h3><ol>
+<li>可以将发送方与接收方抽象成<strong>有限状态机</strong> (Finite-State Machine, FSM)。</li>
+<li><strong>自动重传请求</strong> (Automatic Repeat reQuest, ARQ) 协议基于重传机制实现可靠数据传输，包括了三种协议功能：<ul>
+<li>差错检测</li>
+<li>接收方反馈 (ACK or NAK)</li>
+<li>重传</li>
+<li>此外还需要停等 (stop-and-wait) 协议</li>
+</ul>
+</li>
+<li>对于ACK和NAK可能出错或丢失，接收方可能需要发送<strong>冗余ACK</strong>、发送方则是<strong>冗余packet</strong>，而为了让接收方明白是哪个数据段丢失，发送方的ACK需要含有缺失数据段的<strong>序号</strong>。</li>
+<li>对于包可能整个丢失，发送方需要countdown timer来进行超时重传。</li>
+<li>信道<strong>利用率</strong> (utilization): 发送比特的时间 / 总发送时间。</li>
+<li><strong>流水线</strong> (pipeline): 连续发送N个包，引入了两种差错恢复机制<ul>
+<li>回退N步 (Go-Back-N, GBN, 又称滑动窗口协议):<ul>
+<li>发送方: <strong>累积确认</strong> (Cumulative Acknowledgment) 表明接收方已正确接收到序号为n及以前的所有包。超时出现时，重传所有已发送未确认的包。</li>
+<li>接收方: 按序向上层交付包。<strong>丢弃所有失序包</strong>并重新发送按序ACK，不缓存失序包是因为如果分组n丢失而n + 1被缓存，发送方还是会发送包括n和n + 1在内的所有已发送的包。</li>
+</ul>
+</li>
+<li>选择重传 (Selective Repeat, SR):<ul>
+<li>接收方: 不管是否按序，确认一个正确接收的包，失序包将被缓存直到按序包都被收到为止。</li>
+<li>发送方: 每个窗口内的包都有自己的定时器，超时只重传一个包。</li>
+<li>此外，窗口长度必须小于或等于最大序号的一半，以免接收方混淆重传的包和等待的包。原因是接收方全部接收到包，但是ACK全部丢失，导致发送方窗口没移动但接收方窗口已经到下一轮序号，两方错位进行。</li>
+</ul>
 </li>
 </ul>
 </li>
-<li><p>行像素串行化</p>
+</ol>
+<h3 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h3><ol>
+<li><p><strong>三次握手</strong>指建立TCP连接时：</p>
+<ol>
+<li>客户端发送SYN报文段，不包含应用层数据，但SYN bit为1，初始序号被随机选择。</li>
+<li>服务器端发送SYNACK报文段，不包含应用层数据，SYN bit为1，ACK字段为客户端初始序号+1，服务器也选择了自己的初始序号。</li>
+<li>客户端发送第三个报文段，可以包含数据，SYN bit置零，序号为服务器初始序号+1。</li>
+</ol>
+<p><strong>结束连接</strong>时：</p>
+<ol>
+<li>客户端发送FIN bit为1的终止报文段，服务器收到后回送ACK。</li>
+<li>服务器发送终止报文段，客户端收到后回送ACK。</li>
+</ol>
+<p>整个TCP连接过程中客户端存在以下6个状态：</p>
+<script type="math/tex; mode=display">\begin{aligned} & CLOSED(无连接) \xrightarrow{发送SYN报文} SYN\_SENT \xrightarrow{接收SYN和ACK，发送ACK} \\
+& ESTABLISHED \xrightarrow{发送终止报文} FIN\_WAIT\_1 \xrightarrow{等待接收服务器ACK} \\
+& FIN\_WAIT\_2 \xrightarrow{接收服务器终止报文，发送ACK} TIME\_WAIT \xrightarrow{等待30s} CLOSED
+\end{aligned}</script><p>服务器端$CLOSED-LISTEN-SYN_RCVD-ESTABLISHED-CLOSE_WAIT-LAST_ACK$。</p>
+<p>当客户端发送了一个目标主机目的端口不接受连接的SYN报文时，目标主机会回送一个<strong>RST bit为1</strong>的报文以提示没有该socket。</p>
 </li>
-<li>过滤<ul>
-<li>PNG中定义了<em>过滤器方法0(Filter method 0)</em>，其中包括5种过滤器类型：</li>
-</ul>
+<li><p><strong>最大报文段长度</strong> (MSS) 通常与发送端的最大链路层帧长度 (又称最大传输单元，MTU) 相同，它是一个TCP报文段中应用层数据的最大长度。</p>
 </li>
-</ul>
-
-    <figure class="figure-image">
-      <img src="/images/2025/Filter.png" alt="" loading="lazy" />
-      <figcaption></figcaption>
-    </figure>
-  
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>Type</th>
-<th>Name</th>
-<th>Filter Function</th>
-<th>Reconstruction Function</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>0</td>
-<td>None</td>
-<td>$Filt(x)=Orig(x)$</td>
-<td>$Recon(x)=Filt(x)$</td>
-</tr>
-<tr>
-<td>1</td>
-<td>Sub</td>
-<td>$Filt(x)=Orig(x)-Orig(a)$</td>
-<td>$Recon(x)=Filt(x)+Recon(a)$</td>
-</tr>
-<tr>
-<td>2</td>
-<td>Up</td>
-<td>$Filt(x)=Orig(x)-Orig(b)$</td>
-<td>$Recon(x)=Filt(x)+Recon(a)$</td>
-</tr>
-<tr>
-<td>3</td>
-<td>Average</td>
-<td>$Filt(x)=Orig(x)- \\ floor((Orig(a)+Orig(b))/2)$</td>
-<td>$Recon(x)=Filt(x)+ \\ floor((Orig(a)+Orig(b))/2)$</td>
-</tr>
-<tr>
-<td>4</td>
-<td>Paeth</td>
-<td>$Filt(x)=Orig(x)- \\ PaethPredictor(Orig(a),Orig(b),Orig(c))$</td>
-<td>$Recon(x)=Filt(x)+ \\ PaethPredictor(Recon(a),Recon(b),Recon(c))$</td>
-</tr>
-</tbody>
-</table>
-</div>
-<figure class="highlight c++"><figcaption><span>Paeth_filter</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs c++">p = a + b - c<br>pa = <span class="hljs-built_in">abs</span>(p - a)<br>pb = <span class="hljs-built_in">abs</span>(p - b)<br>pc = <span class="hljs-built_in">abs</span>(p - c)<br><span class="hljs-comment">/* 此处的比较分别表示：</span><br><span class="hljs-comment">* b与c差别较小，说名可能a与x差别较小</span><br><span class="hljs-comment">* a与c差别较小，说明可能x与b差别较小</span><br><span class="hljs-comment">* c与x差别较小</span><br><span class="hljs-comment">*/</span><br><span class="hljs-keyword">if</span> pa &lt;= pb <span class="hljs-keyword">and</span> pa &lt;= pc then Pr = a<br><span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> pb &lt;= pc then Pr = b<br><span class="hljs-keyword">else</span> Pr = c<br><span class="hljs-keyword">return</span> Pr<br></code></pre></td></tr></table></figure>
-<ul>
-<li>压缩<ul>
-<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Deflate">Deflate</a></li>
+<li>TCP的Header在不含选项时为20字节，除源、目的端口号、检验和以外还含有以下结构：<ul>
+<li>4字节的序号字段。初始序号可以自由选择，可以帮助规避相同端口号的新进程误接收先前已终止的进程的包。<strong>序号指的是字节序号</strong></li>
+<li>4字节的ACK字段。由于报文段中总是有该字段，在双向数据传输中，ACK可以看成被捎带 (piggybacked) 在数据报文段中。</li>
+<li>2字节的接收窗口字段</li>
+<li>4 bit的首部长度，由于选项，TCP首部长度可变</li>
+<li>可选的选项</li>
+<li>6 bit的标志字段：ACK bit——ACK字段的有效性，RST、SYN、FIN bit——连接建立与拆除，CWR、ECE bit——前者表示拥塞窗口已缩减、后者为明确拥塞通告回显、它们由路由器在网络层的ECN bit的明确拥塞通告引起，PSH bit——数据交付上层，URG bit——存在紧急数据（其最后一个字节位置由4字节的紧急数据指针字段给出）</li>
+<li>还有时间戳可唯一标识该包</li>
 </ul>
 </li>
-<li>分块</li>
-<li>转换数据流</li>
+<li>TCP估计往返时间 (RTT) 时仅为传输一次 (非重传) 的报文段测量SampleRTT，且一般只在特定时间做一次测量。并且每次的结果会以<strong>指数加权移动平均</strong>得到EstimatedRTT:<script type="math/tex; mode=display">EstimatedRTT=(1-\alpha) * EstimatedRTT + \alpha * SampleRTT</script>还会测量RTT偏差DevRTT：$ DevRTT=(1-\beta) <em> DevRTT + \beta </em> |SampleRTT - EstimatedRTT| $，最终超时时间会被设为$ TimeoutInterval=EstimatedRTT + 4 * DevRTT $。推荐值为1秒，超时后该值还会被加倍。</li>
+<li>TCP可靠传输使用单一的超时定时器（减小开销）、累积ACK（减少重传）、超时时间加倍、快速重传（冗余ACK）、由于接收方缓存机制因此一次至多重传一个包（GBN与SR的结合）。</li>
+<li><strong>流量控制</strong>是为了防止接收方缓存溢出，在TCP报文段中维护一个接收窗口字段 (rwnd)，$rwnd=RevBuffer - [LastByteRevd - LastByteRead]$，我们需要$rwnd \geq 0$。此外，当一方接收缓存已满即$rwnd = 0$且没有任何数据需要发送时，如果其缓存已清空，它也不会发新报文段。为解决该问题，我们让发送方继续发送一个报文段且接收方再发送的确认报文里将包含一个非0的rwnd。</li>
+</ol>
+<h3 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h3><ol>
+<li>拥塞的后果：丢包和长时延。</li>
+<li>控制方法分为两种：<ul>
+<li>端到端拥塞控制：主机的运输层自己想办法。</li>
+<li>网络辅助的拥塞控制：路由器向发送方<strong>直接反馈阻塞信息</strong>（choke packet）或最大发送速率（如ABR），更常用<strong>间接地标记包中的某个字段</strong>来指示拥塞。</li>
 </ul>
+</li>
+</ol>
+<h3 id="TCP拥塞控制"><a href="#TCP拥塞控制" class="headerlink" title="TCP拥塞控制"></a>TCP拥塞控制</h3><ol>
+<li>TCP拥塞控制算法分为慢启动、拥塞避免和快速恢复三个技巧，非常易于理解，直接看PPT。</li>
+<li>TCP RENO有快恢复（收到3个冗余ACK就减半并+3，阈值减到当前峰值的一半），TCP Tahoe直接减到1并慢启动。超时时都会减到1并慢启动。</li>
+<li>TCP吞吐量在确定最大值的理想情况下，平均为$ 0.75 \times WindowSize / RTT $。若与带宽相联系，我们引入丢包率$L$，则平均为$1.22 \times MSS / RTT \sqrt{L}$。</li>
+</ol>
+<h2 id="第六章-链路层和LAN-8分选择题-8分大题"><a href="#第六章-链路层和LAN-8分选择题-8分大题" class="headerlink" title="第六章 链路层和LAN 8分选择题+8分大题"></a>第六章 链路层和LAN 8分选择题+8分大题</h2><ul>
+<li><strong>节点(node)</strong>：运行链路层协议的设备；</li>
+<li><strong>链路(link)</strong>：连接相邻节点的通信信道，分为点对点链路(point-to-point link)和广播链路(broadcast link)；</li>
+<li><strong>链路层服务</strong>：成帧(framing)、链路接入(如MAC)、可靠交付(本地纠错)、差错检测和纠正；</li>
+<li><strong>网络适配器(Network Adapter)</strong>：实现链路层的主体。</li>
+</ul>
+<h3 id="差错检测和纠正技术"><a href="#差错检测和纠正技术" class="headerlink" title="差错检测和纠正技术"></a>差错检测和纠正技术</h3><ul>
+<li>差错检测和纠正比特(EDC)、数据(D)。无法保证一定检测出所有的差错！</li>
+<li>前向纠错(Forward Eorror Correction, FEC)：接收方检测和纠错。</li>
+</ul>
+<ol>
+<li><p><strong>奇偶校验</strong>：加单个奇偶校验位(parity bit)，偶数个差错发生时无法检出。<strong>二位奇偶校验(two-dimensional parity)</strong>：可以通过行检测和列检测，检测和纠正单个差错，可以检测但无法纠正同分组中的两个比特差错。对一列32bit数可以分成4行4列进行检验。</p>
+</li>
+<li><p><strong>检验和</strong>：将每k(如16)个bit数据当作整数加和，和的反码即检验和。接收方只要看所有整数包括检验和的和是否为全1即可。</p>
+</li>
+<li><strong>循环冗余检测(Cyclic Redundancy Check, CRC or Polymial Code)</strong>：要素包括长度为d+r的CRC比特、长度为r+1的生成多项式G、长度为r的CRC比特R。其中$R=D \cdot 2^r XOR G$，$CRC=D \cdot 2^r XOR \; R$，即把R替换补位零来做异或，检测方式为CRC是否为G的倍数。CRC能检测所有小于r+1比特的差错。</li>
+</ol>
+<h3 id="多路访问链路和协议"><a href="#多路访问链路和协议" class="headerlink" title="多路访问链路和协议"></a>多路访问链路和协议</h3><ul>
+<li>多路访问问题(multiple access problem)：如何协调多个发送和接收节点对一个共享广播信道的访问；</li>
+<li>多路访问协议(multiple access protocol)：规范节点的行为。要求有：对于单个广播信道，单个节点传输时能占满传输速率、多个节点能平均得到速率、节点间相互非依赖、开销小；</li>
+<li>碰撞(collide)：节点同时接到多个帧；</li>
+<li>时隙多路访问协议的<strong>效率</strong>：大量活跃节点且大量帧要发送时，长期运行中成功时隙的占比。</li>
+</ul>
+<ol>
+<li><strong>信道划分协议(Channel Partitioning Protocol)</strong><ol>
+<li><strong>时分多路复用(TDM)</strong>：将时间分为时间帧并进一步分为N个时隙(slot)分配给N个节点，通常时隙长度能传输单个分组。优点避免碰撞、公平，缺点限速和等待、未使用时直接浪费。</li>
+<li><strong>频分多路复用(FDM)</strong>：均分带宽，优缺点相似。</li>
+<li>码分多址(CDMA)：为每个节点分配一种不同的编码，使不同节点能同时传输。</li>
+</ol>
+</li>
+<li><strong>随机接入协议(Random Access Protocol)</strong>：节点总是以信道最大速率发送，碰撞时节点等待随机时延后重发，且节点的选择之间相互独立。<ol>
+<li><strong>Slotted ALOHA</strong>：假设所有帧等长、时间被分成等长时隙、节点只在时隙开始时发送帧，该方法在检测到碰撞后<strong>以概率$p$在后续的每个时隙中重传该帧直到成功</strong>。其效率为$Np(1-p)^{N-1}$，最大效率为$1/e=0.37$；</li>
+<li><strong>ALOHA</strong>：没有时隙，直接完整传输帧，检测到碰撞后<strong>立即以概率$p$重传，否则等待一个帧传输时间</strong>。效率为$p(1-p)^{2(N-1)}$，最大效率为$1/(2e)$。</li>
+<li><strong>载波侦听多路访问(CSMA)</strong>：<ul>
+<li><strong>载波侦听(carrier sensing)</strong>：等待使用同一信道的其他正在传输的节点；</li>
+<li><strong>碰撞检测(collision detection)</strong>：传输的同时侦听此信道，如果有另一个节点正在传输干扰帧，立即停止传输。接着等待随机时间后进入载波侦听状态。发生原因：端到端传输路径中可能经过多条信道，有时前方的信道正闲，但必须给来自后方的数据让路。有该机制的协议称为<strong>CSMA/CD</strong>（用在以太网中），而发现碰撞后的等待时间使用下面的算法：</li>
+<li><strong>二进制指数后退(binary expotional backoff)</strong>：在同一帧经历连续n次碰撞后，节点均匀地从${0, 1, …, 2^n-1}$中选择一个值乘以512作为等待时间，集合长度随碰撞次数呈指数增长。</li>
+<li>CSMA/CD效率$\approx \frac{1}{1+5d_{prop}/d_{trans}}$，$d_prop$为信号能量在两个适配器间传播所需地最大时间，$d_trans$为传输一个最大长度的以太网帧的时间。</li>
+<li><strong>CSMA/CA</strong>（用在IEEE 802.11中）：有ACK，接收方接收完后等待SIFS时间后发送ACK</li>
+<li><strong>RTS-CTS</strong>：发送方先用CSMA发送request-to-send（RTS）包到BS，BS广播clear-to-send（CTS）作为回应，其他节点推迟传输，发送方开始传输</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><strong>轮流协议(Taking-turns Protocol)</strong>：为了解决同时传输时的平均要求。<ol>
+<li><strong>轮询协议(polling protocol)</strong>：主节点依次循环轮询每个节点，告诉它们能够最多传输的帧数量。优点效率高，缺点引入轮询时延(即轮到同一节点的时间)对主节点的依赖性。</li>
+<li><strong>令牌传递协议(token-passing protocol)</strong>：将特殊帧(令牌)按固定次序相互传递，持有令牌的节点可以传输最大数量的帧数。优点效率高、分散性，缺点中间环节故障。</li>
+</ol>
+</li>
+<li><strong>LAN</strong>：<ol>
+<li><strong>MAC地址</strong>：48位（6字节），一般用16进制表示，每个网络适配器都有一个MAC地址，并且是独一无二的。广播地址（FF-FF-FF-FF-FF-FF）</li>
+<li><strong>Address resolution protocol（ARP）</strong>：<ol>
+<li><strong>ARP表</strong>：记录<IP地址；MAC地址；TTL（存在时间）>三元组</li>
+<li>只为同一LAN内的主机工作，发送方广播ARP查询分组（含IP），匹配方发送响应ARP分组。</li>
+<li><strong>向子网外发送数据报</strong>：向连接子网的路由器发送IP数据报（链路层目的地址为路由器MAC地址），路由器查询ARP表并将链路层目的地址改写为下一跳路由器或者最终目的MAC地址。</li>
+</ol>
+</li>
+<li><strong>以太网（Ethernet）</strong>：无连接，不可靠，使用无时隙、二进制退避的CSMA/CD</li>
+<li><strong>交换机</strong>：<ol>
+<li>链路层机器，对主机相当于透明可忽略</li>
+<li>缓存/发送以太网帧，CSMA/CD接入</li>
+<li>根据帧来向自学习<MAC地址，接口，TTL>三元表，接收到发向未知地址的帧时会向除发送方接口外的所有接口广播该帧</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
 
       </section>
 
@@ -250,32 +513,16 @@
       
         <nav class="article-nav">
           
-            <div class="article-nav-item layout-padding">
-  <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
-    
-      <div class="card-cover" background-image-lazy data-img="/images/2025/计网.png"></div>
-    
-    <div class="card-text">
-      
-        <a href="/posts/51189/" itemprop="url">
-          <h2 class="card-text--title text-ellipsis">计算机网络学习笔记</h2>
-        </a>
-      
-      <div class="card-text--row">Newer</div>
-    </div>
-  </article>
-</div>
-          
           
             <div class="article-nav-item layout-padding">
   <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
     
-      <div class="card-cover" background-image-lazy data-img="/images/2025/jpeg.png"></div>
+      <div class="card-cover" background-image-lazy data-img="/images/2025/png_cover.png"></div>
     
     <div class="card-text">
       
-        <a href="/posts/14025/" itemprop="url">
-          <h2 class="card-text--title text-ellipsis">从JPEG开始学习的图像有损压缩</h2>
+        <a href="/posts/13679/" itemprop="url">
+          <h2 class="card-text--title text-ellipsis">哈基LZ77，不对，是PNG</h2>
         </a>
       
       <div class="card-text--row">Older</div>
