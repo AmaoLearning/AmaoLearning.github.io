@@ -36,7 +36,7 @@
 
   
 
-  <title>已实现的数据结构（持续更新） | 阿毛的小书桌</title>
+  <title>量子物理复习笔记 | 阿毛的小书桌</title>
 
   
 
@@ -67,7 +67,7 @@
 <!-- header container -->
 <header class="header-container post">
   
-    <div class="post-image" style="background-image: url(/images/2024/data_structure/217.jpg)"></div>
+    <div class="post-image" style="background-image: url(/images/2025/qbit.jpg)"></div>
   
 
   <!-- navbar -->
@@ -118,27 +118,20 @@
     <div class="header-content">
       <div class="post-text layout-block">
         <div class="layout-margin">
-          <h1 class="title-wrap">已实现的数据结构（持续更新）</h1>
+          <h1 class="title-wrap">量子物理复习笔记</h1>
           <h2 class="title-sub-wrap">
             <strong>MaoCaiMao</strong>
             <span>发布于</span>
-            <time  class="article-date" datetime="2024-12-07T16:00:00.000Z" itemprop="datePublished">2024-12-08</time>
+            <time  class="article-date" datetime="2025-06-08T16:00:00.000Z" itemprop="datePublished">2025-06-09</time>
           </h2>
-          
-            <h2 class="last-time">
-              <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-01-05T15:07:33.620Z" itemprop="dateUpdated">2025-01-05</time>
-            </h2>
           
           
           <ul class="wrap-list dark">
   
-    <li><a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">📒 数据结构</a></li>
+    <li><a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">📒 学习笔记</a></li>
     
 </ul>
           <ul class="wrap-list dark">
-  
-    <li><a href="/tags/%E8%B5%9B%E5%8D%9A%E5%85%AB%E8%82%A1/">🏷️ 赛博八股</a></li>
   
 </ul>
         </div>
@@ -162,84 +155,220 @@
       
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
-        <div class="admonition info"><p class="admonition-title">写在前面的
-</p><p>本学期以<strong>数据结构</strong>这门课为契机实现了不少数据结构，也算是一种码力的积累叭。下面列出已实现的和将来需要实现的两部分，比较重要的数据类型会给出api。</p>
-</div>
-
-<h2 id="已实现的"><a href="#已实现的" class="headerlink" title="已实现的"></a>已实现的</h2><h3 id="1-列表"><a href="#1-列表" class="headerlink" title="1. 列表"></a>1. 列表</h3><ul>
-<li><strong>顺序表</strong>有一个比较重要的优化点是<strong>空出列表地址为0的位置作为“哨兵位”</strong>，这样查找时先把需要查找的元素放到“哨兵位”上，接着从后往前依次查找，如果没有找到就会返回0，确保不会越界。此外，<strong>doubleSpace</strong>函数的写法也要熟练。</li>
-<li>链表似乎没有什么好说的，双链表通过判断查找元素位于列表前后部来优化查找时间。</li>
-<li><p>字符串使用顺序表来实现，关于模式匹配有两个比较重要的算法：</p>
+        <h2 id="复习课上的作业复习"><a href="#复习课上的作业复习" class="headerlink" title="复习课上的作业复习"></a>复习课上的作业复习</h2><ol>
+<li>玻尔模型<ol>
+<li>$r_1=0.053nm,v_1=\alpha c=c/137,E_1=-13.6 eV$</li>
+<li>$Z &gt; 1, r_n’=r_n/Z, v_n’=Zv_n, E_n’=\frac{Z^2}{n^2}E_n$</li>
+</ol>
+</li>
+<li>解定态问题，一维无限深势阱要会且能背解，更复杂的如一维有限深等不要求，谐振子问题就算考也会给出一维结论，概率流密度守恒也不要求<ol>
+<li>以势函数写出分段薛定谔方程</li>
+<li>用k代替质量、能量项，常见为$k^2=\frac{2mE}{\hbar^2}$</li>
+<li>把薛定谔方程写成常微分方程</li>
+<li>写出含待定系数的势函数通解，常为$Ae^{ikx}+Be^{-ikx}$或$Ae^{kx}+Be^{-kx}$，取决于$\pm$</li>
+</ol>
+</li>
+<li>经典实验内容会考</li>
+<li>量子计算会涉及Bloch球和跟电子自旋、泡利矩阵有关的内容</li>
+<li>算符计算：<ol>
+<li>动量算符不会给</li>
+<li>基本对易式如角动量对易关系不会给</li>
+<li>泡利矩阵会给出来，相关计算要会</li>
+</ol>
+</li>
+</ol>
+<h2 id="第一章-量子物理基础"><a href="#第一章-量子物理基础" class="headerlink" title="第一章 量子物理基础"></a>第一章 量子物理基础</h2><h3 id="知识部分1"><a href="#知识部分1" class="headerlink" title="知识部分1"></a>知识部分1</h3><ol>
+<li><strong>黑体辐射与普朗克能量子假说</strong><ol>
+<li>单色辐出度$M(\lambda, T)=dE_{\lambda}/d\lambda \; W/m^3$</li>
+<li>总辐出度$M(T)=\int_0^{\inf} M(\lambda, T)d\lambda \; W/m^2$</li>
+<li><strong>基尔霍夫辐射定律</strong>：不同温度下物体的单色辐出度与单色吸收比的比值相等，等于黑体单色辐出度；黑体辐射定律：<ol>
+<li>斯特藩-玻尔兹曼定律：$M_0 (T)=\sigma T^4 ,\; \sigma=5.67 \times 10^{-8}W/(m^2 \cdot K^4)$</li>
+<li>维恩位移定律：$\lambda_m T=b ,\; b=2.897 \times 10^{-3} \; m \cdot K$</li>
+</ol>
+</li>
+<li><strong>普朗克公式</strong>：$M_0 (\lambda, T)=2\pi hc^2\lambda^{-5} \frac{1}{e^{hc/k_B T\lambda}-1}$</li>
+</ol>
+</li>
+<li><strong>光量子</strong><ol>
+<li><strong>光电效应方程</strong>：$h\upsilon=\frac{1}{2}mv_m^2+A$</li>
+<li><strong>波粒二象性</strong>：光的动量 $p=mc=\frac{h\upsilon}{c}=\frac{h}{\lambda}$</li>
+<li><strong>康普顿效应</strong>：$\theta$为相对于入射方向的偏转角，<script type="math/tex; mode=display">\begin{aligned} \Delta \lambda &=\lambda - \lambda_0=\frac{h}{m_ec}(1-\cos\theta) \\ \lambda_c&=\frac{h}{m_ec}=2.43 \times 10^{-12}m=0.0243\mathring{A}\; (\mathring{A}=10^{-10}m) \end{aligned}</script></li>
+</ol>
+</li>
+<li><strong>玻尔理论</strong><ol>
+<li><strong>里德伯方程</strong>：$\tilde{\upsilon}=\frac{1}{\lambda}=R_H(\frac{1}{m^2}-\frac{1}{n^2})=T(m)-T(n), \; R_H=109677.58 cm^{-1}$</li>
+<li><strong>角动量量子化条件</strong>：$L=n\frac{h}{2\pi}=n\hbar, \; n=1,2,3,…$</li>
+<li><strong>氢原子玻尔半径与波尔能量</strong>：<script type="math/tex; mode=display">\begin{aligned} r_n &=\frac{4\pi \epsilon_0 \hbar^2}{m_e e^2}n^2=0.529 n^2 \mathring{A} \\ E_n &=-\frac{e^2}{4\pi \epsilon_0 r_n}+\frac{1}{2}m_e v_n^2=-\frac{m_e e^4}{8\epsilon_0^2 h^2 n^2}=\frac{-13.6}{n^2} eV\end{aligned}</script></li>
+<li><strong>类氢原子玻尔半径、能量与里德伯方程</strong>：设$Z$为原子核电荷数，<script type="math/tex; mode=display">\begin{aligned} r_n &=0.529\frac{n^2}{Z}\mathring{A} \\ E_n &=-13.6\frac{Z^2}{n^2}eV \\ \frac{1}{\lambda} &=R_H Z^2(\frac{1}{m^2}-\frac{1}{n^2}) \end{aligned}</script></li>
+</ol>
+</li>
+<li><strong>物质波</strong>：$\lambda=\frac{h}{p}, \; \upsilon=\frac{E}{h}$</li>
+<li><strong>不确定度关系</strong>：$\Delta x \Delta p_x \geq \frac{\hbar}{2}, \; \Delta y \Delta p_y \geq \frac{\hbar}{2}, \; \Delta z \Delta p_z \geq \frac{\hbar}{2}$，比如给定$\Delta x$，可以估算此方向上速度的不确定度。</li>
+<li><strong>薛定谔方程</strong>：$i\hbar \frac{\partial \Psi}{\partial t}=-\frac{\hbar^2}{2m}\nabla^2 \Psi + V(r,t)\Psi$, 哈密顿量算符$\hat{H}=-\frac{\hbar^2}{2m}\nabla^2+V(r,t)$</li>
+<li><strong>波函数</strong><ol>
+<li><strong>概率密度与归一化条件</strong>：$\rho=\Psi(r,t)^*\Psi(r,t)=|\Psi(r,t)|^2, \; \iiint\rho(r,t)d\tau=1$</li>
+<li><strong>概率流密度</strong>：$J=-\frac{i\hbar}{2m}(\Psi^<em>\nabla\Psi-\Psi\nabla\Psi^</em>), \; \nabla \cdot J=\frac{\partial \rho}{\partial t}$</li>
+<li><strong>态叠加原理</strong>：$\Psi=\sum_i c_i\psi_i$</li>
+<li><strong>定态薛定谔方程</strong>：波函数中的含时项总是$e^{-\frac{iE_n t}{h}}$，因此可以分离波函数的时间和位置函数，$\hat{H}\psi(r)=E\psi(r)$,$E$为分立的能量本征值</li>
+</ol>
+</li>
+<li><p><strong>算符</strong>：由于微观物理量具有不确定性，总是要与波函数相关联，算符其实就是波函数的变换</p>
+<ol>
+<li><strong>平均算符</strong>：如$\lang r \rang = \iiint r|\Psi(r,t)|^2 dxdydz$</li>
+<li><strong>对易括号</strong>：$[\hat{F}, \hat{G}]\triangleq \hat{F}\hat{G}-\hat{G}\hat{F}$，验证对易性时通常带上波函数</li>
+<li><strong>算符性质</strong>：<ol>
+<li>线性(量子力学中只讨论线性算符)</li>
+<li>算符相等：$\hat{F}\psi_1=\hat{G}\psi_1 \longrightarrow \hat{F}=\hat{G}$</li>
+<li>算符加法：$\hat{F}\psi+\hat{G}\psi=(\hat{F}+\hat{G})\psi$</li>
+<li>算符乘法：满足分配律和结合律，交换律一般不成立，即对易符号$[\hat{F},\hat{G}]\triangleq\hat{F}\hat{G}-\hat{G}\hat{F}\neq0$</li>
+<li>狄拉克符号表示波函数：左矢$\lang x|$、右矢$|x\rang$、内积$\lang x|y\rang$、单位基矢$|e_i\rang$</li>
+<li>克罗内克符号：$\begin{aligned}\delta_{ij} \triangleq \lang e_i|e_j\rang=\begin{cases}1, \; i=j \\ 0, \; i \neq j\end{cases}\end{aligned}$</li>
+</ol>
+</li>
+<li><strong>线性自厄(厄米)算符</strong>：力学量对应线性厄米算符，厄米算符满足$\lang\hat{A}\rang=\iiint\psi^<em>\hat{A}\psi dxdydz=实数$，或者$\hat{F}$满足$\iiint\psi^</em>\hat{F}\varphi dxdydz=\iiint(\hat{F}\psi)^*\varphi dxdydz$</li>
+<li><strong>动量算符</strong>：$\hat{p_x}\triangleq -i\hbar\frac{\partial}{\partial x}$，它与$x$是不对易的，也可以利用与坐标的关系$p_x=m\frac{dx}{dt}$</li>
+<li><strong>动能算符</strong>：$\hat{T}\triangleq \frac{\hat{p}^2}{2m}=-\frac{\hbar^2}{2m}\nabla^2$</li>
+<li><strong>能量算符</strong>：由定态薛定谔方程，$\hat{E}=\hat{H}$，$E=-\frac{\hbar^2}{2m}\frac{d^2}{dx^2}+V(x)$</li>
+<li><strong>角动量算符</strong>：量子情况下，$\hat{L^2}$与$\hat{L_z}$的本征值谱是分立的，分别为$L^2=l(l+1)\hbar, \; L_z=m\hbar$，其中$l$与$m$为量子数，$m=0, \pm 1, …, \pm l$。在直角坐标系中：<script type="math/tex; mode=display">\begin{aligned}\hat{L} &=\hat{r} \times \hat{p} \\ &=(x\overrightarrow{i}+y\overrightarrow{j}+z\overrightarrow{k}) \times (\hat{p_x}\overrightarrow{i}+\hat{p_y}\overrightarrow{j}+\hat{p_z}\overrightarrow{k}) \\ &=\hat{L_x}\overrightarrow{i}+\hat{L_y}\overrightarrow{j}+\hat{L_z}\overrightarrow{k} \\ \hat{L^2} &=\hat{L_x^2}+\hat{L_y^2}+\hat{L_z^2} \\ \hat{L_x} &= y\hat{p_z}-z\hat{p_y} \\ [\hat{L_i}, \hat{L_j}]&=i\hbar \hat{L_k} \end{aligned}</script>而在球坐标系中，代入球坐标$(r,\theta,\phi)$表示后：<script type="math/tex; mode=display">\begin{aligned} \hat{L_z}&=-i\hbar\frac{\partial}{\partial \phi} \\ \hat{L^2}&=-\hbar^2[\frac{1}{\sin\theta}\frac{\partial}{\partial\theta}(\sin\theta\frac{\partial}{\partial \theta})+\frac{1}{\sin^2\theta}\frac{\partial^2}{\partial\phi^2}] \\
+\hat{L_x}&=i\hbar(\sin\phi\frac{\partial}{\partial\theta}+\cot\theta\cos\phi\frac{\partial}{\partial\phi}) \\
+\hat{L_y}&=i\hbar(-\cos\phi\frac{\partial}{\partial\theta}+\cot\theta\sin\phi\frac{\partial}{\partial\phi})
+\end{aligned}</script></li>
+</ol>
+</li>
+<li><p><strong>本征值与本征函数</strong>：$\hat{F}$作用于函数$u$有$\hat{F}u=\lambda u$时，$\lambda$为算符的本征值，$u$为算符的本征函数(类似于矩阵的特征值与特征向量)。</p>
 <ul>
-<li><strong>BF算法</strong>：逐次移动模式首位下标，每次移动后逐个检查模式每位。最差时间复杂度为<strong>O(n)</strong>。</li>
-<li><p><strong>KMP算法</strong>：若逐位比较模式不成功，跳过匹配成功的主串字符，失配函数</p>
-<figure class="highlight c++"><figcaption><span>KMP算法</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-comment">/*找每一位的最长前缀，前缀：首尾相同的部分，abjab中最长前缀为ab*/</span><br><span class="hljs-function"><span class="hljs-type">int</span>* <span class="hljs-title">nextValue</span><span class="hljs-params">(<span class="hljs-type">const</span> sstring &amp;t)</span> </span>&#123;<br>    <span class="hljs-type">int</span> tlen = t.<span class="hljs-built_in">length</span>();<br>    <span class="hljs-type">int</span> *next = <span class="hljs-keyword">new</span> <span class="hljs-type">int</span>[tlen];<br>    <span class="hljs-type">int</span> iterator, len, str_pointer, maxLen;<br><br>    <span class="hljs-keyword">for</span> (iterator = <span class="hljs-number">0</span>; iterator &lt; tlen; iterator++) &#123;<br>        maxLen = <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">for</span> (len = iterator; len &gt; <span class="hljs-number">0</span>; len--) &#123;<br>            maxLen = len;<br>            <span class="hljs-keyword">for</span> (str_pointer = <span class="hljs-number">0</span>; str_pointer &lt; len; str_pointer++) &#123;<br>                <span class="hljs-keyword">if</span> (t.str[str_pointer] != t.str[iterator - len + str_pointer]) <br>                    &#123;maxLen = <span class="hljs-number">0</span>; <span class="hljs-keyword">break</span>;&#125;<br>            &#125;<br>            <span class="hljs-keyword">if</span> (maxLen) <span class="hljs-keyword">break</span>;            <br>        &#125;<br>        next[iterator] = maxLen;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> next;<br>&#125;<br><br><span class="hljs-comment">/*每次发生失配时，模式指针回退到最长前缀的下一位，拟成功匹配位置为现主串指针位置 - 最长前缀长度*/</span><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">sstring::KMP_find</span><span class="hljs-params">(<span class="hljs-type">const</span> sstring &amp;t, <span class="hljs-type">int</span> start)</span> <span class="hljs-type">const</span> </span>&#123;<br>    <span class="hljs-type">int</span> *next = <span class="hljs-built_in">nextValue</span>(t);<br>    <span class="hljs-type">int</span> tlen = t.<span class="hljs-built_in">length</span>();<br>    <span class="hljs-type">int</span> truelen = <span class="hljs-built_in">length</span>() - tlen;<br>    <span class="hljs-type">int</span> pos;<br>    <span class="hljs-type">int</span> iterator = start, substr_pointer = <span class="hljs-number">0</span>;<br><br>    <span class="hljs-keyword">while</span> (iterator &lt;= truelen) &#123;<br>        pos = iterator;<br>        <span class="hljs-keyword">while</span> ((substr_pointer &lt; tlen) &amp;&amp;<br>        str[iterator] == t.str[substr_pointer]) &#123;iterator++; substr_pointer++;&#125;<br>        <br>        <span class="hljs-comment">// 处理两种情况</span><br>        <span class="hljs-comment">// 第一种是substr_pointer == tlen，即匹配成功；</span><br>        <span class="hljs-comment">// 另一种情况是匹配出错，substr_pointer回退，iterator进一位；</span><br>        <span class="hljs-keyword">if</span> (substr_pointer == tlen) &#123;<br>            <span class="hljs-keyword">break</span>;<br>        &#125;<br>        <span class="hljs-keyword">else</span> &#123;<br>            substr_pointer = next[substr_pointer];<br>            iterator++;<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+<li>对于同一个本征值，有几个线性无关本征函数即<strong>简并度</strong>为几。只有一个称为无简并</li>
+<li>若$\hat{F}$是厄米算符，它的本征值为<strong>实数</strong></li>
+<li>厄米算符不同本征值的本征函数是<strong>正交</strong>的</li>
+<li>归一化的波函数除了不同本征值的波函数归一化，不同本征态的<strong>概率也是归一化</strong>的，由此可以算能量的期望值</li>
+<li>两个力学量的算符可以<strong>对易</strong>时它们具有共同本征函数(本征态)，仅此时测量这两个力学量能同时有确定值，不然满足<strong>不确定度关系</strong>：<script type="math/tex; mode=display">\Delta A\Delta B \geq \frac{1}{2}|\lang [\hat{A}, \hat{B}]\rang| \\ (\Delta A)^2=\lang \psi | (\hat{A}-\lang \hat{A}\rang)^2 | \psi \rang=\lang \hat{A}^2\rang-\lang \hat{A}\rang^2</script></li>
+<li>用本征态函数表示态函数：$\Psi=\sum_{i=1}^n C_i\psi_i,C_i=\int{\psi_i^*\Psi}$</li>
+</ul>
+</li>
+<li><strong>表象</strong>：表象类比坐标系，表象的基矢组即他们的正交归一化本征态类比基向量，幺正变换类比坐标系间变换<ol>
+<li><strong>表象中的波函数</strong>：${C_l}=(C_1,C_2,…,C_l,…)$，态矢可以表示为基矢的线性叠加$|\psi\rang=\sum_l C_l | u_l\rang$，本征矢在表象中的矩阵形式是相互独立的列向量，而波函数可以表示为它们的线性组合即$\psi^T(F)=[C_1, …, C_l, …]$</li>
+<li><strong>算符在表象中的矩阵表示</strong>：$\hat{X}$在$\hat{F}$表象中，$X_{ij}=\lang u_i|X|u_j \rang$，该矩阵形式可以在本征值方程、薛定谔方程中使用</li>
+<li><strong>自厄算符的矩阵性质</strong>：$A$的厄米共轭矩阵$A^\dagger=(A^*)^T$，$A$是自厄算符时，$A=A^\dagger$</li>
+<li><strong>矩阵求本征值和本征态</strong>：解$det(X-\lambda I)=0$得本征值$\lambda$，将每个$\lambda$代入$(X-\lambda I)C=0$解出$C$即本征态</li>
+<li><strong>幺正变换</strong>：$[|g_i\rang]=S[|u_i\rang]$，$S$是正交矩阵，$S^T=S^{-1}$。设$|\psi\rang=\sum_l C_l | u_l\rang$，求$|\psi\rang=\sum_l A_l | g_l\rang$中的$A_l$时，$A=S^\dagger C$，$F(B)=S^\dagger F(A)S$<script type="math/tex; mode=display">A_l=\lang g_l|\psi\rang=\sum_i \lang g_l|u_i\rang\lang u_i | \psi \rang=\sum_i \lang g_l | u_i\rang C_i=\sum_i S^*_{il}C_i</script></li>
+</ol>
+</li>
+<li><strong>电子自旋</strong>：<ol>
+<li><strong>施特恩-格拉赫实验</strong>：测量原子的磁矩，原子磁矩由电子自旋运动产生，且只有两个方向：平行与反平行</li>
+<li><strong>角动量</strong>：<ol>
+<li>普遍角动量算符$\hat{J}^2$的本征值$J^2=j(j+1)\hbar^2$，其中$j$是角动量量子数，整数或半整数</li>
+<li>角动量分量算符如$\hat{j_z}$的本征值为$j_z=m\hbar, \; m=-j,-j+1,…,j-1,j$，共$2j+1$个可能值</li>
+<li>分量算符满足对易关系$[\hat{J_i}, \hat{J_j}]=i\hbar\hat{J_k}$</li>
+<li>自旋角动量算符$\hat{S}^2$的本征值为$S^2=s(s+1)\hbar^2$，其中$s=\frac{1}{2}$</li>
+<li>自旋角动量分量算符如$\hat{S_z}$的本征值为$S_z=m_s \hbar, \; m_s$也有$2s+1$个可能值，但由实验事实知只有两个，故$2s+1=2, \; m_s=\pm \frac{1}{2}$</li>
+<li>泡利自旋算符$\hat{\sigma}$，满足$\hat{S}=\frac{\hbar}{2}\hat{\sigma}$，其分量算符本征值均为$\pm 1$，且为二维矩阵如下(以$\hat{S_z}$为表象)<script type="math/tex; mode=display">\begin{aligned} & \sigma_x=\begin{bmatrix} 0 & 1 \\ 1 & 0\end{bmatrix} \;\;
+  \sigma_y=\begin{bmatrix} 0 & -i \\ i & 0\end{bmatrix} \;\;
+  \sigma_z=\begin{bmatrix} 1 & 0 \\ 0 & -1\end{bmatrix} \\
+  &\sigma_i^2=I, \;\; \sigma_x\sigma_y=i\sigma_z
+  \end{aligned}</script></li>
+<li>自旋波函数如$\hat{S_z}$的本征态$\chi_1=\begin{bmatrix}1 \\ 0\end{bmatrix}, \; \chi_{-1}=\begin{bmatrix}0 \\ 1\end{bmatrix}$分别对应于自旋方向平行于z轴与反平行的，它们是由$\hat{S_z}\chi=\frac{\hbar}{2}\sigma_z \chi=\frac{\hbar}{2}\chi$计算得到的，我们通常以$\hat{S_z}$为表象计算其他自选波函数</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="例题习题1"><a href="#例题习题1" class="headerlink" title="例题习题1"></a>例题习题1</h3><ol>
+<li>电子单缝衍射实验中衍射条纹中心最大宽度：$w=\frac{2\lambda D}{a}$ $a$缝宽、$D$缝屏距</li>
+<li>微观粒子在温度为$T$时的动能：$E=3kT/2$</li>
+<li>$\alpha$粒子是$He$原子核</li>
+<li>$\int^{+\infin}_{-\infin} e^{-x^2}=\sqrt{\pi}$</li>
+<li>由$\Psi(x,0)=\sum_i C_i \psi_i(x)$得$\Psi(x,t)=\sum_i C_i \psi_i(x) e^{-iE_i t/\hbar}$，$E_i$为能量本征值，可由定态薛定谔方程计算</li>
+<li>计算$\hat{\sigma}$的点积时可以将其看作$(\hat{\sigma_x}, \hat{\sigma_y}, \hat{\sigma_z})$</li>
+<li>计算$\lang \hat{L_x} \rang$可以利用已知的本征方程$\hat{L_z}Y_{lm}=m\hbar Y_{lm}$和$[\hat{L_y}, \hat{L_z}]=i\hbar\hat{L_x}$</li>
+</ol>
+<h2 id="第二章-定态问题"><a href="#第二章-定态问题" class="headerlink" title="第二章 定态问题"></a>第二章 定态问题</h2><h3 id="知识2"><a href="#知识2" class="headerlink" title="知识2"></a>知识2</h3><ol>
+<li><strong>一维方势垒</strong>：根据定态薛定谔方程和波函数连续条件，可以解出系数代表粒子入射、透射、反射的概率开根号，如$\psi_1=Ae^{ikx}+A’e^{-ikx},x&lt;0;\;\psi_2=Be^{k’x}+B’e^{-k’x},0<x<a;\;\psi_3=Ce^{ikx},x>a$，其中$k^2=\frac{2mE}{\hbar^2},k’^2=\frac{2m(V_0-E)}{\hbar^2}$<ol>
+<li>概率流密度：以入射波为例，$J_i=|A|^2\hbar k/m$</li>
+<li>反射波系数：$R=|\frac{J_r}{J_i}|=|\frac{A’}{A}|^2=\frac{(k^2+k’^2)^2\sinh^2(k’a)}{(k^2+k’^2)^2\sinh^2(k’a)+4k^2k’^2}$</li>
+<li>透射波强度：$T=|\frac{J_t}{J_i}|=|\frac{C}{A}|^=\frac{4k^2k’^2}{(k^2+k’^2)^2\sinh^2(k’a)+4k^2k’^2}$，$T+R=1$</li>
+</ol>
+</li>
+<li><strong>有限深势阱</strong>：根据定态薛定谔方程、波函数及其一阶导数连续条件、波函数标准条件($x\rightarrow \pm \infin,\psi(x)\rightarrow 0$)，势阱宽为$2a$<ol>
+<li>本征函数：$\psi=\begin{cases}A\sin(kx+\delta), &amp;|x|&lt;a \\<br>Be^{-k’x}, &amp;x&gt;a \\ Ce^{k’x}, &amp;x&lt;-a\end{cases}$，$\delta$可能是$\pi$的整数倍或半整数倍，其中半整数倍时$\psi_S$是偶函数，称为偶宇称；整数倍时$\psi_A$是奇函数，称为奇宇称</li>
+<li>能量本征值：$u=ka,v=k’a$，由两式$\begin{cases}u\cot(u+\delta)=-v \\ u^2+v^2=\frac{2mV_0}{\hbar^2}a^2\end{cases}$，分奇偶宇称可以画图得到能级数与$V_0 a^2$的关系</li>
+<li>无限深势阱：$V_0=\infin$。能量本征值$E_n=\frac{n^2\pi^2\hbar^2}{8ma^2}$，在题中随势阱宽度变化而变化；阱外波函数为0，波函数$\psi_n(x)=\sqrt{\frac{1}{a}}\sin[\frac{n\pi}{2a}(x+a)], \; |x|&lt;a$，在不同题中随势阱对称轴平移</li>
+</ol>
+</li>
+<li><strong>线性谐振子</strong>：$V=\frac{1}{2}\mu \omega^2x^2$，$\mu$是谐振子的质量。令$\xi=\sqrt{\mu\omega/\hbar},\lambda=2E/(\hbar\omega)$<ul>
+<li>薛定谔方程可以改写为$\frac{d^2}{d\xi^2}\psi(\xi)+(\lambda-\xi^2)\psi(\xi)=0$</li>
+<li>满足条件$\lambda-1=2n=0,2,4,…$时$E_n=\frac{\lambda}{2}\hbar\omega=(n+\frac{1}{2})\hbar\omega$</li>
+<li>本征函数：$\psi_n(x)=N_nH_n(\xi)e^{-\xi^2/2}$</li>
+<li>波函数的性质：<ol>
+<li>$n$偶有偶宇称，$n$奇有奇宇称</li>
+<li>最低能态是偶宇称$n=0$</li>
+<li>量子数的跃迁只可能是$\pm 1$</li>
+</ol>
 </li>
 </ul>
 </li>
-<li><p>稀疏矩阵</p>
-<ul>
-<li>矩阵形式</li>
-<li>链表形式：转置后若要将链表以行列顺序排列，可以以行、列顺序比较进行排序</li>
+<li><strong>氢原子</strong>：$V(r)=-\frac{Ze^2}{4\pi\epsilon_0 r}$<ol>
+<li><strong>本征函数</strong>：哈密顿算符、角动量平方算符与角动量投影分量算符有共同本征函数$\psi(r,\theta,\phi)=R(r)Y_{lm}(\theta,\phi)=R(r)\Theta(\theta)\Phi(\phi), \; 球谐函数Y_{lm}(\theta, \phi)=N_{lm}P_l^m(\cos\theta)e^{im\phi}$</li>
+<li><strong>电子束缚态</strong>：能量$E<0$时，本征值谱分立；$E>0$，本征值谱连续，电子可以自由运动</li>
+<li><strong>量子数</strong>：三个重要的量子数$(n,l,m_l)$，电子可以表示为形如$nl^{m_l}$，如$1s^2,2p^6$<ul>
+<li>$n$表征能量量子化，$1K,2L,3M,4N,5O,…$(主量子数)，能级公式与玻尔公式相符</li>
+<li>$l$表征电子轨道角动量量子数(角量子数)，与$l=0,1,2,3,4,…,n-1$对应的是电子轨道$s,p,d,f,g,…$</li>
+<li>$m_l$表征电子轨道角动量在外磁场的投影分量量量子化，$-l,…, 0,…, l$(磁量子数)</li>
+<li>此外还有$m_s$表征电子自旋方向，$\pm\frac{1}{2}$(自旋磁量子数)</li>
 </ul>
 </li>
-</ul>
-<h3 id="2-栈和队列"><a href="#2-栈和队列" class="headerlink" title="2. 栈和队列"></a>2. 栈和队列</h3><ul>
-<li>顺序栈和链式栈都比较容易实现</li>
-<li><p>顺序循环队列，下面几个元素比较重要：</p>
-  <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">class</span> <span class="hljs-title class_">seqQueue</span> &#123;<br><span class="hljs-keyword">private</span>:<br>    <span class="hljs-comment">/*每次pop时，Front前进一位且%maxSize;</span><br><span class="hljs-comment">     *push时，Rear前进一位且%maxSize;*/</span><br>    <span class="hljs-type">int</span> maxSize;<br>    <span class="hljs-type">int</span> Front, Rear;<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">doubleSpace</span><span class="hljs-params">()</span></span>;<br>&#125;<br><br><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">elemType</span>&gt;<br><span class="hljs-type">void</span> seqQueue&lt;elemType&gt;::<span class="hljs-built_in">doubleSpace</span>() &#123;<br>    elemType *newArray;<br>    <span class="hljs-type">int</span> i, j;<br><br>    newArray = <span class="hljs-keyword">new</span> elemType[<span class="hljs-number">2</span>*maxSize];<br>    <br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>, j = Front; j != Rear; i++, j=(j<span class="hljs-number">+1</span>)%maxSize) <br>        newArray[i] = array[j];<br><br>    <span class="hljs-keyword">delete</span> [] array;<br>    array = newArray;<br>    Front = <span class="hljs-number">0</span>;<br>    Rear = j;<br>    maxSize *= <span class="hljs-number">2</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
-</li>
-<li><p><strong>优先队列</strong>：使用<strong>最小化堆或最大化堆</strong>来构筑，每次pop只需要除去顶端元素，push时就需要对堆进行调整，由于顶端位置永远为下标0，所以不需要使用循环队列。</p>
-  <figure class="highlight c++"><figcaption><span>priorityQueue.h</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">T</span>&gt;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">priorityQueue</span> &#123;<br>    <span class="hljs-keyword">private</span>:<br>        <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">adjust</span><span class="hljs-params">(<span class="hljs-type">int</span> i)</span></span>;<br>    <span class="hljs-keyword">public</span>:<br>        <span class="hljs-built_in">priorityQueue</span>(T a[], <span class="hljs-type">int</span> n);<br>        <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">enQueue</span><span class="hljs-params">(<span class="hljs-type">const</span> T &amp;x)</span></span>;<br>        <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">deQueue</span><span class="hljs-params">()</span></span>;<br>&#125;;<br><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">T</span>&gt;<br>priorityQueue&lt;T&gt;::<span class="hljs-built_in">priorityQueue</span>(T a[], <span class="hljs-type">int</span> n) &#123;<br>    <span class="hljs-type">int</span> i, j;<br>    T temp;<br><br>    array = <span class="hljs-keyword">new</span> T[n + <span class="hljs-number">10</span>];<br>    maxSize = n<span class="hljs-number">+10</span>;<br>    Rear = n - <span class="hljs-number">1</span>;<br><br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; n; i++)    array[i] = a[i];<br>    <span class="hljs-keyword">for</span> (i = (n<span class="hljs-number">-1</span>)/<span class="hljs-number">2</span>; i&gt;=<span class="hljs-number">0</span>; i--) &#123;<br>        <span class="hljs-built_in">adjust</span>(i);<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">T</span>&gt;<br><span class="hljs-type">void</span> priorityQueue&lt;T&gt;::<span class="hljs-built_in">enQueue</span>(<span class="hljs-type">const</span> T &amp;x) &#123;<br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">isFull</span>()) <span class="hljs-built_in">doubleSpace</span>();<br>    Rear++;<br>    <span class="hljs-type">int</span> hole; <span class="hljs-comment">// 从队尾开始，寻找插入元素最合适的位置，每次都只需要与父节点进行比较</span><br>    <span class="hljs-keyword">for</span> (hole= Rear; hole &gt; <span class="hljs-number">0</span> &amp;&amp; x &lt; array[ hole/ <span class="hljs-number">2</span> ]; hole /= <span class="hljs-number">2</span> )<br>            array[ hole ] = array[ hole / <span class="hljs-number">2</span> ];<br>    array[hole] = x;<br>&#125;<br><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">T</span>&gt;<br><span class="hljs-type">void</span> priorityQueue&lt;T&gt;::<span class="hljs-built_in">deQueue</span>() &#123;<br>    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">isEmpty</span>()) <span class="hljs-keyword">throw</span> <span class="hljs-built_in">outOfBound</span>();<br>    <span class="hljs-comment">// 把队尾元素放到首位，然后调整</span><br>    array[<span class="hljs-number">0</span>] = array[Rear];<br>    Rear--;<br>    <br>    <span class="hljs-built_in">adjust</span>(<span class="hljs-number">0</span>);<br>&#125;<br><br><span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">class</span> <span class="hljs-title class_">T</span>&gt;<br><span class="hljs-type">void</span> priorityQueue&lt;T&gt;::<span class="hljs-built_in">adjust</span>(<span class="hljs-type">int</span> i) &#123;<br>    <span class="hljs-type">int</span> maxChild;<br>    T temp;<br>    <span class="hljs-comment">// 调整小的往上，小顶堆</span><br>    <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) &#123;<br>        maxChild = <span class="hljs-number">2</span>*i<span class="hljs-number">+1</span>;<br><br>        <span class="hljs-keyword">if</span> (maxChild &gt; Rear) <span class="hljs-keyword">return</span>;<br>        <span class="hljs-keyword">if</span> (maxChild<span class="hljs-number">+1</span> &lt;= Rear) &#123;<br>            <span class="hljs-keyword">if</span> (array[maxChild + <span class="hljs-number">1</span>] &lt;= array[maxChild]) maxChild++;<br>        &#125;<br>        <span class="hljs-keyword">if</span> (array[i] &lt; array[maxChild]) <span class="hljs-keyword">return</span>;<br>        <br>        temp = array[i];<br>        array[i] = array[maxChild];<br>        array[maxChild] = temp;<br>        i = maxChild;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
-</li>
-</ul>
-<h3 id="3-树和二叉树"><a href="#3-树和二叉树" class="headerlink" title="3. 树和二叉树"></a>3. 树和二叉树</h3><ul>
-<li><strong>二叉树</strong><ul>
-<li><strong>满二叉树或完全二叉树</strong>可以使用数组来构筑。</li>
-<li>三种遍历方式都需要用到栈，其中只有前序遍历不需要额外的辅助标记栈。</li>
-<li><strong>二叉线索树</strong>通过对非满节点的孩子命为直接前驱或直接后继，摆脱了中序遍历时对栈的依赖。</li>
-<li><strong>哈夫曼树</strong>的构建：总结点数为原结点数的<strong>2n-1</strong>倍，每次把最小的两个权重加和构筑新结点并作为它们的父结点。</li>
-<li><strong>并查集</strong>以根节点为特征，每个节点都有一个父节点字段，根节点的父节点为不存在的位置如-1，可以用数组构建。</li>
+<li><strong>类氢离子</strong>：只有一个电子，相关公式已放进第一章玻尔理论</li>
+<li><strong>电子概率分布</strong>：有径向和角向分布，分别将对方在全定义域积分<ul>
+<li><strong>径向分布</strong>：$W_{nl}dr=r^2 dr\int d\Omega|\psi_{nlm}(r,\theta,\phi)|^2=|R_{nl}(r)|^2 r^2 dr$，可以理解为电子出现在$(r,r+dr)$球壳的概率</li>
+<li><strong>角向分布</strong>：$d\Omega\int |R_{nl}Y_{lm}(\theta,\psi)|^2 r^2 dr=|Y_{lm}(\theta,\phi)|^2 d\Omega=|\Theta(\theta)|^2 d\Omega$</li>
 </ul>
 </li>
-<li>树与二叉树转换：二叉树可以通过<strong>孩子兄弟表示法</strong>来表示树，该算法中每个二叉树节点的字段有树中该节点的第一个孩子、数据和下一个兄弟节点。</li>
-</ul>
-<h3 id="4-图"><a href="#4-图" class="headerlink" title="4. 图"></a>4. 图</h3><ul>
-<li>邻接矩阵</li>
-<li>邻接表<ul>
-<li>标准形式，有个小窍门是每次插入新边时插到离节点最近的位置，使时间复杂度减为O(n)，但对于邻接多重表和十字链表显然不适用
-    <figure class="figure-image">
-      <img src="/images/2024/data_structure/link.jpg" alt="邻接表表示" loading="lazy" />
-      <figcaption>邻接表表示</figcaption>
-    </figure>
-  </li>
-<li><strong>邻接多重表</strong>
-    <figure class="figure-image">
-      <img src="/images/2024/data_structure/multiple.jpg" alt="邻接多重表表示" loading="lazy" />
-      <figcaption>邻接多重表表示</figcaption>
-    </figure>
-  </li>
-<li><strong>十字链表</strong>
-    <figure class="figure-image">
-      <img src="/images/2024/data_structure/cross.jpg" alt="十字链表表示" loading="lazy" />
-      <figcaption>十字链表表示</figcaption>
-    </figure>
-  </li>
+<li><strong>泡利不相容原理</strong>：不可能有复数的费米子(自旋为半整数的粒子，整数的叫玻色子)处于同一量子状态，即四个量子数不可能完全相同。由此原子中具有相同主量子数$n$的电子数最多为$N_n=\sum_{l=0}^{n-1}(2l+1)2=2n^2$</li>
+</ol>
+</li>
+</ol>
+<h3 id="例题习题2"><a href="#例题习题2" class="headerlink" title="例题习题2"></a>例题习题2</h3><ol>
+<li>假设$\psi_{lm}(r,\theta,\phi)=\psi(r)$，径向概率密度$W_{lm}=\int |\psi(r)|^2d\Omega=4\pi |\psi(r)|^2,\;d\Omega=\sin\theta d\theta d\phi$</li>
+<li>$\sum_{n \; odd\; from\; 1\; to\; \infin}\frac{1}{n^2}=\frac{\pi^2}{8}$</li>
+<li>遇到二维各向同性谐振子，可以分离$\psi=\psi(x)\psi(y)$，列两个式子，而$E=E_x+E_y$，它们可以分别有量子数$n_x,n_y$，而能级取决于它们的和</li>
+<li>一维谐振子：$\lang x\rang=0,\lang x^2\rang=(n+1/2)\hbar/(\mu\omega),\lang p\rang=0,\lang p^2\rang=(n+1/2)\mu\omega\hbar$，故$\Delta x=\sqrt{\lang x^2\rang-0},\;\Delta p=\sqrt{\lang p^2\rang - 0}$</li>
+<li>类氢原子二体问题：能级出现的质量为折合质量，$\mu=\frac{m_e M}{m_e+M}$，而能级公式为$E_n=-13.6\mu /n^2 eV$</li>
+</ol>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><h3 id="电子自旋相关"><a href="#电子自旋相关" class="headerlink" title="电子自旋相关"></a>电子自旋相关</h3><ol>
+<li><strong>氢原子内磁场与电子自旋-轨道相互作用能</strong>：$Z$是原子核电荷数<script type="math/tex; mode=display">\overrightarrow{B_e}=\frac{\mu_0 \overrightarrow{j}\times\overrightarrow{r}}{4\pi r^3}=\frac{ Z^*e\overrightarrow{L}}{4\pi\epsilon_0 mr^3} \\
+\Delta E_{l,s}=-\overrightarrow{\mu_s}\cdot\overrightarrow{B_e}=\frac{1}{2}\frac{Z^*e^2}{4\pi \epsilon_0 m^2 r^3}\overrightarrow{S} \cdot \overrightarrow{L}</script></li>
+<li><strong>电子总角动量</strong>：$\overrightarrow{J}=\overrightarrow{L}+\overrightarrow{S}$，总量子数$j$，$J=\sqrt{j(j+1)}\hbar$<ol>
+<li>$l=0$时，$j=s$</li>
+<li>$l\neq 0$时，$j=l\pm \frac{1}{2}$</li>
+<li>碱金属原子态：$n^{2s+1}L_j$</li>
+<li>$z$方向分量$J_z=m_j\hbar,\;m=-j,…,j$</li>
+<li>两总角动量相加$\overrightarrow{J’}=\overrightarrow{J_1}+\overrightarrow{J_2}, \; J’^2=j’(j’+1)\hbar^2, \; j=|j_1-j_2|,…,j_1+j_2$</li>
+<li><strong>外磁场B中的原子能级分裂</strong>：$\Delta E=-\overrightarrow{\mu_J}\cdot\overrightarrow{B}=-\mu_{jz}B=m_j g_j \mu_B B, \; m_j=-j,-(j-1),…,j-1,j$，朗德g因子$g=1+\frac{j(j+1)-l(l+1)+s(s+1)}{2j(j+1)}$</li>
+<li><strong>塞曼效应</strong>：外磁场条件下原子两个能级间的跃迁存在多重可能性，$h\upsilon’=(E_2-E_1)+(m_{j2}g_2-m_{j1}g_1)\mu_BB,\;\tilde{\upsilon}’-\tilde{\upsilon}=\frac{1}{\lambda’}-\frac{1}{\lambda}=(m_{j2}g_2-m_{j1}g_1)L,\; L=\frac{\mu_B B}{hc}=\frac{eB}{4\pi m_ec}$<ul>
+<li>正常：体系总自旋为0，$g_2=g_1=1$，$h\upsilon’=(E_2-E_1)+\Delta m_j\mu_BB,\;,\Delta m_j=0,\pm 1$，三条谱线</li>
+<li>反常：体系总自旋不为0，偶数条谱线</li>
 </ul>
 </li>
-<li>遍历方式<ul>
-<li>深度优先遍历<strong>BFS</strong>：用栈，先访问先进节点的邻节点。</li>
-<li>广度优先遍历<strong>DFS</strong>：用队列，先访问邻节点。</li>
+<li><strong>斯特恩-盖拉赫实验</strong>：碱金属线间距$\Delta z=g\mu_B\frac{\partial B}{\partial z}\frac{dD}{3kT}$，玻尔磁子$\mu_B=\frac{e\hbar}{2m_e}$</li>
+</ol>
+</li>
+</ol>
+<h3 id="电子组态"><a href="#电子组态" class="headerlink" title="电子组态"></a>电子组态</h3><ol>
+<li><strong>双电子耦合</strong>：如$1s2p$，需要满足<strong>Pauli不相容原理</strong><ol>
+<li><strong>L-S耦合</strong>：双电子组态对应的量子数$L=l_1+l_2,…,|l_1-l_2|, S=s_1+s_2,…,|s_1-s_2|$</li>
+<li><strong>Pauli不相容原理</strong>：同科电子($n,l$相同的电子)$L+S$必为偶数，即$m_l,m_s$必有不同的</li>
+<li><strong>洪特定则</strong>：同一电子组态形成三重态的能量总比单重态低<ol>
+<li>S越大，能级越低</li>
+<li>S相同，L值越大，能级越低</li>
+<li>同科电子，L相同，<ul>
+<li>同科电子数&lt;=闭壳层占有数的一半，J越小，能级越低</li>
+<li>同科电子数&gt;闭壳层占有数的一半，J越大，能级越低</li>
 </ul>
 </li>
-</ul>
-<h3 id="5-其他"><a href="#5-其他" class="headerlink" title="5. 其他"></a>5. 其他</h3><ul>
-<li><strong>哈希集合</strong>：顺序表，插入位置由<code>待插入数据 % 质数</code>计算得到，每个位置存储一个链表的首节点。</li>
-</ul>
-<div class="admonition warning"><p class="admonition-title">未实现的
-</p><p>平衡二叉树（AVL）、红黑树、B树、B+树…</p>
-</div>
-
+</ol>
+</li>
+</ol>
+</li>
+</ol>
 
       </section>
 
@@ -247,32 +376,16 @@
       
         <nav class="article-nav">
           
-            <div class="article-nav-item layout-padding">
-  <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
-    
-      <div class="card-cover" background-image-lazy data-img="/images/2025/杂谈.jpg"></div>
-    
-    <div class="card-text">
-      
-        <a href="/posts/17101/" itemprop="url">
-          <h2 class="card-text--title text-ellipsis">2025新年闲谈</h2>
-        </a>
-      
-      <div class="card-text--row">Newer</div>
-    </div>
-  </article>
-</div>
-          
           
             <div class="article-nav-item layout-padding">
   <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
     
-      <div class="card-cover" background-image-lazy data-img="/images/2024/meshlab.png"></div>
+      <div class="card-cover" background-image-lazy data-img="/images/2025/计网.png"></div>
     
     <div class="card-text">
       
-        <a href="/posts/50306/" itemprop="url">
-          <h2 class="card-text--title text-ellipsis">通过外界调用MeshLab的两种方法</h2>
+        <a href="/posts/51189/" itemprop="url">
+          <h2 class="card-text--title text-ellipsis">计算机网络学习笔记</h2>
         </a>
       
       <div class="card-text--row">Older</div>
