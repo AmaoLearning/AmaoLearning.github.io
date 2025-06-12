@@ -125,6 +125,11 @@
             <time  class="article-date" datetime="2025-06-08T16:00:00.000Z" itemprop="datePublished">2025-06-09</time>
           </h2>
           
+            <h2 class="last-time">
+              <span>最后更新于</span>
+              <time  class="article-updated" datetime="2025-06-12T16:18:49.723Z" itemprop="dateUpdated">2025-06-13</time>
+            </h2>
+          
           
           <ul class="wrap-list dark">
   
@@ -158,7 +163,7 @@
         <h2 id="复习课上的作业复习"><a href="#复习课上的作业复习" class="headerlink" title="复习课上的作业复习"></a>复习课上的作业复习</h2><ol>
 <li>玻尔模型<ol>
 <li>$r_1=0.053nm,v_1=\alpha c=c/137,E_1=-13.6 eV$</li>
-<li>$Z &gt; 1, r_n’=r_n/Z, v_n’=Zv_n, E_n’=\frac{Z^2}{n^2}E_n$</li>
+<li>$Z &gt; 1, r_n’=r_n/Z, v_n’=Zv_n, E_n’=Z^2E_n$</li>
 </ol>
 </li>
 <li>解定态问题，一维无限深势阱要会且能背解，更复杂的如一维有限深等不要求，谐振子问题就算考也会给出一维结论，概率流密度守恒也不要求<ol>
@@ -198,7 +203,7 @@
 <li><strong>玻尔理论</strong><ol>
 <li><strong>里德伯方程</strong>：$\tilde{\upsilon}=\frac{1}{\lambda}=R_H(\frac{1}{m^2}-\frac{1}{n^2})=T(m)-T(n), \; R_H=109677.58 cm^{-1}$</li>
 <li><strong>角动量量子化条件</strong>：$L=n\frac{h}{2\pi}=n\hbar, \; n=1,2,3,…$</li>
-<li><strong>氢原子玻尔半径与波尔能量</strong>：<script type="math/tex; mode=display">\begin{aligned} r_n &=\frac{4\pi \epsilon_0 \hbar^2}{m_e e^2}n^2=0.529 n^2 \mathring{A} \\ E_n &=-\frac{e^2}{4\pi \epsilon_0 r_n}+\frac{1}{2}m_e v_n^2=-\frac{m_e e^4}{8\epsilon_0^2 h^2 n^2}=\frac{-13.6}{n^2} eV\end{aligned}</script></li>
+<li><strong>氢原子玻尔半径与波尔能量</strong>：<script type="math/tex; mode=display">\begin{aligned} r_n &=\frac{4\pi \epsilon_0 \hbar^2}{m_e e^2}n^2=0.529 n^2 \mathring{A} \\ E_n &=-\frac{e^2}{4\pi \epsilon_0 r_n}+\frac{1}{2}m_e v_n^2=-\frac{m_e e^4}{32\epsilon_0^2 h^2 n^2}=\frac{-13.6}{n^2} eV\end{aligned}</script></li>
 <li><strong>类氢原子玻尔半径、能量与里德伯方程</strong>：设$Z$为原子核电荷数，<script type="math/tex; mode=display">\begin{aligned} r_n &=0.529\frac{n^2}{Z}\mathring{A} \\ E_n &=-13.6\frac{Z^2}{n^2}eV \\ \frac{1}{\lambda} &=R_H Z^2(\frac{1}{m^2}-\frac{1}{n^2}) \end{aligned}</script></li>
 </ol>
 </li>
@@ -207,25 +212,25 @@
 <li><strong>薛定谔方程</strong>：$i\hbar \frac{\partial \Psi}{\partial t}=-\frac{\hbar^2}{2m}\nabla^2 \Psi + V(r,t)\Psi$, 哈密顿量算符$\hat{H}=-\frac{\hbar^2}{2m}\nabla^2+V(r,t)$</li>
 <li><strong>波函数</strong><ol>
 <li><strong>概率密度与归一化条件</strong>：$\rho=\Psi(r,t)^*\Psi(r,t)=|\Psi(r,t)|^2, \; \iiint\rho(r,t)d\tau=1$</li>
-<li><strong>概率流密度</strong>：$J=-\frac{i\hbar}{2m}(\Psi^<em>\nabla\Psi-\Psi\nabla\Psi^</em>), \; \nabla \cdot J=\frac{\partial \rho}{\partial t}$</li>
+<li><strong>概率流密度</strong>：<script type="math/tex">J=-\frac{i\hbar}{2m}(\Psi^*\nabla\Psi-\Psi\nabla\Psi^*), \; \nabla \cdot J=\frac{\partial \rho}{\partial t}</script></li>
 <li><strong>态叠加原理</strong>：$\Psi=\sum_i c_i\psi_i$</li>
 <li><strong>定态薛定谔方程</strong>：波函数中的含时项总是$e^{-\frac{iE_n t}{h}}$，因此可以分离波函数的时间和位置函数，$\hat{H}\psi(r)=E\psi(r)$,$E$为分立的能量本征值</li>
 </ol>
 </li>
 <li><p><strong>算符</strong>：由于微观物理量具有不确定性，总是要与波函数相关联，算符其实就是波函数的变换</p>
 <ol>
-<li><strong>平均算符</strong>：如$\lang r \rang = \iiint r|\Psi(r,t)|^2 dxdydz$</li>
+<li><strong>平均算符</strong>：如$\langle r \rangle = \iiint r|\Psi(r,t)|^2 dxdydz$</li>
 <li><strong>对易括号</strong>：$[\hat{F}, \hat{G}]\triangleq \hat{F}\hat{G}-\hat{G}\hat{F}$，验证对易性时通常带上波函数</li>
 <li><strong>算符性质</strong>：<ol>
 <li>线性(量子力学中只讨论线性算符)</li>
 <li>算符相等：$\hat{F}\psi_1=\hat{G}\psi_1 \longrightarrow \hat{F}=\hat{G}$</li>
 <li>算符加法：$\hat{F}\psi+\hat{G}\psi=(\hat{F}+\hat{G})\psi$</li>
 <li>算符乘法：满足分配律和结合律，交换律一般不成立，即对易符号$[\hat{F},\hat{G}]\triangleq\hat{F}\hat{G}-\hat{G}\hat{F}\neq0$</li>
-<li>狄拉克符号表示波函数：左矢$\lang x|$、右矢$|x\rang$、内积$\lang x|y\rang$、单位基矢$|e_i\rang$</li>
-<li>克罗内克符号：$\begin{aligned}\delta_{ij} \triangleq \lang e_i|e_j\rang=\begin{cases}1, \; i=j \\ 0, \; i \neq j\end{cases}\end{aligned}$</li>
+<li>狄拉克符号表示波函数：左矢$\langle x|$、右矢$|x\rangle$、内积$\langle x|y\rangle$、单位基矢$|e_i\rangle$</li>
+<li>克罗内克符号：$\begin{aligned}\delta_{ij} \triangleq \langle e_i|e_j\rangle=\begin{cases}1, \; i=j \\ 0, \; i \neq j\end{cases}\end{aligned}$</li>
 </ol>
 </li>
-<li><strong>线性自厄(厄米)算符</strong>：力学量对应线性厄米算符，厄米算符满足$\lang\hat{A}\rang=\iiint\psi^<em>\hat{A}\psi dxdydz=实数$，或者$\hat{F}$满足$\iiint\psi^</em>\hat{F}\varphi dxdydz=\iiint(\hat{F}\psi)^*\varphi dxdydz$</li>
+<li><strong>线性自厄(厄米)算符</strong>：力学量对应线性厄米算符，厄米算符满足$\langle\hat{A}\rangle=\iiint\psi^<em>\hat{A}\psi dxdydz=实数$，或者$\hat{F}$满足$\iiint\psi^</em>\hat{F}\varphi dxdydz=\iiint(\hat{F}\psi)^*\varphi dxdydz$</li>
 <li><strong>动量算符</strong>：$\hat{p_x}\triangleq -i\hbar\frac{\partial}{\partial x}$，它与$x$是不对易的，也可以利用与坐标的关系$p_x=m\frac{dx}{dt}$</li>
 <li><strong>动能算符</strong>：$\hat{T}\triangleq \frac{\hat{p}^2}{2m}=-\frac{\hbar^2}{2m}\nabla^2$</li>
 <li><strong>能量算符</strong>：由定态薛定谔方程，$\hat{E}=\hat{H}$，$E=-\frac{\hbar^2}{2m}\frac{d^2}{dx^2}+V(x)$</li>
@@ -241,16 +246,16 @@
 <li>若$\hat{F}$是厄米算符，它的本征值为<strong>实数</strong></li>
 <li>厄米算符不同本征值的本征函数是<strong>正交</strong>的</li>
 <li>归一化的波函数除了不同本征值的波函数归一化，不同本征态的<strong>概率也是归一化</strong>的，由此可以算能量的期望值</li>
-<li>两个力学量的算符可以<strong>对易</strong>时它们具有共同本征函数(本征态)，仅此时测量这两个力学量能同时有确定值，不然满足<strong>不确定度关系</strong>：<script type="math/tex; mode=display">\Delta A\Delta B \geq \frac{1}{2}|\lang [\hat{A}, \hat{B}]\rang| \\ (\Delta A)^2=\lang \psi | (\hat{A}-\lang \hat{A}\rang)^2 | \psi \rang=\lang \hat{A}^2\rang-\lang \hat{A}\rang^2</script></li>
+<li>两个力学量的算符可以<strong>对易</strong>时它们具有共同本征函数(本征态)，仅此时测量这两个力学量能同时有确定值，不然满足<strong>不确定度关系</strong>：<script type="math/tex; mode=display">\Delta A\Delta B \geq \frac{1}{2}|\langle [\hat{A}, \hat{B}]\rangle| \\ (\Delta A)^2=\langle \psi | (\hat{A}-\langle \hat{A}\rangle)^2 | \psi \rangle=\langle \hat{A}^2\rangle-\langle \hat{A}\rangle^2</script></li>
 <li>用本征态函数表示态函数：$\Psi=\sum_{i=1}^n C_i\psi_i,C_i=\int{\psi_i^*\Psi}$</li>
 </ul>
 </li>
 <li><strong>表象</strong>：表象类比坐标系，表象的基矢组即他们的正交归一化本征态类比基向量，幺正变换类比坐标系间变换<ol>
-<li><strong>表象中的波函数</strong>：${C_l}=(C_1,C_2,…,C_l,…)$，态矢可以表示为基矢的线性叠加$|\psi\rang=\sum_l C_l | u_l\rang$，本征矢在表象中的矩阵形式是相互独立的列向量，而波函数可以表示为它们的线性组合即$\psi^T(F)=[C_1, …, C_l, …]$</li>
-<li><strong>算符在表象中的矩阵表示</strong>：$\hat{X}$在$\hat{F}$表象中，$X_{ij}=\lang u_i|X|u_j \rang$，该矩阵形式可以在本征值方程、薛定谔方程中使用</li>
+<li><strong>表象中的波函数</strong>：${C_l}=(C_1,C_2,…,C_l,…)$，态矢可以表示为基矢的线性叠加$|\psi\rangle=\sum_l C_l | u_l\rangle$，本征矢在表象中的矩阵形式是相互独立的列向量，而波函数可以表示为它们的线性组合即$\psi^T(F)=[C_1, …, C_l, …]$</li>
+<li><strong>算符在表象中的矩阵表示</strong>：$\hat{X}$在$\hat{F}$表象中，$X_{ij}=\langle u_i|X|u_j \rangle$，该矩阵形式可以在本征值方程、薛定谔方程中使用</li>
 <li><strong>自厄算符的矩阵性质</strong>：$A$的厄米共轭矩阵$A^\dagger=(A^*)^T$，$A$是自厄算符时，$A=A^\dagger$</li>
 <li><strong>矩阵求本征值和本征态</strong>：解$det(X-\lambda I)=0$得本征值$\lambda$，将每个$\lambda$代入$(X-\lambda I)C=0$解出$C$即本征态</li>
-<li><strong>幺正变换</strong>：$[|g_i\rang]=S[|u_i\rang]$，$S$是正交矩阵，$S^T=S^{-1}$。设$|\psi\rang=\sum_l C_l | u_l\rang$，求$|\psi\rang=\sum_l A_l | g_l\rang$中的$A_l$时，$A=S^\dagger C$，$F(B)=S^\dagger F(A)S$<script type="math/tex; mode=display">A_l=\lang g_l|\psi\rang=\sum_i \lang g_l|u_i\rang\lang u_i | \psi \rang=\sum_i \lang g_l | u_i\rang C_i=\sum_i S^*_{il}C_i</script></li>
+<li><strong>幺正变换</strong>：$[|g_i\rangle]=S[|u_i\rangle]$，$S$是正交矩阵，$S^T=S^{-1}$。设$|\psi\rangle=\sum_l C_l | u_l\rangle$，求$|\psi\rangle=\sum_l A_l | g_l\rangle$中的$A_l$时，$A=S^\dagger C$，$F(B)=S^\dagger F(A)S$<script type="math/tex; mode=display">A_l=\langle g_l|\psi\rangle=\sum_i \langle g_l|u_i\rangle\langle u_i | \psi \rangle=\sum_i \langle g_l | u_i\rangle C_i=\sum_i S^*_{il}C_i</script></li>
 </ol>
 </li>
 <li><strong>电子自旋</strong>：<ol>
@@ -276,22 +281,22 @@
 <li>电子单缝衍射实验中衍射条纹中心最大宽度：$w=\frac{2\lambda D}{a}$ $a$缝宽、$D$缝屏距</li>
 <li>微观粒子在温度为$T$时的动能：$E=3kT/2$</li>
 <li>$\alpha$粒子是$He$原子核</li>
-<li>$\int^{+\infin}_{-\infin} e^{-x^2}=\sqrt{\pi}$</li>
+<li>$\int^{+\infty}_{-\infty} e^{-x^2}=\sqrt{\pi}$</li>
 <li>由$\Psi(x,0)=\sum_i C_i \psi_i(x)$得$\Psi(x,t)=\sum_i C_i \psi_i(x) e^{-iE_i t/\hbar}$，$E_i$为能量本征值，可由定态薛定谔方程计算</li>
 <li>计算$\hat{\sigma}$的点积时可以将其看作$(\hat{\sigma_x}, \hat{\sigma_y}, \hat{\sigma_z})$</li>
-<li>计算$\lang \hat{L_x} \rang$可以利用已知的本征方程$\hat{L_z}Y_{lm}=m\hbar Y_{lm}$和$[\hat{L_y}, \hat{L_z}]=i\hbar\hat{L_x}$</li>
+<li>计算$\langle \hat{L_x} \rangle$可以利用已知的本征方程$\hat{L_z}Y_{lm}=m\hbar Y_{lm}$和$[\hat{L_y}, \hat{L_z}]=i\hbar\hat{L_x}$</li>
 </ol>
 <h2 id="第二章-定态问题"><a href="#第二章-定态问题" class="headerlink" title="第二章 定态问题"></a>第二章 定态问题</h2><h3 id="知识2"><a href="#知识2" class="headerlink" title="知识2"></a>知识2</h3><ol>
-<li><strong>一维方势垒</strong>：根据定态薛定谔方程和波函数连续条件，可以解出系数代表粒子入射、透射、反射的概率开根号，如$\psi_1=Ae^{ikx}+A’e^{-ikx},x&lt;0;\;\psi_2=Be^{k’x}+B’e^{-k’x},0<x<a;\;\psi_3=Ce^{ikx},x>a$，其中$k^2=\frac{2mE}{\hbar^2},k’^2=\frac{2m(V_0-E)}{\hbar^2}$<ol>
+<li><strong>一维方势垒</strong>：根据定态薛定谔方程和波函数连续条件，可以解出系数代表粒子入射、透射、反射的概率开根号，如<script type="math/tex">\psi_1=Ae^{ikx}+A'e^{-ikx},x<0;\;\psi_2=Be^{k'x}+B'e^{-k'x},0<x<a;\;\psi_3=Ce^{ikx},x>a</script>，其中$k^2=\frac{2mE}{\hbar^2},k’^2=\frac{2m(V_0-E)}{\hbar^2}$<ol>
 <li>概率流密度：以入射波为例，$J_i=|A|^2\hbar k/m$</li>
 <li>反射波系数：$R=|\frac{J_r}{J_i}|=|\frac{A’}{A}|^2=\frac{(k^2+k’^2)^2\sinh^2(k’a)}{(k^2+k’^2)^2\sinh^2(k’a)+4k^2k’^2}$</li>
 <li>透射波强度：$T=|\frac{J_t}{J_i}|=|\frac{C}{A}|^=\frac{4k^2k’^2}{(k^2+k’^2)^2\sinh^2(k’a)+4k^2k’^2}$，$T+R=1$</li>
 </ol>
 </li>
-<li><strong>有限深势阱</strong>：根据定态薛定谔方程、波函数及其一阶导数连续条件、波函数标准条件($x\rightarrow \pm \infin,\psi(x)\rightarrow 0$)，势阱宽为$2a$<ol>
+<li><strong>有限深势阱</strong>：根据定态薛定谔方程、波函数及其一阶导数连续条件、波函数标准条件($x\rightarrow \pm \infty,\psi(x)\rightarrow 0$)，势阱宽为$2a$<ol>
 <li>本征函数：$\psi=\begin{cases}A\sin(kx+\delta), &amp;|x|&lt;a \\<br>Be^{-k’x}, &amp;x&gt;a \\ Ce^{k’x}, &amp;x&lt;-a\end{cases}$，$\delta$可能是$\pi$的整数倍或半整数倍，其中半整数倍时$\psi_S$是偶函数，称为偶宇称；整数倍时$\psi_A$是奇函数，称为奇宇称</li>
 <li>能量本征值：$u=ka,v=k’a$，由两式$\begin{cases}u\cot(u+\delta)=-v \\ u^2+v^2=\frac{2mV_0}{\hbar^2}a^2\end{cases}$，分奇偶宇称可以画图得到能级数与$V_0 a^2$的关系</li>
-<li>无限深势阱：$V_0=\infin$。能量本征值$E_n=\frac{n^2\pi^2\hbar^2}{8ma^2}$，在题中随势阱宽度变化而变化；阱外波函数为0，波函数$\psi_n(x)=\sqrt{\frac{1}{a}}\sin[\frac{n\pi}{2a}(x+a)], \; |x|&lt;a$，在不同题中随势阱对称轴平移</li>
+<li>无限深势阱：$V_0=\infty$。能量本征值$E_n=\frac{n^2\pi^2\hbar^2}{8ma^2}$，在题中随势阱宽度变化而变化；阱外波函数为0，波函数$\psi_n(x)=\sqrt{\frac{1}{a}}\sin[\frac{n\pi}{2a}(x+a)], \; |x|&lt;a$，在不同题中随势阱对称轴平移</li>
 </ol>
 </li>
 <li><strong>线性谐振子</strong>：$V=\frac{1}{2}\mu \omega^2x^2$，$\mu$是谐振子的质量。令$\xi=\sqrt{\mu\omega/\hbar},\lambda=2E/(\hbar\omega)$<ul>
@@ -328,9 +333,9 @@
 </ol>
 <h3 id="例题习题2"><a href="#例题习题2" class="headerlink" title="例题习题2"></a>例题习题2</h3><ol>
 <li>假设$\psi_{lm}(r,\theta,\phi)=\psi(r)$，径向概率密度$W_{lm}=\int |\psi(r)|^2d\Omega=4\pi |\psi(r)|^2,\;d\Omega=\sin\theta d\theta d\phi$</li>
-<li>$\sum_{n \; odd\; from\; 1\; to\; \infin}\frac{1}{n^2}=\frac{\pi^2}{8}$</li>
+<li>$\sum_{n \; odd\; from\; 1\; to\; \infty}\frac{1}{n^2}=\frac{\pi^2}{8}$</li>
 <li>遇到二维各向同性谐振子，可以分离$\psi=\psi(x)\psi(y)$，列两个式子，而$E=E_x+E_y$，它们可以分别有量子数$n_x,n_y$，而能级取决于它们的和</li>
-<li>一维谐振子：$\lang x\rang=0,\lang x^2\rang=(n+1/2)\hbar/(\mu\omega),\lang p\rang=0,\lang p^2\rang=(n+1/2)\mu\omega\hbar$，故$\Delta x=\sqrt{\lang x^2\rang-0},\;\Delta p=\sqrt{\lang p^2\rang - 0}$</li>
+<li>一维谐振子：$\langle x\rangle=0,\langle x^2\rangle=(n+1/2)\hbar/(\mu\omega),\langle p\rangle=0,\langle p^2\rangle=(n+1/2)\mu\omega\hbar$，故$\Delta x=\sqrt{\langle x^2\rangle-0},\;\Delta p=\sqrt{\langle p^2\rangle - 0}$</li>
 <li>类氢原子二体问题：能级出现的质量为折合质量，$\mu=\frac{m_e M}{m_e+M}$，而能级公式为$E_n=-13.6\mu /n^2 eV$</li>
 </ol>
 <h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><h3 id="电子自旋相关"><a href="#电子自旋相关" class="headerlink" title="电子自旋相关"></a>电子自旋相关</h3><ol>
@@ -343,9 +348,9 @@
 <li>$z$方向分量$J_z=m_j\hbar,\;m=-j,…,j$</li>
 <li>两总角动量相加$\overrightarrow{J’}=\overrightarrow{J_1}+\overrightarrow{J_2}, \; J’^2=j’(j’+1)\hbar^2, \; j=|j_1-j_2|,…,j_1+j_2$</li>
 <li><strong>外磁场B中的原子能级分裂</strong>：$\Delta E=-\overrightarrow{\mu_J}\cdot\overrightarrow{B}=-\mu_{jz}B=m_j g_j \mu_B B, \; m_j=-j,-(j-1),…,j-1,j$，朗德g因子$g=1+\frac{j(j+1)-l(l+1)+s(s+1)}{2j(j+1)}$</li>
-<li><strong>塞曼效应</strong>：外磁场条件下原子两个能级间的跃迁存在多重可能性，$h\upsilon’=(E_2-E_1)+(m_{j2}g_2-m_{j1}g_1)\mu_BB,\;\tilde{\upsilon}’-\tilde{\upsilon}=\frac{1}{\lambda’}-\frac{1}{\lambda}=(m_{j2}g_2-m_{j1}g_1)L,\; L=\frac{\mu_B B}{hc}=\frac{eB}{4\pi m_ec}$<ul>
-<li>正常：体系总自旋为0，$g_2=g_1=1$，$h\upsilon’=(E_2-E_1)+\Delta m_j\mu_BB,\;,\Delta m_j=0,\pm 1$，三条谱线</li>
-<li>反常：体系总自旋不为0，偶数条谱线</li>
+<li><strong>塞曼效应</strong>：外磁场条件下原子两个能级间的跃迁存在多重可能性，$h\upsilon’=(E_2-E_1)+(m_{j2}g_2-m_{j1}g_1)\mu_BB,\;\tilde{\upsilon}’-\tilde{\upsilon}=\frac{1}{\lambda’}-\frac{1}{\lambda}=(m_{j2}g_2-m_{j1}g_1)L,\; L=\frac{\mu_B B}{hc}=\frac{eB}{4\pi m_ec}$。似乎能理解了，塞曼效应现象的原因来自电子能级跃迁和电子自旋，其中，正常塞曼效应总自旋为0，只有电子跃迁会影响谱线，即j不跃迁、+1、-1三条线；反常塞曼效应总自旋不为0，自旋方向也会影响谱线，即新增乘2<ul>
+<li>正常：单态谱线在外磁场中的三分裂，体系总自旋为0，$g_2=g_1=1$，$h\upsilon’=(E_2-E_1)+\Delta m_j\mu_BB,\;,\Delta m_j=0,\pm 1$，三条谱线</li>
+<li>反常：非单态谱线在外磁场中的四分裂或六分裂，体系总自旋不为0，偶数条谱线</li>
 </ul>
 </li>
 <li><strong>斯特恩-盖拉赫实验</strong>：碱金属线间距$\Delta z=g\mu_B\frac{\partial B}{\partial z}\frac{dD}{3kT}$，玻尔磁子$\mu_B=\frac{e\hbar}{2m_e}$</li>
@@ -353,22 +358,36 @@
 </li>
 </ol>
 <h3 id="电子组态"><a href="#电子组态" class="headerlink" title="电子组态"></a>电子组态</h3><ol>
-<li><strong>双电子耦合</strong>：如$1s2p$，需要满足<strong>Pauli不相容原理</strong><ol>
-<li><strong>L-S耦合</strong>：双电子组态对应的量子数$L=l_1+l_2,…,|l_1-l_2|, S=s_1+s_2,…,|s_1-s_2|$</li>
-<li><strong>Pauli不相容原理</strong>：同科电子($n,l$相同的电子)$L+S$必为偶数，即$m_l,m_s$必有不同的</li>
+<li><p><strong>双电子耦合</strong>：如$1s2p$，需要满足<strong>Pauli不相容原理</strong></p>
+<ol>
+<li><p><strong>两种电子耦合方式：L-S耦合和j-j耦合</strong></p>
+<p><img src="/images/2025/qbit/image-4.png" alt="alt text"></p>
+<p><img src="/images/2025/qbit/image-5.png" alt="alt text"></p>
+</li>
+<li><strong>Pauli不相容原理</strong>：同科电子($n,l$相同的电子，如1s1s是而1s2p不是)$L+S$必为偶数，即$m_l,m_s$必有不同的</li>
 <li><strong>洪特定则</strong>：同一电子组态形成三重态的能量总比单重态低<ol>
-<li>S越大，能级越低</li>
-<li>S相同，L值越大，能级越低</li>
+<li>S越大，能级越低（电子自旋平行，分据不同轨道取向）</li>
+<li>S相同，L值越大，能级越低（电子自旋相反，轨道取向可相同）</li>
 <li>同科电子，L相同，<ul>
 <li>同科电子数&lt;=闭壳层占有数的一半，J越小，能级越低</li>
 <li>同科电子数&gt;闭壳层占有数的一半，J越大，能级越低</li>
 </ul>
 </li>
+<li><img src="/images/2025/qbit/image-6.png" alt="alt text"></li>
 </ol>
 </li>
 </ol>
 </li>
+<li><img src="/images/2025/qbit/image-7.png" alt="alt text"></li>
 </ol>
+<h3 id="量子比特"><a href="#量子比特" class="headerlink" title="量子比特"></a>量子比特</h3><p><img src="/images/2025/qbit/image-8.png" alt="alt text"></p>
+<p><img src="/images/2025/qbit/image-9.png" alt="alt text"></p>
+<p><img src="/images/2025/qbit/image-10.png" alt="alt text"></p>
+<h3 id="PPT补充"><a href="#PPT补充" class="headerlink" title="PPT补充"></a>PPT补充</h3><p><img src="/images/2025/qbit/image.png" alt="alt text"></p>
+<p><img src="/images/2025/qbit/image-1.png" alt="alt text"></p>
+<p><img src="/images/2025/qbit/image-2.png" alt="alt text"></p>
+<p><img src="/images/2025/qbit/image-3.png" alt="alt text"></p>
+<p><img src="/images/2025/qbit/image-11.png" alt="alt text"></p>
 
       </section>
 
@@ -379,7 +398,7 @@
             <div class="article-nav-item layout-padding">
   <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
     
-      <div class="card-cover" background-image-lazy data-img="./images/2025/algorithm_roadmap.jpg"></div>
+      <div class="card-cover" background-image-lazy data-img="/images/2025/algorithm_roadmap.jpg"></div>
     
     <div class="card-text">
       
