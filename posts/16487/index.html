@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-06-12T16:05:41.093Z" itemprop="dateUpdated">2025-06-13</time>
+              <time  class="article-updated" datetime="2025-06-14T11:46:14.738Z" itemprop="dateUpdated">2025-06-14</time>
             </h2>
           
           
@@ -160,12 +160,13 @@
       
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
-        <h3 id="Time-Complexity"><a href="#Time-Complexity" class="headerlink" title="Time Complexity"></a>Time Complexity</h3>
+        <h3 id="Time-Complexity"><a href="#Time-Complexity" class="headerlink" title="Time Complexity"></a>Time Complexity</h3><!-- 
     <figure class="figure-image">
       <img src="/images/2025/algorithm_master_theorem.png" alt="" loading="lazy" />
       <figcaption></figcaption>
     </figure>
-  
+   -->
+<p><img src="/images/2025/algorithm_master_theorem.png" width="80%" height="80%"></p>
 <h3 id="Divide-and-Conquer"><a href="#Divide-and-Conquer" class="headerlink" title="Divide and Conquer"></a>Divide and Conquer</h3><ol>
 <li>Count Inversions : 把数组分成前后两部分A，B，直接考虑A与B间交叉的逆序对，可以通过将排序后的A、B按序合并来计数，即$i<j,a_i>b_j$，每一次该情况出现都说明有$j-n/2$个逆序对。</li>
 <li>k-th smallest : 使用快排分成三组(M=pivot, R&gt;pivot, L&lt;pivot)<ul>
@@ -244,6 +245,235 @@
 <li>Traveling Salesman Problem：维护$f[S,v]$（$S$为所用节点集合，可以用0和1串的十进制表示，$v$表示终点的最短路），更新规则如下，最终结果为$f[V,v]$，时间复杂度为$O(|V|^2 2^{|V|})$。<script type="math/tex; mode=display">f[S,v]=\min_{k\in V}\{f[S-\{k\},k]+d(k,v)\}</script></li>
 <li>Maximize Independent Set on Trees：独立集是相互间没有边的节点集合。维护$f[v]$（以$v$为根的子树的最大集），更新规则如下。时间复杂度为$O(n)$。<script type="math/tex; mode=display">f[v]=\max \{\sum_{u\in children(v)}f[u], \sum_{u\in grandchildren(v)}f[u]+1\}</script> 也可以贪心地使用DFS，总是选择更靠近叶子的节点，丢弃其父节点。拓扑序可以用二叉树的中序遍历。</li>
 </ul>
+</li>
+</ol>
+<h3 id="Network-Flow"><a href="#Network-Flow" class="headerlink" title="Network Flow"></a>Network Flow</h3><ul>
+<li>Flow Cancellation：找到一条s-t路反向经过有向边时，认为是撤销了这条边上的部分流量。</li>
+<li><strong>Residual Network</strong>：$G\rightarrow G^f \; about \; f$。在原图的基础上，保留每条边的正向流量作为边权值，同时构造反向边，权值为容量-流量。</li>
+</ul>
+<ol>
+<li><p>Maximum Flow Problem：Ford-Fulkerson Algorithm，每次都在残差图上找一条s-t路径，并以路上的最小边权重更新残差图，直到再也找不到s-t路为止。</p>
+<ol>
+<li>边缘情况：图中某两个点间原本就有正反向边，可以加一个点把两条边变成三条边以去除双向。</li>
+<li>收敛性：整数情况下每次至少增加1，会收敛；无理数情况下不一定停止，并且也不一定收敛到正确结果。</li>
+<li>正确性：Max-Flow-Min-Cut Theorem</li>
+<li>时间复杂度：$O(|E|\cdot f_{max})$</li>
+<li><p>应用：关键是<strong>构造可以使用最大流相关算法的图</strong></p>
+<ol>
+<li><p>比赛预测：构造起终点s和t。为让D赢，ABC各有可以赢的最大场数，将这些场数作为它们连接终点t的边权值；再构造A-B\A-C\B-C三个点，以各队间比赛场次与起点s连接，再分别与各自的两队连接。</p>
+<!-- 
+    <figure class="figure-image">
+      <img src="/images/2025/algorithm/2c8dab1c5698bca4dec3d9f5c52d3b8.jpg" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+   -->
+<p><img src="/images/2025/algorithm/2c8dab1c5698bca4dec3d9f5c52d3b8.jpg" width="80%" height="80%"></p>
+</li>
+<li><p>Maximum Bipartite Matching：构造起终点s和t。s连接匹配一方的所有点，边权值为1；t连接另一方；双方边权值可以无穷大。</p>
+<!-- 
+    <figure class="figure-image">
+      <img src="/images/2025/algorithm/801a6913ea897a87bfa16873ff2e6bd.jpg" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+   -->
+<p><img src="/images/2025/algorithm/801a6913ea897a87bfa16873ff2e6bd.jpg" width="80%" height="80%"></p>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li><p>Max-Flow-Min-Cut Theorem：每个s-t割都是一个s-t流的上界，最大流由有最小值的s-t割确定。</p>
+<ol>
+<li>以下两个lemma证明该结论：<ol>
+<li>对任意流和任意s-t割，流$\leq$割：从s流出的流量<script type="math/tex; mode=display">v(f)=f_{ou}(L)-f_{in}(L)\leq f_{ou}(L)=\sum\limits_{(u,v)\in E,u\in L,v\in R}f(u,v)\leq c(L,R)</script></li>
+<li>存在等于Ford-Fulkerson算法结果的s-t割：<ul>
+<li>$f_{ou}(L)=c(L,R)$：跨割L-R方向流量流满，使残差图中正向边找不到s-t路径。</li>
+<li>$f_{in}(L)=0$：跨割R-L方向流量为0，使残差图中构造反向边时找不到s-t路径。</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>找最小割：在已经找到最大流的残差图中，从s出发能够到达的点全在L中，其余点全在<br>R中。<!-- 
+    <figure class="figure-image">
+      <img src="/images/2025/algorithm/061f7ef3bc9d1a1c6f202ebd091a642.jpg" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+   -->
+<img src="/images/2025/algorithm/061f7ef3bc9d1a1c6f202ebd091a642.jpg" width="80%" height="80%"></li>
+<li>二分图的Hall’s Marriage Theorem：$G=(A,B,E)$，当且仅当$\forall S\subseteq A, |S|\leq |N(S)|$时，存在大小为$|A|$的匹配。$S\subseteq A$时，$N(S)$是$B$中与$S$相连的节点数。</li>
+</ol>
+</li>
+<li>Edmonds-Karp Algorithm：与Ford-Fulkerson算法的区别是使用BFS找s-t路<ol>
+<li>BFS：使用BFS相当于以节点跳数为距离由近及远地找路<ul>
+<li>弱单调性：每次寻路过后，$G^f$中下一条s-t路的距离是非减的。</li>
+<li>强单调性：称呼路上限制流量的边为<em>瓶颈</em>。对同一条边(u,v)来说，第一次瓶颈使它反向，而在它第二次瓶颈前必然已经有流量通过(v,u)，即u-v\v-u都被经过了，因此两次(u,v)瓶颈间必使u到s的距离至少增加2.<ul>
+<li>第一次瓶颈$dist^i(v)=dist^i(u)+1$</li>
+<li>第二次瓶颈$dist^{i+j}(u)=dist^{i+j}(v)+1\geq dist^i(u)+2$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>时间复杂度：$O(|V|\cdot |E|^2)$，每次BFS花|E|，距离从0到|V|，因此每条边至多当|V|/2次瓶颈。</li>
+</ol>
+</li>
+<li>Dinitz(Dinic)’s Algorithm：对于残差图，根据节点到s的跳数建立等级图，图中只保留从低等级跨向高等级的边。在等级图中找blocking flow，以此更新流和残差图，循环<ol>
+<li>blocking flow：对等级图从s跑完整的前向DFS，找到s-t路时删除瓶颈边，走到死胡同节点时删除该节点的所有入边</li>
+<li>时间复杂度：$O(|V|^2\cdot |E|)$，由于以下的推导，每次迭代后s-t距离必然增加至少1，而距离最大为|V|，每次DFS花|E|。<ul>
+<li>首先有与Edmonds-Karp推导中相似的弱单调性。</li>
+<li>证明强单调性：由于blocking flow的定义，若在$G^{f_{i+1}}_L$中存在与$G^{f_i}_L$中等长的路径，它一定有后者没有的边。若这条边(u,v)没在前一次残差图中，则(v,u)是瓶颈；若在残差图但没在等级图中，uv必须等级相等或u比v大。因此$dist^i(u)\geq dist^i(v)$，再结合弱单调性：<script type="math/tex; mode=display">\begin{aligned}dist^{i+1}(t)&=dist^{i+1}(u)+1+dist^{i+1}(v,t)\\ &\geq dist^i(u)+1+dist^i(v,t) \\ &\geq dist^i(v)+1+dist^i(v,t) \\ &\geq dist^i(t)+1\end{aligned}</script></li>
+</ul>
+</li>
+<li>最大二分图匹配问题：添加s、t且将所有边权值命为1，跑Dinitz算法。时间复杂度为$O(|E|\cdot \sqrt{|V|})$：先跑$\sqrt{|V|}$轮DFS，此时路径长度已经至少为$\sqrt{|V|}$。又由于权值为1，每条边被至多一条路独占，因此剩下至多$\frac{|V|}{\sqrt{|V|}}=\sqrt{|V|}$条路，最多再跑这么多轮。</li>
+</ol>
+</li>
+</ol>
+<h3 id="Linear-Programming"><a href="#Linear-Programming" class="headerlink" title="Linear Programming"></a>Linear Programming</h3><ul>
+<li><strong>使用强对偶性解最优解</strong>：<ol>
+<li>写原始和对偶LP</li>
+<li>描述两个LP对应的原始问题和对偶问题</li>
+<li>如果问题是离散整数的，需要证明它们有整数最优解</li>
+<li>解对偶LP，再应用强对偶定理</li>
+</ol>
+</li>
+</ul>
+<ol>
+<li>Simplex Method(线性优化问题)：在约束条件造成的凸图形中选一个顶点作为起始点，向目标方向沿着边移动到下一个顶点，直到遇到局部最小值时停止。m个条件、n个变量时，时间复杂度为$\binom{m}{n}$。</li>
+<li>标准形式LP：等式可以写成两个不等式，无约束变量如x可以用$x^+-x^-$($x^+,x^-\geq 0$)替换。把每条边上的流量作为变量，最大流问题可以写成LP。<script type="math/tex; mode=display">\begin{aligned}maximize\; &c^Tx \\ subject \; to\; &Ax\leq b \\ &x\geq 0\end{aligned}</script></li>
+<li>对偶LP(Duality)：primal LP中的每个约束条件对应一个$y_i$，乘以y相加后，不等号右边是新的目标函数，约束条件是不等号左边原变量系数不小于原目标函数中的系数、和非负性。<script type="math/tex; mode=display">\begin{aligned}minimize\; &b^Ty \\ subject\; to\; &y^TA\geq c^T \\ &y\geq 0\end{aligned}</script><ol>
+<li>弱对偶定理：原LP和对偶LP的可行解满足$c^T\hat{x}\leq b^T\hat{y}$。</li>
+<li>强对偶定理：原LP和对偶LP的最优解满足$c^T x^<em>=b^T y^</em>$</li>
+</ol>
+</li>
+<li>LP-Relaxation：<ol>
+<li>Integar Program(IP or ILP)：加一个变量为整数的约束。是NP完全问题。可以先不管整数约束解LP问题得到近似解，再约到整数。</li>
+<li>Minimum Vertex Cover：<ol>
+<li>Vertex Cover：$S\subseteq V$且$S$有所有边的至少一端。</li>
+<li>IP形式：<script type="math/tex; mode=display">\begin{aligned}minimize\; &\sum\limits_{v\in V}x_v \\ subject\; to\; &x_u+x_v\geq 1 \\ &x_v\in \{0,1\}\end{aligned}</script></li>
+<li>Relaxation to LP：$x_v\in {0,1}\rightarrow 0\leq x_v\leq 1$，而$OPT(IP)\geq OPT(LP)$，解LP问题，返回$S={v|x_v^<em>\geq\frac{1}{2}}$。该算法近似为2，因为$OPT=OPT(LP)=\sum\limits_{v\in V}x_v^</em>=\sum\limits_{v:x_v^<em>&lt;1/2}x_v^</em>+\sum\limits_{v:x_v^<em>\geq 1/2}x_v^</em>\geq 0 + \sum\limits_{v:x_v^*\geq 1/2}\frac{1}{2}=\frac{1}{2}\cdot |S|=OPT(IP)$</li>
+<li>对偶问题类似最大二元匹配：Ranking Algorithm，赋予A中所有节点一个0到1间的排序值，B中所有节点greedily选择有最小排序值的相邻节点匹配。期望$E(ALG)\geq (1-1/e)OPT$。</li>
+</ol>
+</li>
+<li>由于强对偶定理只对OPT有效，当且仅当IP及其Dual都有整数最优解时，强对偶定理对它有效。</li>
+<li>整数最优解的条件：标准LP问题中约束条件A是幺模矩阵(unimodular)，当原问题中b为整数则有整数最优解，c为整数则对偶问题有整数最优解。简单来说，LP及其dual均有整数最优解要求A为幺模矩阵、bc为整数。<ul>
+<li>幺模矩阵：每个方形子矩阵的特征值在{0,1,-1}中。</li>
+<li>证明幺模矩阵：归纳法，base是每个元素都是0-1\1，归纳是从k x k到 (k+1) x (k+1)，讨论一行是全0、一个非0、每行都有两个非0则列运算即可。</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>最大流问题：<ol>
+<li>LP形式：<script type="math/tex; mode=display">\begin{aligned}maximize &\sum\limits_{u:(s,u)\in E}f_{su}&(起点流量) \\ subject \; to \; &f_{uv}\leq c_{uv} &(流量与容量) \\ &\sum\limits_{v:(v,u)\in E}f_{vu}-\sum_{w:(u,w)\in E}f_{uw}=0 &(中间节点流量守恒) \\ &f_{uv}\geq 0\end{aligned}</script></li>
+<li>对偶问题：<script type="math/tex; mode=display">\begin{aligned}minimize &\sum\limits_{(u,v)\in E}c_{uv}y_{uv}&(边容量\times 边是否为割) \\ subject \; to \; &y_{su}+z_u\geq 1&(su为割或u在割的s侧) \\ &y_{vt}-z_v\geq 0&(vt为割或v在割的t侧) \\ &y_{uv}-z_u+z_v\geq 0&(中间边为割或两端在割的同一边) \\ &y_{uv}\geq 0\end{aligned}</script></li>
+</ol>
+</li>
+<li>von Neumann’s Minimax Theorem：说明了零和博弈中谁先选择策略不重要，是强对偶定理的引申。<script type="math/tex; mode=display">\max\limits_x\min\limits_y\sum\limits_{i,j}G_{i,j}x_iy_j=\min\limits_y\max\limits_x\sum\limits_{i,j}G_{i,j}x_iy_j</script></li>
+</ol>
+<h3 id="NP-Completeness"><a href="#NP-Completeness" class="headerlink" title="NP-Completeness"></a>NP-Completeness</h3><ul>
+<li>证明某问题(f)NP-complete的标准步骤：<ol>
+<li>证明f是一个NP问题</li>
+<li>选择合适的其他NP-complete问题g作为基准，尽量找相近的</li>
+<li>证明f比g Karp难<ul>
+<li>证明g的yes实例可以对应f的yes实例</li>
+<li>证明g的no实例可以对应f的no实例，更简单的是证明它的逆否命题(contrapositive)，即证明<strong>如果g的实例x可以映射到f的yes实例、x就是g的yes实例</strong></li>
+</ul>
+</li>
+<li>如果已知g但f与g相差甚远，可以再找个中间问题h</li>
+</ol>
+</li>
+</ul>
+<ol>
+<li><p>先备知识：</p>
+<ul>
+<li>常见NP-hard问题：SAT(CNF合取范式)、Vertex Cover、Independent Set、Subset Sum、Hamiltonian Path。</li>
+<li><strong>决定问题</strong>：$f:\sum^*\rightarrow {0,1}$，简单的决定问题应当存在多项式时间内结束的算法$\mathcal A$。</li>
+<li>此处用<strong>图灵机</strong>表示算法，图灵机与常见的C语言式算法总能在同样的问题上有多项式时间算法：<ul>
+<li>纸带：无限内存</li>
+<li>纸带上的移动指针</li>
+<li>符号集</li>
+<li>状态集：算法的不同阶段</li>
+<li>状态转移函数：状态间的转移、移动指针</li>
+<li>开始状态：纸带上写入输入、指针指向纸带头</li>
+<li>终止状态：接受或拒绝<!-- 
+    <figure class="figure-image">
+      <img src="/images/2025/algorithm/a056e05cc37649ff219ed64803bb933.jpg" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+   -->
+<img src="/images/2025/algorithm/a056e05cc37649ff219ed64803bb933.jpg" width="80%" height="80%"></li>
+</ul>
+</li>
+<li><strong>理性搜索问题</strong>：<ul>
+<li>搜索：难</li>
+<li>验证：简单</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>复杂度类</strong>：</p>
+<ul>
+<li><strong>复杂度类P</strong>：存在多项式时间图灵机(算法)的决定问题。常见的P问题如判断图中两点间是否存在路径、判断图中是否可以存在至少为k的流量、判断k是否为质数，这类问题被认为是<em>简单</em>的。</li>
+<li><strong>复杂度类NP</strong>：存在多项式时间内结束的验证图灵机(算法)$\mathcal A(verifier)$的决定问题。常见问题如上述所有NP-hard问题。注意我们的输入还需要包括一个待检结果(certificate，常用y表示)。</li>
+<li>$P\subseteq NP$：可以基于P的算法$\mathcal A$构建忽略y的算法，当P的结果为1时，认为y是空集(零输入)；当结果为0时，对任意y均被拒绝。</li>
+</ul>
+</li>
+<li><strong>Karp Reduction</strong>：一个决定问题f Karp reduce to 另一个决定问题g，即$f\leq_k g$<ol>
+<li>目的：证明一个问题比另一个问题稍难，则能通过已知问题所属的复杂度类推知其他问题的复杂度类。例如$SAT\leq_k 3SAT$</li>
+<li>条件：存在满足多项式时间图灵机$\mathcal A$能转换两个问题的结果，使<ol>
+<li>输入f的yes实例能输出g的yes实例</li>
+<li>输入f的no实例能输出g的no实例</li>
+</ol>
+</li>
+<li>传递性</li>
+<li>最难的问题：<ul>
+<li><strong>NP-hard</strong>：比NP中的所有问题都Karp难</li>
+<li><strong>NP-complete</strong>：比NP中所有问题都Karp难且自身属于NP。<strong>SAT是NP-complete问题</strong>，这是证明许多问题NP-complete的起点，即<strong>比SAT都Karp难的NP问题</strong>必然NP-complete。而解出NP-complete问题意味着NP-complete属于P，即证明了P=NP。</li>
+</ul>
+</li>
+<li>应用：关键是找出两个问题解间的关系<ul>
+<li>Independent Set $\leq_k$ Vertex Cover：G=(V,E)，S是G的独立集时，V-S就是G的顶点覆盖。故结果转换图灵机只需独立集输入实例(G,k)$\rightarrow$顶点覆盖输入(G,|V|-k)，转换后输入Vertex Cover Solver。</li>
+<li>Independent Set $\leq_k$ Clique：只需将前者输入实例的图改为全连接图$\overline{G}$。</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>更多NP-complete问题：<ol>
+<li><strong>Dominating Set</strong>：G中的一个节点集合S，G的节点要么在S中，要么与S中某个节点相邻。可以从Vertex Cover出发，将G在边上新增节点并将旧节点相互全连接得到G’，(G’,y)就是一个Dominating Set的yes实例。</li>
+<li><strong>Hamiltonian Path</strong>：3SAT $\leq_k$ DirectedHamiltonianPath $\leq_k$ HamiltonianPath。<ul>
+<li>3SAT $\leq_k$ DirectedHamiltonianPath：用两个节点的环表示clause，用许多个clause相连(表示该变量在某个clause中)以及出入口来表示一个变量，从入口到出口走一个方向为true、另一个方向为false；此外用通过一个独立于变量外的节点表示该一个3SAT-clause被解决了(被某个变量定为true)，该节点被括号内含有的变量内的双节点环连接，非变量反向连接。<!-- 
+    <figure class="figure-image">
+      <img src="/images/2025/algorithm/59c41b9f05e376e56c692847aeee6fd.jpg" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+   -->
+<img src="/images/2025/algorithm/59c41b9f05e376e56c692847aeee6fd.jpg" width="80%" height="80%"><!-- 
+    <figure class="figure-image">
+      <img src="/images/2025/algorithm/9c875f80e7703cffaec5156eeaf413c.jpg" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+   -->
+<img src="/images/2025/algorithm/9c875f80e7703cffaec5156eeaf413c.jpg" width="50%" height="50%"><!-- 
+    <figure class="figure-image">
+      <img src="/images/2025/algorithm/ad3e5e926b3f04913ab18bb227d48d6.jpg" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+   -->
+<img src="/images/2025/algorithm/ad3e5e926b3f04913ab18bb227d48d6.jpg" width="80%" height="80%"><!-- 
+    <figure class="figure-image">
+      <img src="/images/2025/algorithm/cdba578d052b4063e004d707d7a9176.jpg" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+   -->
+<img src="/images/2025/algorithm/cdba578d052b4063e004d707d7a9176.jpg" width="80%" height="80%"></li>
+<li>DirectedHamiltonianPath $\leq_k$ HamiltonianPath：将有向图转换成无向图，具体是将有向图的一个点拆成三个点分别接收入边、出边和保证经过的中间点。路从出边进来也没事，此时整条路都会反。<!-- 
+    <figure class="figure-image">
+      <img src="/images/2025/algorithm/6378d47081f11d25c51a5f81c1ba36e.jpg" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+   -->
+<img src="/images/2025/algorithm/6378d47081f11d25c51a5f81c1ba36e.jpg" width="80%" height="80%"></li>
+</ul>
+</li>
+</ol>
 </li>
 </ol>
 
