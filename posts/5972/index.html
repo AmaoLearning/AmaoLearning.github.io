@@ -125,6 +125,11 @@
             <time  class="article-date" datetime="2025-06-22T16:00:00.000Z" itemprop="datePublished">2025-06-23</time>
           </h2>
           
+            <h2 class="last-time">
+              <span>最后更新于</span>
+              <time  class="article-updated" datetime="2025-06-26T08:48:07.128Z" itemprop="dateUpdated">2025-06-26</time>
+            </h2>
+          
           
           <ul class="wrap-list dark">
   
@@ -236,7 +241,7 @@
 <ul>
 <li>为规避变换前后点的尺度问题，方程表达为$x_i’\times Hx_i=0\rightarrow A_ih=0\; A_i$为$2\times 9$或$3\times 9$矩阵。其中$h=(H_{11},H_{12},H_{13},…,H_{33})$，由于可以将$H_{33}$标准化为1，或者引入尺度约束$||h||=1$，我们只需要4对二维点8个方程进行求解（最小配置解）。</li>
 <li>超定解：点对大于4时，可以解优化问题$min||Ah||\;subject\;to\;||h||=1$。</li>
-<li><p>算法：计算每对点的矩阵$A_i$，将每个$2\times 9$矩阵组合成一个$2n\times 9$的矩阵$A$。对$A$进行奇异值分解，最小奇异值对应的单位特征向量就是我们需要的解。</p>
+<li><p>算法：计算每对点的矩阵$A_i$，将每个$2\times 9$矩阵组合成一个$2n\times 9$的矩阵$A$。对$A$进行奇异值分解，<strong>最小奇异值对应的单位特征向量就是我们需要的解</strong>。</p>
 <blockquote><p>设$M$为m行n列矩阵，其奇异值分解为$M=U\Sigma V^<em>$，其中$U$为m行m列幺正矩阵（其共轭转置等于其逆），$\Sigma$是m行n列非负实数对角矩阵，$V$为n行n列幺正矩阵（$V^</em>$为其共轭转置）。奇异值$sigma$满足$Mv=\sigma u\; \&amp; \; M^<em>u=\sigma v$，u是$\sigma$的m维单位向量（左奇异向量），v为n维归一化的右奇异向量。$\Sigma$对角线上是M的奇异值，而$U、V$的列分别是左、右奇异向量，同时也分别是$MM^</em>、M^*M$的特征向量。</p>
 <footer><strong>奇异值分解（Singular value decomposition，SVD）</strong></footer></blockquote>
 </li>
@@ -259,6 +264,85 @@
 </ul>
 </li>
 </ul>
+<h2 id="摄像机及其几何模型"><a href="#摄像机及其几何模型" class="headerlink" title="摄像机及其几何模型"></a>摄像机及其几何模型</h2><ol>
+<li>小孔模型：让所有光线只能通过唯一的孔进入暗室到达胶片，消除了模糊。<ul>
+<li>光线进入的通道就是光圈，数值上为焦距 / 针孔直径。</li>
+<li>小孔与成像面的距离，称为焦距，常用单位为毫米或英寸。焦距较小可拍摄广角照片，较大则为长焦照片。</li>
+<li>小孔小到一定程度会因为衍射导致模糊。</li>
+<li>小孔的最佳直径$\phi=\sqrt{2f\lambda}$。</li>
+<li>暗角是因为小孔与相纸四角的距离较远，解决方法之一是将相纸卷曲成椭圆面。</li>
+<li>小孔相机有无限景深，即不论远近的物体清晰度相同，但是容易出现眩光。</li>
+</ul>
+</li>
+<li>透视投影效应<ul>
+<li>近大远小：相似三角形原理，靠近小孔的小物体和远离小孔的大物体在相纸上的投影可能同样大。
+</li>
+</ul>
+</li>
+<li>透视投影几何<ol>
+<li>光线上的空间各点投影为同一图像点，物体间有遮挡。</li>
+<li>点$\rightarrow$点，线$\rightarrow$线或点（经过焦点的线），平面$\rightarrow$平面或线（经过焦点的平面）。距离和角度都可能变化。</li>
+<li>透视投影方程：$(x,y,z)\xrightarrow{投影变换}(f\frac{x}{z},f\frac{y}{z})$，可以写成齐次矩阵形式，透视投影矩阵可以分解成三个阶段，世界到相机坐标系、透视投影矩阵、相机到像素坐标系。<script type="math/tex; mode=display">\begin{bmatrix}1 &0 &0 &0 \\ 0 &1 &0 &0 \\ 0 &0 &\frac{1}{f} &0\end{bmatrix}\begin{bmatrix}x \\ y \\ z \\ 1\end{bmatrix}=\begin{bmatrix}x \\ y \\ \frac{z}{f}\end{bmatrix}\rightarrow(f\frac{x}{z},f\frac{y}{z})</script></li>
+<li>投影分类：<ul>
+<li>透视投影</li>
+<li>弱透视投影：深度不同的点赋予同样的深度，正常透视投影，即透视投影方程中的$z=z_0$。</li>
+<li>正交投影：焦点在无限远处，又称平行投影。$(x,y,z)\xrightarrow{正交投影}(x,y)$。</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>透镜模型<ol>
+<li>透镜将平行光经过偏曲（除了经过镜头中心的）后汇聚于焦点。相比小孔模型能聚焦更多的光线。</li>
+<li>薄透镜的厚度可以忽略。</li>
+<li>薄透镜方程：$\frac{1}\frac{f}=\frac{1}{u}+\frac{1}{v}$。</li>
+<li>景深：不同深度的景物点会聚焦到不同的图像平面，不在成像平面上的聚焦点会投影成一个模糊的圈。景深就是模糊度在容忍范围内的图像平面的距离，景深大即容忍距离大，反之即小。一般光圈越小，聚焦较清晰的范围就越大。</li>
+<li>通过同一视点不同焦距的照片可以通过优化获得三维深度图。<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/3-540-47967-8_2">H. Jin and P. Favaro, 2002</a></li>
+<li>视场（Field of View）：相机能够看到的角度。因为成像平面大小不变，焦距越小，视场越大；反之越小。满足$\psi=\tan^{-1}(\frac{d}{2f})$。
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/2-6.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  </li>
+<li>镜头的缺陷<ul>
+<li>色差：镜头对不同波⻓的光线有不同的折射率,导致彩色边纹。</li>
+<li>球面像差：球状镜头不能完美聚焦，远离光轴的光线聚焦到更近的地方。</li>
+<li>晕影：镜头组中，靠近成像平面的透镜可能将其他光线投影到原本物体的成像点。</li>
+<li>径向畸变：<ul>
+<li>广角镜头或者极短焦距情况下容易出现桶装畸变。这是因为物体影像的放大率相对透镜光轴的距离反相关减少。</li>
+<li>较旧的远摄镜头可能出现枕状畸变。这是因为物体影像的放大率相对透镜光轴的距离正相关增加。</li>
+<li>变焦镜头的视野末端可能出吓吓你胡状畸变。是前两种的混合，通常是靠近影像中心处为桶状，往外慢慢变成枕状。
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/2-7.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  </li>
+</ul>
+</li>
+<li>切向畸变：镜头中物理透镜未完全与成像平面平行。  </li>
+</ul>
+</li>
+<li>数码相机的数字图像失真：<ul>
+<li>噪声：光线暗或光纤敏感度ISO增加时的噪点（通常可近似为高斯噪声）、坏点。</li>
+<li>图像处理：过度锐化的光晕、压缩失真、散焦效应。</li>
+<li>颜色失真：紫晕、白平衡。</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>摄像机模型<ol>
+<li>在透视投影方程的基础上，考虑将坐标转换为数字图像平面的坐标，即原点在图片的左下角，且x、y方向像素数可能不同，则$(x,y,z)\xrightarrow{摄像机变换}(m_xf\frac{x}{z}+p_x,m_yf\frac{y}{z}+p_y)$，这里$m_x,m_y$分别为x、y轴单位距离上的像素数，可以用$\alpha$代替$mf$，$K$为相机内参数矩阵，<script type="math/tex; mode=display">x=K[I|0]X_{cam},\; K=\begin{bmatrix}\alpha_x &0 &x_0 \\ 0 &\alpha_y &y_0 \\ 0 &0 & 1\end{bmatrix}</script></li>
+<li>考虑偏斜时，总自由度为5<script type="math/tex; mode=display">K=\begin{bmatrix}\alpha_x &s &x_0 \\ 0 &\alpha_y &y_0 \\ 0 &0 & 1\end{bmatrix}</script></li>
+<li>将物体从世界坐标系转换到相机坐标系的矩阵为相机外参数矩阵，其中$R$为旋转矩阵，$\widetilde{C}$为平移向量，即<script type="math/tex; mode=display">x_{cam}=\begin{bmatrix}R &-R\widetilde{C} \\ 0 & 1\end{bmatrix}x</script></li>
+<li>相机矩阵为3乘4齐次矩阵，且左三列3乘3矩阵非奇异<script type="math/tex; mode=display">P=KR[I|-\widetilde{C}]</script>相机中心$C$，则$PC=0$。</li>
+<li>相机矩阵P的计算，相机的标定就是得到P\相机的内外参数的过程<ul>
+<li>最小配置解：$x_i=PX_i\rightarrow Ap=0$其中$p$为P的12个元素，自由度为11，A为$2n \times 12$矩阵，因此最小配置解需要5.5对点。之后进行SVD分解，最小奇异值对应的右奇异向量就是p。</li>
+<li>前面提到过的黄金标准算法（Gold Standard error）等。</li>
+</ul>
+</li>
+<li>畸变矫正：常用Brown-Corady模型建模相机畸变，并且直接在图像平面上进行去畸变，具体来说<script type="math/tex; mode=display">\begin{aligned}&x_u=x_d+(x_d-x_c)(K_1 r^2+K_2 r^4+...)+(P_1(r^2+2(x_d-x_c)^2)+2P_2(x_d-x_c)(y_d-y_c))(1+P_3r^2+P_4r^4+...) \\&y_u=y_d+(y_d-y_c)(K_1 r^2+K_2 r^4+...)+(P_2(r^2+2(y_d-y_c)^2)+2P_1(x_d-x_c)(y_d-y_c))(1+P_3r^2+P_4r^4+...) &\end{aligned}</script>其中$(x_d,y_d),(x_u,y_u),(x_c,y_c)$分别为有畸变、去畸变和畸变中心的坐标，$K_n,P_n$分别为径向、切向畸变系数，$r^2=(x_d-x_c)^2+(y_d-y_c)^2$即像素坐标到畸变中心的距离半径的平方。</li>
+</ol>
+</li>
+</ol>
 
       </section>
 
