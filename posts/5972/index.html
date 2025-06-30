@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-06-26T08:48:07.128Z" itemprop="dateUpdated">2025-06-26</time>
+              <time  class="article-updated" datetime="2025-06-30T12:27:34.049Z" itemprop="dateUpdated">2025-06-30</time>
             </h2>
           
           
@@ -264,7 +264,7 @@
 </ul>
 </li>
 </ul>
-<h2 id="摄像机及其几何模型"><a href="#摄像机及其几何模型" class="headerlink" title="摄像机及其几何模型"></a>摄像机及其几何模型</h2><ol>
+<h2 id="摄像机及其几何模型"><a href="#摄像机及其几何模型" class="headerlink" title="摄像机及其几何模型"></a>摄像机及其几何模型</h2><h3 id="单目几何模型"><a href="#单目几何模型" class="headerlink" title="单目几何模型"></a>单目几何模型</h3><ol>
 <li>小孔模型：让所有光线只能通过唯一的孔进入暗室到达胶片，消除了模糊。<ul>
 <li>光线进入的通道就是光圈，数值上为焦距 / 针孔直径。</li>
 <li>小孔与成像面的距离，称为焦距，常用单位为毫米或英寸。焦距较小可拍摄广角照片，较大则为长焦照片。</li>
@@ -340,6 +340,128 @@
 </ul>
 </li>
 <li>畸变矫正：常用Brown-Corady模型建模相机畸变，并且直接在图像平面上进行去畸变，具体来说<script type="math/tex; mode=display">\begin{aligned}&x_u=x_d+(x_d-x_c)(K_1 r^2+K_2 r^4+...)+(P_1(r^2+2(x_d-x_c)^2)+2P_2(x_d-x_c)(y_d-y_c))(1+P_3r^2+P_4r^4+...) \\&y_u=y_d+(y_d-y_c)(K_1 r^2+K_2 r^4+...)+(P_2(r^2+2(y_d-y_c)^2)+2P_1(x_d-x_c)(y_d-y_c))(1+P_3r^2+P_4r^4+...) &\end{aligned}</script>其中$(x_d,y_d),(x_u,y_u),(x_c,y_c)$分别为有畸变、去畸变和畸变中心的坐标，$K_n,P_n$分别为径向、切向畸变系数，$r^2=(x_d-x_c)^2+(y_d-y_c)^2$即像素坐标到畸变中心的距离半径的平方。</li>
+</ol>
+</li>
+</ol>
+<h3 id="双目与对极几何模型"><a href="#双目与对极几何模型" class="headerlink" title="双目与对极几何模型"></a>双目与对极几何模型</h3><ol>
+<li>双目系统的几何结构<ul>
+<li>基线（Baseline）：两个光学中心的连线。</li>
+<li>对极点（Epipole）：基线与图像平面的交点。</li>
+<li>对极平面（Epipolar plane）：包含基线的平面。所有对极线在对极点交汇。</li>
+<li>对极线（Epipolar line）：对极平面与图像平面的交线。</li>
+</ul>
+</li>
+<li>双目系统的几何约束 
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/3-1.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+<ul>
+<li>基本矩阵F <ul>
+<li>描述：F表示对极几何中点与对极线的对应，即上图中$x\Xrightarrow{F} l’$。</li>
+<li>几何推导：如上图，假设在相机坐标系下，有转换关系$x’=H_{\pi}x$，故对极线与对极点则有$l’=e’\times x’=[e’]_{\times} H_{\pi} x=Fx$，$F=[e’]_{X}H_{\pi}=e\times H_{\pi}$即基本矩阵。<blockquote>
+<p>$[e’]_{\times}$定义为形如</p>
+<script type="math/tex; mode=display">\begin{bmatrix}0 &-e_3 &e_2 \\ e_3 &0 &-e_1 \\ -e_2 &e_1 &0\end{bmatrix}</script><p>的负对称矩阵，与它相乘相当于与e’叉乘(<em>Multiple view geometry in cv P581</em>)</p>
+</blockquote>
+</li>
+<li>代数推导：$F=[e’]_{\times}P’P^+$，$P^+$是P的伪逆矩阵。假设已知原点在左边相机中心$P=K[I|0],\;P’=K’[R|t]$，则$P^+=\begin{bmatrix}[K^{-1} \\ 0]\end{bmatrix}\; C=(0^T,\; 1)^T$，有<script type="math/tex; mode=display">F=[P'C]_{\times}P'P^+=[K't]_{\times}K'RK^{-1}=K'^{-T}[t]_{\times}RK^{-1}</script></li>
+<li>性质：<ol>
+<li>3乘3矩阵，由于$[e’]_{\times}$秩为2，故秩为2，7个自由度。</li>
+<li>$l=F^Tx’$</li>
+<li>对极约束：x’在l’上：$x’^Tl’=x’^TFx=0$</li>
+<li>$Fe=[e’]\times H_{\pi}e=[e’]\times e’=0$，同理$F^Te’=0$，因此e和e’分别是F和F转置的零空间。</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>本质矩阵E<ul>
+<li>推导：当K已知时，归一化坐标$\hat{x}=K^{-1}x=K^{-1}PX=[R|t]X$。当世界坐标系零点在左相机中心时，归一化相机矩阵$P=[I|0],\; P’=[R|t]$。则该系统的基础矩阵为$E=[t]_{\times}R=R[R^Tt]_{\times}$，又称为本质矩阵。</li>
+<li>性质：<ol>
+<li>3乘3矩阵，秩为2，5个自由度</li>
+<li>$E=K’^TFK$</li>
+<li>$\hat{x’}^TE\hat{x}=0$</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>解决问题<ol>
+<li>给定图像中的一个点x，如何约束另一幅图像中的对应点x’：$x’Fx=0$</li>
+<li>给定一组对应点（x，x’），如何得到P，P’：先用点对应算出基础矩阵，再从基础矩阵中算出P与P’<ol>
+<li>8点法：把对极约束方程写成$Af=0$的形式，对A进行SVD分解，f就是V的最后一列。</li>
+<li>Gold Standard：8点法得到F的初值，最小化重投影误差联合优化空间点X和F</li>
+</ol>
+</li>
+<li>前面全已知，计算对应空间点X<ol>
+<li>三角定位：x’与x存在测量误差，因此图像点不满足摄像机投影方程和对极约束，反向射线不会交于一点。</li>
+<li>直接线性法：$x\times (PX)=\begin{bmatrix}yp^3-p^2 \\ p^3-xp^1 \\ xp^2-yp^1\end{bmatrix}X=0$，接着用SVD解。</li>
+<li>光束法（Bundle adjustment）：$Q(a_i,b_j)$是点i在图片j上的预测投影点，d计量其与真实点的欧氏距离。$v_{ij}$表示点i在j上是否能被看到，$a_j$表示相机参数，$b_i$表示点坐标<script type="math/tex; mode=display">\min_{a_j,b_i}\sum\nolimits^n_{i=1}\sum\nolimits^m_{j=1}v_{ij}d(Q(a_j,b_i),x_{ij})^2</script></li>
+</ol>
+</li>
+</ol>
+</li>
+<li>立体视觉深度估计<ol>
+<li>概念<ul>
+<li>深度：摄像机中心导场景点的距离，或者Z坐标分量。</li>
+<li>立体视觉（Stereo）：通过三维点在两幅图像中的位置差异计算场景深度的视觉技术。</li>
+</ul>
+</li>
+<li>简单立体视觉系统的几何结构：  
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/3-2.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+<ul>
+<li>目标：假设光轴平行、相机参数已知，希望通过图像坐标点的对应恢复三维点的深度。</li>
+<li>由相似三角形原理，$Z=\frac{bf}{d}=\frac{bf}{b-X_L+X_R}$</li>
+</ul>
+</li>
+<li>对极约束的作用：空间点P与两个相机中心确定了对极平面，P的投影点一定在相机成像平面与对极平面的交线上。这能够缩小对应点的搜索空间。</li>
+<li>立体视觉图像矫正<ol>
+<li>目的：使光轴平行，且图像平面平行于基线，此时对极线就是图像的一行。需要求出两个图像重投影的单应变换。</li>
+<li>步骤：将图像2的对极点映射到水平方向的无穷远点(1,0,0)（对应于两图像平面平行）得到变换H’，再用最小二乘法求解图像1的变换H，最终用变换矩阵重采样。<ul>
+<li>H’求法：<script type="math/tex">\begin{aligned}H'=T_1T_2T_3 ,\; &T_1=\begin{bmatrix}1 &0 &-\delta_x \\ 0 &1 &-\delta_y \\ 0 &0 &1\end{bmatrix} \\ \theta=\arctan2[e_y,e_x],\; &T_2=\begin{bmatrix}\cos(-\theta) &-\sin(-\theta) &0 \\ \sin(-\theta) &\cos(-\theta) &0 \\ 0 &0 &1\end{bmatrix} \\ &T_3=\begin{bmatrix}1 &0 &0 \\ 0 &1 &0 \\ -1/e_x &0 &1\end{bmatrix}\end{aligned}</script></li>
+<li>H求法：当H与H’相匹配时，由基础矩阵$F=[e’]_{\times}M$，H需要满足<script type="math/tex">H=(I+H'e'a^T)H'M</script><br>式中$H’e’=(1,0,0)^T$，则$H_A=\begin{bmatrix}a &amp;b &amp;c \\ 0 &amp;1 &amp;0 \\ 0 &amp;0 &amp;1\end{bmatrix},\; H=H_AH’M$</li>
+<li>最小化视差：$\min_{a,b,c}\sum\nolimits_i d(Hx_i, H’x_i’)^2$</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>立体视觉匹配：利用相似度、唯一性、顺序、视差梯度等软约束找匹配点<ol>
+<li>局部法-密集对应搜索：对于图1对极线上的每个窗口，在图2相同对极线上逐窗口寻找代价最小的位置。代价的一种比较方式是比较窗口向量$w$减去平均值$\overline{w}$后两向量$w-\overline{w},\;w’-\overline{w}’$间的角度，即求余弦值。</li>
+<li>基于相关的窗口匹配：PPT有点简略，暂时没在书上找到，欢迎在评论区补充。<blockquote>
+<p>窗口大小分析：窗口大$\rightarrow$细节少、噪声少；窗口小$\rightarrow$细节多、噪声多。可以改进为自适应的窗口大小。</p>
+</blockquote>
+</li>
+<li>能量最小化问题：找到视差d，使其能最小化能量函数$E(d)=\sum\nolimits_{(x,y)\in I}C(x,y,d(x,y))$。<blockquote>
+<p>Disparity Space Image(DSI)评价两张图片中某一行每个像素的匹配得分，坐标为(i, j)，即同一行左图第i个像素与右图第j个像素的匹配。</p>
+<ul>
+<li>单像素匹配：在DSI的每一列独立选择最小的匹配方式。</li>
+<li>平滑匹配：能量函数中除匹配代价外加入平滑代价，如临近4个点的L1视差距离、临近8个点的匹配之和等。</li>
+<li>扫描线法动态规划：有了DSI，其实每一行的匹配问题就成了找一条从DSI图左上角到右下角的最小代价路径，并且该路径尽量不会造成阻塞（occlusion）。常见算法和阻塞解决办法见<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%BB%B4%E7%89%B9%E6%AF%94%E7%AE%97%E6%B3%95">Viterbi算法</a>和<a target="_blank" rel="noopener" href="https://www.cse.psu.edu/~rtc12/CSE486/lecture09.pdf">Stereo Algorithms</a>
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/3-3.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  </li>
+</ul>
+</blockquote>
+</li>
+<li>遮挡问题：可以利用视差梯度约束，顺序约束等<blockquote>
+<p>其他挑战性问题：</p>
+
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/3-4.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  </blockquote>
+</li>
+</ol>
+</li>
+<li>主动立体视觉：<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Structured_light">结构光</a>，通过将光图案投射到物体表面来测量三维物体形状和深度的方法。图案可以是条纹、网格或点。投影图案的变形通过三角测量揭示物体的立体几何形状，从而创建物体的3D模型。</li>
 </ol>
 </li>
 </ol>
