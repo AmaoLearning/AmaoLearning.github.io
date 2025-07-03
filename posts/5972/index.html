@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-06-30T12:27:34.049Z" itemprop="dateUpdated">2025-06-30</time>
+              <time  class="article-updated" datetime="2025-07-03T01:57:24.617Z" itemprop="dateUpdated">2025-07-03</time>
             </h2>
           
           
@@ -294,7 +294,7 @@
 <li>透镜模型<ol>
 <li>透镜将平行光经过偏曲（除了经过镜头中心的）后汇聚于焦点。相比小孔模型能聚焦更多的光线。</li>
 <li>薄透镜的厚度可以忽略。</li>
-<li>薄透镜方程：$\frac{1}\frac{f}=\frac{1}{u}+\frac{1}{v}$。</li>
+<li>薄透镜方程：$\frac{1}{f}=\frac{1}{u}+\frac{1}{v}$。</li>
 <li>景深：不同深度的景物点会聚焦到不同的图像平面，不在成像平面上的聚焦点会投影成一个模糊的圈。景深就是模糊度在容忍范围内的图像平面的距离，景深大即容忍距离大，反之即小。一般光圈越小，聚焦较清晰的范围就越大。</li>
 <li>通过同一视点不同焦距的照片可以通过优化获得三维深度图。<a target="_blank" rel="noopener" href="https://link.springer.com/chapter/10.1007/3-540-47967-8_2">H. Jin and P. Favaro, 2002</a></li>
 <li>视场（Field of View）：相机能够看到的角度。因为成像平面大小不变，焦距越小，视场越大；反之越小。满足$\psi=\tan^{-1}(\frac{d}{2f})$。
@@ -358,9 +358,9 @@
     </figure>
   
 <ul>
-<li>基本矩阵F <ul>
-<li>描述：F表示对极几何中点与对极线的对应，即上图中$x\Xrightarrow{F} l’$。</li>
-<li>几何推导：如上图，假设在相机坐标系下，有转换关系$x’=H_{\pi}x$，故对极线与对极点则有$l’=e’\times x’=[e’]_{\times} H_{\pi} x=Fx$，$F=[e’]_{X}H_{\pi}=e\times H_{\pi}$即基本矩阵。<blockquote>
+<li>基本矩阵F<ul>
+<li>描述：F表示对极几何中点与对极线的对应，即上图中$x\xrightarrow{F} l’$。</li>
+<li>几何推导：如上图，假设在相机坐标系下，有转换关系$x’=H_{\pi}x$，故对极线与对极点则有$l’=e’\times x’=[e’]_{\times} H_{\pi} x=Fx$，$F=[e’]_{\times}H_{\pi}=e’\times H_{\pi}$即基本矩阵。<blockquote>
 <p>$[e’]_{\times}$定义为形如</p>
 <script type="math/tex; mode=display">\begin{bmatrix}0 &-e_3 &e_2 \\ e_3 &0 &-e_1 \\ -e_2 &e_1 &0\end{bmatrix}</script><p>的负对称矩阵，与它相乘相当于与e’叉乘(<em>Multiple view geometry in cv P581</em>)</p>
 </blockquote>
@@ -396,7 +396,7 @@
 </li>
 <li>前面全已知，计算对应空间点X<ol>
 <li>三角定位：x’与x存在测量误差，因此图像点不满足摄像机投影方程和对极约束，反向射线不会交于一点。</li>
-<li>直接线性法：$x\times (PX)=\begin{bmatrix}yp^3-p^2 \\ p^3-xp^1 \\ xp^2-yp^1\end{bmatrix}X=0$，接着用SVD解。</li>
+<li>直接线性法：$\begin{bmatrix}x\times (PX) \\ x’ \times (P’X)\end{bmatrix}=\begin{bmatrix}xp^3-p^1 \\ yp^3-xp^2 \\ x’p’^3-p’^1 \\ y’p’^3-p’^2\end{bmatrix}X=0$，接着用SVD解。</li>
 <li>光束法（Bundle adjustment）：$Q(a_i,b_j)$是点i在图片j上的预测投影点，d计量其与真实点的欧氏距离。$v_{ij}$表示点i在j上是否能被看到，$a_j$表示相机参数，$b_i$表示点坐标<script type="math/tex; mode=display">\min_{a_j,b_i}\sum\nolimits^n_{i=1}\sum\nolimits^m_{j=1}v_{ij}d(Q(a_j,b_i),x_{ij})^2</script></li>
 </ol>
 </li>
@@ -465,6 +465,118 @@
 </ol>
 </li>
 </ol>
+<h2 id="局部特征的检测与描述"><a href="#局部特征的检测与描述" class="headerlink" title="局部特征的检测与描述"></a>局部特征的检测与描述</h2><h3 id="检测"><a href="#检测" class="headerlink" title="检测"></a>检测</h3><ol>
+<li>边缘<ol>
+<li>因素：表面法线、深度、表面颜色、光照不连续。</li>
+<li>特征：像素值突变，或者进一步导数（差分滤波）先向下突变、再向上突变。</li>
+<li>问题：<ol>
+<li>噪声：取图像的一行，像素值突变处处都是，差分滤波响应强。解决方法是将图像先通过平滑滤波器（如跟高斯函数卷积），要求差分图像则可以与高斯函数的导数卷积（卷积的导数等于卷积其中一个导数）。
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/4-1.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  </li>
+<li>平滑求导：去除噪声，但是模糊了边缘。滤波器大小不同也会有不同效果。</li>
+</ol>
+</li>
+<li>边缘检测器<ol>
+<li>Canny：高斯一阶导数接近优化信噪比和定位乘积算子。高斯滤波核的大小会影响检测边缘的尺度、细节、平滑度。应用广泛。<ul>
+<li>分别用xy方向的高斯滤波器对图像滤波</li>
+<li>用差分计算梯度的大小和方向，即$E_s,\; E_0$两张图</li>
+<li>非最大抑制，对每个像素[i, j]，确定最接近$E_0[i,\;j]$的$0^o,45^o,90^o,135^o$中的一个方向$d_k$。沿着该方向查看[i, j]的两个近邻，如果$E_s[i,\;j]$大于两个近邻，$I_N[i,\;j]=E_s[i,\;j]$，否则等于0。输出图像$I_N$是细化后的边缘。</li>
+<li>双阈值边缘连接。选择阈值$T_H, \; T_L$，对每个未处理的边缘点$I_N[i,\;j]$，如果它大于$T_H$就继续沿着边缘追踪；如果它大于$T_L$且与已被处理为边缘的点邻接，就把它也作为边缘点，继续追踪；如果都小于就重新定位。这种方法称为滞后阈值法（Hysteresis thresholding）。</li>
+</ul>
+</li>
+<li>Laplacian of Gaussian（LoG）：用高斯滤波平滑图像，再用拉普拉斯算子增强边缘，最后检测二阶导数的过零点。<script type="math/tex; mode=display">\begin{aligned}h(x,y)&=\Delta[g(x,y)*f(x,y)] \\&=[\Delta g(x,y)]* f(x,y) \\ \Delta g(x,y)&=(\frac{x^2+y^2-2\sigma^2}{\sigma^4})e^{-(x^2+y^2)/2\sigma^2} \\ \Delta &=\nabla^2=\frac{\partial^2}{\partial x^2}+\frac{\partial^2}{\partial y^2}\end{aligned}</script></li>
+</ol>
+</li>
+</ol>
+</li>
+<li>点<ol>
+<li>局部特征的主要部分：<ol>
+<li>用处：通过检测找到一组关键点，以关键点为中心建立局部邻域的向量表示，从而通过计算特征向量的距离找到两幅图中的对应。</li>
+<li>好的局部特征：<ul>
+<li>重复性——不同图像中有、反复检测到</li>
+<li>显著性——独特</li>
+<li>紧凑性——数量少</li>
+<li>局部性——图像中的一小片区域，对遮挡和复杂背景有鲁棒性</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>角点检测：滑动窗口，包含角点的滑窗向任何方向移动都会引起灰度值的显著改变。<ol>
+<li>Harris方法：偏移量带来的改变由下式表示<ul>
+<li>理论：<script type="math/tex; mode=display">E(u,v)=\sum\nolimits_{x,y}w(x,y)(I(x+u,y+v)-I(x,y))^2</script> $w(x,y)$窗口函数使用高斯函数来平滑图像。Taylor展开得到<script type="math/tex; mode=display">\begin{aligned}E(u,v)&\approx\sum\nolimits_{x,y}w(x,y) [uI_x+vI_y]^2\\ &=(u,v)\sum\nolimits_{x,y}w(x,y)\begin{bmatrix}I_x^2 &I_xI_y \\ I_yI_x &I_y^2\end{bmatrix}(u,v)^T\end{aligned}</script> 令$M=\sum\nolimits_{x,y}w(x,y)\begin{bmatrix}I_x^2 &amp;I_xI_y \\ I_yI_x &amp;I_y^2\end{bmatrix}$，称为结构张量，它的两个特征值指示了两个方向的灰度变化情况，一个较大说明有边，两个都大说明有角点。 
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/4-2.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+ 可以用测度$R=\det M-k(trace M)^2$，其中$\det M=\lambda _1\lambda_2$来衡量，R负且绝对值大为边缘、绝对值小为平坦区域、R正且大为角点。</li>
+<li>算法 
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/4-3.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  </li>
+<li>性质：<ul>
+<li>不变性：光照变化时角点位置不变</li>
+<li>共变性：几何变换前后同一角点仍能被检测到</li>
+<li>对变化的尺度和剪切变换则不具有上述性质，原来的角点放大后可能是边</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>尺度不变检测：<ul>
+<li>解决在尺度不同的两张图中分别找到合适的窗口大小：自动尺度选择算法，即为同一像素点定义不同大小的窗口，并通过响应函数f计算响应值，响应的极值点认为是最合适的窗口，由此可以将两张图片的尺寸归一化。</li>
+<li>定义响应函数f，使之作用在不同窗口大小能获得相同的值，此外还需要有稳定且容易找到的极值点。通常是求不同$\sigma$的金字塔特征图。<ol>
+<li>LoG：改变$\sigma$，乘一个$\sigma^2$来归一化尺寸，求局部特征值。</li>
+<li>SIFT（DoG）：求$k\sigma$与$(k+1)\sigma$标准差下的高斯模糊差，不求导数，是对LoG的近似。</li>
+<li>Harris-Laplace：在不同尺度上计算Harris角点，再用LoG方法求响应。</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>仿射不变检测：<ul>
+<li>检测器再仿射变形前后的响应具有一致性</li>
+<li>最大稳定极值区域（MSER）：在所有的灰度值上设定阈值生成二值图像，当阈值改变时，监测每个连通域的面积，那些面积改变的最小的连通域定义为MSER。</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><p>局部特征描述向量：以兴趣点为中心的图像块。</p>
+<ol>
+<li>最简单方法：将块内像素排列起来，形成向量。缺点是对小的平移和旋转敏感。</li>
+<li>Scale Invariant Feature Transform（SIFT）描述子：对一个小块，根据梯度方向将像素放到相应的向量维度上，生成梯度方向与数量直方图。多个直方图的方形集合即描述子。4 <em> 4共16个子块，8个梯度方向区间，即8 </em> 16共128维向量。<ol>
+<li>旋转不变性：以图像块梯度的主导方向为基准进行旋转，从而将块特征对齐到规范方向。<ul>
+<li>SIFT方向估计与归一化：选择主导方向并旋转到固定方向，在直方图上体现为横坐标整体移动。</li>
+</ul>
+</li>
+<li>光照不变性：<ul>
+<li>在梯度空间计算，故对同一的光照变化量对鲁棒性；</li>
+<li>向量归一化到0-1，则对乘数有鲁棒性；</li>
+<li>将大于0.2的向量分量置为0.2并重新归一化，对部分非线性光照变化有鲁棒性。</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>Gradient Location and Orientation Histogram（GLOH）描述子：log极坐标空间中，用径向半径为6、11、15的1、8、8共17个容器，每个容器内像素按照16个梯度方向计算直方图，故得到一个16 * 17共272维向量；再PCA降维到与SIFT相同的128维。</li>
+<li>Histogram of Oriented Histogram（HOG）：R-HOG相当于在密集网格中、无需方向对齐的SIFT，C-HOG则径向分容器。对直立人体识别效果较好。</li>
+<li>Shape Context：以某点为中心，计算其他点到该点log-极坐标径向距离的直方图。形状匹配，此外还有$X^2$ distance。检测边缘不可靠时，用高斯函数滤波效果更好。</li>
+<li>二分图匹配：最小化两个点集的匹配总代价。</li>
+<li>Local Binary Pattern（LBP）二值特征：对每个像素，将邻近的8个像素与它进行比较，值比它大记为1，否则记为0，用8 bit数记录这个像素。在16 * 16网格中计算这种8 bit数的直方图。二值特征还有BRIEF、ORB、BRISK等。</li>
+</ol>
+<h3 id="匹配"><a href="#匹配" class="headerlink" title="匹配"></a>匹配</h3><p>特征匹配指标：欧氏距离、向量的余弦相似度。同一特征由于在图上可能有重复或者相似较高的其他特征，需要根据指标选择最佳匹配。</p>
+<ul>
+<li>最近邻匹配：计算特征空间距离，然后<ul>
+<li>去掉高于阈值的点。</li>
+<li>或者计算最近邻距离与次近邻距离的比值，去掉趋近0的值。</li>
+</ul>
+</li>
+</ul>
 
       </section>
 
