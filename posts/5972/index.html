@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-07-03T01:57:24.617Z" itemprop="dateUpdated">2025-07-03</time>
+              <time  class="article-updated" datetime="2025-07-07T08:08:57.026Z" itemprop="dateUpdated">2025-07-07</time>
             </h2>
           
           
@@ -577,6 +577,78 @@
 </ul>
 </li>
 </ul>
+<h3 id="运动特征——光流"><a href="#运动特征——光流" class="headerlink" title="运动特征——光流"></a>运动特征——光流</h3><ol>
+<li>运动估计方法：<ul>
+<li>基于稀疏特征的方法：点对应，适合图像运动较大的场景</li>
+<li>密集的像素级运动估计：亮度变化，适合图像运动较小</li>
+</ul>
+</li>
+<li><p>运动场：</p>
+<ul>
+<li>运动视差：运动向量距离摄像头越近在图像上的投影越长、 
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/4-4.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  </li>
+<li><p>光流：亮度模式的显著运动。此运动可能也是由光照变化造成的。</p>
+<ul>
+<li>估计假设：<ul>
+<li>亮度恒常：相同点投影在帧间看起来相同</li>
+<li>微小运动：运动幅度小</li>
+<li>空间一致：局部邻域内的点运动相近</li>
+</ul>
+</li>
+<li><p>光圈问题：由于视野狭窄造成的运动方向误判，如理发店的旋转杆。解决方法如下是用一个局部的复数像素避免移动方向上的歧义，Lukas-Kanade算法。</p>
+
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/4-5.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+<blockquote><p>$A^TA$可逆，特征值不是太小，非病态矩阵（特征值之比不是太大）。特征值的特征表现在图上：</p>
+<ul>
+<li>一大一小：物体边缘。某方向运动很快。</li>
+<li>都小：纹理稀疏区域。运动很小。</li>
+<li>都大：纹理密集区域。运动很大。</li>
+</ul>
+<footer><strong>该方程有解的条件</strong></footer></blockquote></li>
+<li>小运动假设不满足时：降低分辨率，Coarse-to-fine分辨率金字塔估计</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="图像视觉表示"><a href="#图像视觉表示" class="headerlink" title="图像视觉表示"></a>图像视觉表示</h2><ol>
+<li>历史上的图像表示：<ul>
+<li>元像素：所有像素值顺序连接成1维向量。缺点有需要严格对齐，无法处理遮挡，尺度、视角鲁棒性。</li>
+<li>颜色直方图：优点有对对齐、尺度、旋转等鲁棒性，缺点有空间位置信息缺失。因此有引入分块来克服该局限，不确定分块尺度则可以使用尺度金字塔。
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/4-6.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  </li>
+<li>梯度直方图</li>
+</ul>
+</li>
+<li>视觉词袋表示（<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~efros/courses/LBMV07/Papers/csurka-eccv-04.pdf">2004</a>）：来自文本处理中的词袋模型，关键为统计字典中词汇频率。视觉表示中将纹理元视为词汇。<ul>
+<li>步骤<ol>
+<li>视觉特征采样：原文中使用SIFT
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/4-7.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  </li>
+<li>学习字典元：支持向量机等</li>
+<li>特征向量量化到字典元</li>
+<li>统计字典元直方图</li>
+</ol>
+</li>
+<li>缺点：空间位置信息缺失，解决同样为尺度金字塔统计。</li>
+<li>应用：图像索引与检索等</li>
+</ul>
+</li>
+</ol>
 
       </section>
 
