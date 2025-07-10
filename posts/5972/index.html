@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-07-07T08:08:57.026Z" itemprop="dateUpdated">2025-07-07</time>
+              <time  class="article-updated" datetime="2025-07-10T08:50:45.311Z" itemprop="dateUpdated">2025-07-10</time>
             </h2>
           
           
@@ -631,7 +631,8 @@
 <li>梯度直方图</li>
 </ul>
 </li>
-<li>视觉词袋表示（<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~efros/courses/LBMV07/Papers/csurka-eccv-04.pdf">2004</a>）：来自文本处理中的词袋模型，关键为统计字典中词汇频率。视觉表示中将纹理元视为词汇。<ul>
+<li><p>视觉词袋表示（<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~efros/courses/LBMV07/Papers/csurka-eccv-04.pdf">2004</a>）：来自文本处理中的词袋模型，关键为统计字典中词汇频率。视觉表示中将纹理元视为词汇。</p>
+<ul>
 <li>步骤<ol>
 <li>视觉特征采样：原文中使用SIFT
     <figure class="figure-image">
@@ -647,6 +648,69 @@
 <li>缺点：空间位置信息缺失，解决同样为尺度金字塔统计。</li>
 <li>应用：图像索引与检索等</li>
 </ul>
+</li>
+<li><p>霍夫变换：在霍夫空间中，用一个点来表示一个具体的曲线，如直线、圆等。</p>
+<ol>
+<li>直线霍夫变换：<ul>
+<li>如果用$y=mx+b$表示直线，那么已知x-y空间中的一个点就能确认该直线在m-b霍夫空间中的一条直线上；两个点确定该直线；三个及以上点则需要根据$(x,y)$代表的霍夫空间中的直线来给每个可能的组合$(m,b)$进行打分（vote），通常使用二维线性累加器，选出得分最高的$(m_0,b_0)$。
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/5-3.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  </li>
+<li>习惯上使用极坐标空间，用原点到直线的垂线$(d, \theta)$表示经过某点$(x,y)$的直线，$d=x\cos\theta+y\sin\theta$。
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/5-4.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/5-5.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  </li>
+</ul>
+</li>
+<li>圆霍夫变换：根据圆的解析公式$(x-a)^2+(y-b)^2=r^2$，圆的霍夫空间为a-b-r三维参数空间。具体步骤为对每个边缘点$(x,y)$、可能的半径$r$和梯度方向$\theta$，计算$a=x+r\cos(\theta),\;b=y-r\sin(\theta)$，在累加器中向$(a,b,r)$加分，最后取得分最高点。
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/5-6.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/5-7.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/5-8.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  </li>
+</ol>
+</li>
+<li>广义霍夫变换：表示任意形状的非解析曲线。<ol>
+<li>步骤：<ul>
+<li>对用任意方法得到的边缘点，求<strong>R表</strong>。R表的计算过程：对曲线内部选定的参考点$a$（通常为中心），遍历每个边缘点$x$以建立一个边缘点梯度方向$\Phi$（垂直切线方向与水平方向的夹角）与边缘点到参考点的平移向量$r=a-x$之映射表。表中每个梯度方向对应的平移向量可能不唯一。 
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/5-1.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+ 
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/5-2.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  </li>
+<li>对曲线内部所有点，求累积得分（vote）：建立一个二维得分表$A(a)$，遍历每个边缘点$x$。以$x_0$和它的梯度方向$\Phi_0$为例，根据R表得到该方向对应的向量$r_{01},r_{02},…$，计算得分点$a_{01}=x_0+r_{01},a_{02}=x_0+r_{02},…$，并为得分点们在得分表中加分。加分可以是常量，可以是关于$x$的函数，也可以是梯度相关的函数等，有不同规则。</li>
+<li>最后得分最高的参考点就是代表曲线的点。</li>
+</ul>
+</li>
+</ol>
 </li>
 </ol>
 
