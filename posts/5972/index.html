@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-07-10T08:50:45.311Z" itemprop="dateUpdated">2025-07-10</time>
+              <time  class="article-updated" datetime="2025-07-17T10:54:35.552Z" itemprop="dateUpdated">2025-07-17</time>
             </h2>
           
           
@@ -242,7 +242,7 @@
 <li>为规避变换前后点的尺度问题，方程表达为$x_i’\times Hx_i=0\rightarrow A_ih=0\; A_i$为$2\times 9$或$3\times 9$矩阵。其中$h=(H_{11},H_{12},H_{13},…,H_{33})$，由于可以将$H_{33}$标准化为1，或者引入尺度约束$||h||=1$，我们只需要4对二维点8个方程进行求解（最小配置解）。</li>
 <li>超定解：点对大于4时，可以解优化问题$min||Ah||\;subject\;to\;||h||=1$。</li>
 <li><p>算法：计算每对点的矩阵$A_i$，将每个$2\times 9$矩阵组合成一个$2n\times 9$的矩阵$A$。对$A$进行奇异值分解，<strong>最小奇异值对应的单位特征向量就是我们需要的解</strong>。</p>
-<blockquote><p>设$M$为m行n列矩阵，其奇异值分解为$M=U\Sigma V^<em>$，其中$U$为m行m列幺正矩阵（其共轭转置等于其逆），$\Sigma$是m行n列非负实数对角矩阵，$V$为n行n列幺正矩阵（$V^</em>$为其共轭转置）。奇异值$sigma$满足$Mv=\sigma u\; \&amp; \; M^<em>u=\sigma v$，u是$\sigma$的m维单位向量（左奇异向量），v为n维归一化的右奇异向量。$\Sigma$对角线上是M的奇异值，而$U、V$的列分别是左、右奇异向量，同时也分别是$MM^</em>、M^*M$的特征向量。</p>
+<blockquote><p>设$M$为m行n列矩阵，其奇异值分解为<script type="math/tex">M=U\Sigma V^*</script>，其中$U$为m行m列幺正矩阵（其共轭转置等于其逆），$\Sigma$是m行n列非负实数对角矩阵，$V$为n行n列幺正矩阵（<script type="math/tex">V^*</script>为其共轭转置）。奇异值$sigma$满足<script type="math/tex">Mv=\sigma u\; \& \; M^*u=\sigma v</script>，u是$\sigma$的m维单位向量（左奇异向量），v为n维归一化的右奇异向量。$\Sigma$对角线上是M的奇异值，而$U、V$的列分别是左、右奇异向量，同时也分别是<script type="math/tex">MM^*、M^*M</script>的特征向量。</p>
 <footer><strong>奇异值分解（Singular value decomposition，SVD）</strong></footer></blockquote>
 </li>
 </ul>
@@ -713,6 +713,26 @@
 </ol>
 </li>
 </ol>
+<h2 id="图像处理任务"><a href="#图像处理任务" class="headerlink" title="图像处理任务"></a>图像处理任务</h2><h3 id="分类与识别"><a href="#分类与识别" class="headerlink" title="分类与识别"></a>分类与识别</h3><p><strong>朴素贝叶斯分类器</strong>（Naive Bayes Classifier）：把物体类别看成满足多种特征的集合，假设特征数量和类别数量有限并且特征之间相互独立（这一点通常不实际），利用条件概率确定类别。具体原理及构造方法见<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/zh-cn/%E6%9C%B4%E7%B4%A0%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%88%86%E7%B1%BB%E5%99%A8">维基百科-朴素贝叶斯概率模型</a>。</p>
+<p><strong>支持向量机</strong>（SVM）：只有两两分类器，多类别分类需要多个SVM来将某类与其他类别分开或者两两分开，最终应用所有SVM给可能的所属类别打分。</p>
+<p><strong>两者间的区别同时也是生成模型与判别模型的差异</strong>（Generative Model vs Discriminative Model）：生成模型是所有变量的全概率模型（建模联合概率），而判别模型是在给定观测变量值前提下目标变量的条件概率模型（建模条件概率）。因此生成模型能够用于模拟（即生成）模型中任意变量的分布情况，而判别模型只能根据观测变量得到目标变量的采样。判别模型不对观测变量的分布建模，因此它不能够表达观测变量与目标变量之间更复杂的关系。因此，生成模型更适用于无监督的任务，如分类和聚类；大部分判别模型本身是监督学习模型，不易扩展用于非监督学习过程。对于诸如分类和回归问题，由于不考虑联合概率分布，采用判别模型可以取得更好的效果。而生成模型在刻画复杂学习任务中的依赖关系方面则较判别模型更加灵活。</p>
+<blockquote><p>It is more important to have more or  better labeled data than to use a  different supervised learning technique.</p>
+<footer><strong>Norvig “The Unreasonable Effectiveness of Data”</strong></footer></blockquote>
+<blockquote><p>❖ K-nearest neighbor  ❖ SVM  ❖ Naïve Bayes  ❖ Bayesian network  ❖ Logistic regression  ❖ Randomized Forests  ❖ Boosted Decision Trees  ❖ Restricted Boltzmann Machines  ❖ Neural networks  ❖ Deep Convolutional Network  ❖ …</p>
+<footer><strong>常见分类器</strong></footer></blockquote>
+<h3 id="物体检测"><a href="#物体检测" class="headerlink" title="物体检测"></a>物体检测</h3><p>图片来自<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1905.05055">Object Detection in 20 Years: A Survey</a></p>
+
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/6-1.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/6-2.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
 
       </section>
 
