@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-07-17T10:54:35.552Z" itemprop="dateUpdated">2025-07-17</time>
+              <time  class="article-updated" datetime="2025-07-23T07:33:26.595Z" itemprop="dateUpdated">2025-07-23</time>
             </h2>
           
           
@@ -733,7 +733,55 @@
       <figcaption></figcaption>
     </figure>
   
+<h3 id="图像分割"><a href="#图像分割" class="headerlink" title="图像分割"></a>图像分割</h3><p>目标：将特征分成聚类、获取图片关键部分的紧凑中间表示</p>
+<p><strong>自底向上的分片——聚类</strong>：只有数据、没有标签的无监督学习，聚类问题的核心矛盾是开始时既不知道各聚类中心也不知道有哪些聚类，为此出现了很多方法：</p>
+<ul>
+<li>K-means：随机初始化K个聚类中心。将点加入最近中心的聚类，将每个聚类的中心更新为它的平均位置，重复第二步。问题是容易变为局部最小值，并且没有考虑聚类。
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/6-3.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  </li>
+<li>Expectation Maximization（EM）：会估计点属于聚类的概率，K-means的概率变种。</li>
+<li>Mean Shift：在任意中心、一定半径的搜索窗口内，根据窗口内计算得到的特征点质心移动待定的聚类中心，接着以新中心作新的搜索窗口，不断重复。 
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/6-4.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  </li>
+<li>Graph Cut: 将所有特征点视为全连接图，用距离或者其他函数度量点间权重，找最小割。Normalized Cut加入以下正则来改善最小割的小块化趋势：$Ncut(A,B)=\frac{cut(A,B)}{assoc(A,V)}+\frac{cut(A,B)}{assoc(B,V)},\; assoc(A,V)=\sum\nolimits_{e\in V}w_e$。缺点是计算复杂度高。</li>
+</ul>
+<p><strong>可变轮廓</strong>：用可变边界调整目标轮廓，优点是很容易接近高梯度位置、并且可以随物体变化而变化。</p>
+<ul>
+<li>轮廓表示：一组离散的节点，每次迭代可调整每个节点的位置</li>
+<li>能量函数：外部能量函数寻找边缘，如梯度，<script type="math/tex; mode=display">E_{external}(v)=-(|G_x(v)|^2+|G_y(v)|^2)</script>  内部能量函数约束轮廓形状，如弹性与曲率，s为节点序号<script type="math/tex; mode=display">E_{internal}(v(s))=\alpha|\frac{dv}{ds}|^2+\beta|\frac{d^2v}{d^2s}|^2</script>  总能量函数即两者的比例和$E_{total}=E_{internal}+\gamma E_{external}$，通过$\alpha,\;\beta,\;\gamma$可调整轮廓效果。</li>
+<li>轮廓调整：可以贪心地让每个节点移动到最佳近邻，也可以动态规划</li>
+</ul>
+<p><strong>深度学习方法：</strong></p>
+<ul>
+<li>方法：<ul>
+<li>全卷积网络：卷积网络能提取特征得到热力图、解卷积网络能升采样得到分片图  
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/6-5.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  </li>
+<li>带概率图模型的卷积网络，常见的有条件随机场、马尔科夫随机场</li>
+<li>基于编解码器的模型，如U-Net</li>
+<li>多尺度金字塔网络模型</li>
+<li>循环卷积网络模型</li>
+<li>Transformer、GAN ……</li>
+</ul>
+</li>
+<li>数据集：常用的二维数据集有PASCAL VOC、MS COCO等，2.5D数据集有Stanford 2D-3D等。</li>
+<li>评价指标：如像素精度、平均像素精度、交并集商等。</li>
+</ul>
 
+    <figure class="figure-image">
+      <img src="/images/2025/cv_sjtu/6-6.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
       </section>
 
       
