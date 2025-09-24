@@ -156,17 +156,35 @@
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
         <h2 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h2><h3 id="A-算法"><a href="#A-算法" class="headerlink" title="A*算法"></a>A*算法</h3><p>对路径点$n$的评估采用$f(n)=g(n)+h(n)$，其中：</p>
-<pre><code>- $g(n)$表示从起点到$n$的实际距离。
-- $h(n)$表示从$n$到终点的估算距离，该距离要求小于等于实际最优距离，常用如欧氏距离、曼哈顿距离（坐标轴平行距离）等，可自定义。
-</code></pre><p>与其他算法比较：</p>
-<pre><code>- 如果$h(n)$为0，该算法退化为Dijkstra算法；
-- 如果$g(n)$为0，该算法退化为只考虑与终点距离的纯贪婪算法。
-</code></pre><figure class="highlight pgsql"><figcaption><span>python</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"># 来源: https://mat.uab.cat/~alseda/MasterOpt/AStar-Algorithm.pdf<br>Put node_start <span class="hljs-keyword">in</span> the <span class="hljs-keyword">OPEN</span> list <span class="hljs-keyword">with</span> f(node_start) = h(node_start) (initialization)<br><span class="hljs-keyword">while</span> the <span class="hljs-keyword">OPEN</span> list <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> empty &#123;<br>    Take <span class="hljs-keyword">from</span> the <span class="hljs-keyword">open</span> list the node node_current <span class="hljs-keyword">with</span> the lowest<br>        f(node_current) = g(node_current) + h(node_current)<br>    <span class="hljs-keyword">if</span> node_current <span class="hljs-keyword">is</span> node_goal we have <span class="hljs-built_in">found</span> the solution; break<br>    Generate <span class="hljs-keyword">each</span> state node_successor that come <span class="hljs-keyword">after</span> node_current<br>    <span class="hljs-keyword">for</span> <span class="hljs-keyword">each</span> node_successor <span class="hljs-keyword">of</span> node_current &#123;<br>        <span class="hljs-keyword">Set</span> successor_current_cost = g(node_current) + w(node_current, node_successor)<br>        <span class="hljs-keyword">if</span> node_successor <span class="hljs-keyword">is</span> <span class="hljs-keyword">in</span> the <span class="hljs-keyword">OPEN</span> list &#123;<br>            <span class="hljs-keyword">if</span> g(node_successor) ≤ successor_current_cost <span class="hljs-keyword">continue</span> (<span class="hljs-keyword">to</span> <span class="hljs-type">line</span> <span class="hljs-number">20</span>)<br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> node_successor <span class="hljs-keyword">is</span> <span class="hljs-keyword">in</span> the CLOSED list &#123;<br>            <span class="hljs-keyword">if</span> g(node_successor) ≤ successor_current_cost <span class="hljs-keyword">continue</span> (<span class="hljs-keyword">to</span> <span class="hljs-type">line</span> <span class="hljs-number">20</span>)<br>            <span class="hljs-keyword">Move</span> node_successor <span class="hljs-keyword">from</span> the CLOSED list <span class="hljs-keyword">to</span> the <span class="hljs-keyword">OPEN</span> list<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">Add</span> node_successor <span class="hljs-keyword">to</span> the <span class="hljs-keyword">OPEN</span> list<br>            <span class="hljs-keyword">Set</span> h(node_successor) <span class="hljs-keyword">to</span> be the heuristic distance <span class="hljs-keyword">to</span> node_goal<br>        &#125;<br>        <span class="hljs-keyword">Set</span> g(node_successor) = successor_current_cost<br>        <span class="hljs-keyword">Set</span> the parent <span class="hljs-keyword">of</span> node_successor <span class="hljs-keyword">to</span> node_current<br>    &#125;<br>    <span class="hljs-keyword">Add</span> node_current <span class="hljs-keyword">to</span> the CLOSED list<br>&#125;<br><span class="hljs-keyword">if</span>(node_current != node_goal) <span class="hljs-keyword">exit</span> <span class="hljs-keyword">with</span> error (the <span class="hljs-keyword">OPEN</span> list <span class="hljs-keyword">is</span> empty)<br></code></pre></td></tr></table></figure>
+<ul>
+<li>$g(n)$表示从起点到n的实际距离。</li>
+<li>$h(n)$表示从n到终点的估算距离，该距离要求小于等于实际最优距离，常用如欧氏距离、曼哈顿距离（坐标轴平行距离）等，可自定义。</li>
+</ul>
+<p>与其他算法比较：</p>
+<ul>
+<li>如果$h(n)$为0，该算法退化为Dijkstra算法；</li>
+<li>如果$g(n)$为0，该算法退化为只考虑与终点距离的纯贪婪算法。<figure class="highlight pgsql"><figcaption><span>python</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"># 来源: https://mat.uab.cat/~alseda/MasterOpt/AStar-Algorithm.pdf<br>Put node_start <span class="hljs-keyword">in</span> the <span class="hljs-keyword">OPEN</span> list <span class="hljs-keyword">with</span> f(node_start) = h(node_start) (initialization)<br><span class="hljs-keyword">while</span> the <span class="hljs-keyword">OPEN</span> list <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> empty &#123;<br>    Take <span class="hljs-keyword">from</span> the <span class="hljs-keyword">open</span> list the node node_current <span class="hljs-keyword">with</span> the lowest<br>        f(node_current) = g(node_current) + h(node_current)<br>    <span class="hljs-keyword">if</span> node_current <span class="hljs-keyword">is</span> node_goal we have <span class="hljs-built_in">found</span> the solution; break<br>    Generate <span class="hljs-keyword">each</span> state node_successor that come <span class="hljs-keyword">after</span> node_current<br>    <span class="hljs-keyword">for</span> <span class="hljs-keyword">each</span> node_successor <span class="hljs-keyword">of</span> node_current &#123;<br>        <span class="hljs-keyword">Set</span> successor_current_cost = g(node_current) + w(node_current, node_successor)<br>        <span class="hljs-keyword">if</span> node_successor <span class="hljs-keyword">is</span> <span class="hljs-keyword">in</span> the <span class="hljs-keyword">OPEN</span> list &#123;<br>            <span class="hljs-keyword">if</span> g(node_successor) ≤ successor_current_cost <span class="hljs-keyword">continue</span><br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> node_successor <span class="hljs-keyword">is</span> <span class="hljs-keyword">in</span> the CLOSED list &#123;<br>            <span class="hljs-keyword">if</span> g(node_successor) ≤ successor_current_cost <span class="hljs-keyword">continue</span><br>            <span class="hljs-keyword">Move</span> node_successor <span class="hljs-keyword">from</span> the CLOSED list <span class="hljs-keyword">to</span> the <span class="hljs-keyword">OPEN</span> list<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">Add</span> node_successor <span class="hljs-keyword">to</span> the <span class="hljs-keyword">OPEN</span> list<br>            <span class="hljs-keyword">Set</span> h(node_successor) <span class="hljs-keyword">to</span> be the heuristic distance <span class="hljs-keyword">to</span> node_goal<br>        &#125;<br>        <span class="hljs-keyword">Set</span> g(node_successor) = successor_current_cost<br>        <span class="hljs-keyword">Set</span> the parent <span class="hljs-keyword">of</span> node_successor <span class="hljs-keyword">to</span> node_current<br>    &#125;<br>    <span class="hljs-keyword">Add</span> node_current <span class="hljs-keyword">to</span> the CLOSED list<br>&#125;<br><span class="hljs-keyword">if</span>(node_current != node_goal) <span class="hljs-keyword">exit</span> <span class="hljs-keyword">with</span> error (the <span class="hljs-keyword">OPEN</span> list <span class="hljs-keyword">is</span> empty)<br></code></pre></td></tr></table></figure></li>
+</ul>
+
       </section>
 
       
       
         <nav class="article-nav">
+          
+            <div class="article-nav-item layout-padding">
+  <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
+    
+    <div class="card-text">
+      
+        <a href="/posts/51146/" itemprop="url">
+          <h2 class="card-text--title text-ellipsis">渲染手册</h2>
+        </a>
+      
+      <div class="card-text--row">Newer</div>
+    </div>
+  </article>
+</div>
           
           
             <div class="article-nav-item layout-padding">
@@ -425,13 +443,13 @@
         <svg class="icon icon-article" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
   <path d="M240.51564747 647.74217627h196.07203239c16.59071043 0 30.16492806-13.57421762 30.16492805-30.16492806V165.10332731c0-33.18142087-30.16492806-60.32985613-60.32985612-60.32985611H245.04038668C225.43318342 104.7734712 210.35071939 119.85593522 210.35071939 139.46313845V617.57724821c0 16.59071043 13.57421762 30.16492806 30.16492808 30.16492806z m663.62841731-452.47392089v482.63884894c0 33.18142087-27.14843525 60.32985613-60.32985612 60.32985613H180.18579134c-33.18142087 0-60.32985613-27.14843525-60.32985612-60.32985613V195.26825538c-49.77213131 0-90.49478418 40.72265287-90.49478417 90.49478417v452.4739209c0 49.77213131 40.72265287 90.49478418 90.49478417 90.49478417h286.56681657c16.59071043 0 30.16492806 13.57421762 30.16492807 30.16492807s13.57421762 30.16492806 30.16492805 30.16492806h90.49478418c16.59071043 0 30.16492806-13.57421762 30.16492805-30.16492806s13.57421762-30.16492806 30.16492807-30.16492807h286.56681657c49.77213131 0 90.49478418-40.72265287 90.49478417-90.49478417V285.76303955c0-49.77213131-40.72265287-90.49478418-90.49478417-90.49478417zM587.41232014 647.74217627h191.54729318c19.60720323 0 34.68966726-15.08246403 34.68966729-34.68966727V134.93839925c0-16.59071043-13.57421762-30.16492806-30.16492808-30.16492805H617.57724821c-30.16492806 0-60.32985613 27.14843525-60.32985612 60.32985611v452.4739209c0 16.59071043 13.57421762 30.16492806 30.16492805 30.16492806z" fill="currentColor"></path>
 </svg>
-        <span>13</span>
+        <span>14</span>
       </div>
       <div class="count-box--item">
         <svg class="icon icon-categories" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
   <path d="M900.3614811 257.09082106h-339.81629553l-67.96326003-101.9448889c-19.41807444-29.12711113-48.54518557-43.69066667-82.52681443-43.69066667H123.6385189c-53.39970333 0-97.09036999 43.69066667-97.09037113 97.09036999v582.54222222c0 53.39970333 43.69066667 97.09036999 97.09037113 97.09037002h776.7229622c53.39970333 0 97.09036999-43.69066667 97.09037113-97.09037002V354.18119104c0-53.39970333-43.69066667-97.09036999-97.09037113-97.09036998z m-97.09036999 242.72592554H220.72888889c-24.27259221 0-48.54518557-24.27259221-48.54518556-48.54518556s24.27259221-48.54518557 48.54518556-48.54518444h582.54222222c24.27259221 0 48.54518557 24.27259221 48.54518556 48.54518444s-24.27259221 48.54518557-48.54518556 48.54518556z" fill="currentColor"></path>
 </svg>
-        7
+        8
       </div>
       <div class="count-box--item">
         <svg class="icon icon-tags" viewBox="0 0 1098 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -508,6 +526,12 @@
         <li class="categories-list-item">
           <a href="/categories/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/">
             信息收集 (1)
+          </a>
+        </li>
+        
+        <li class="categories-list-item">
+          <a href="/categories/CG/">
+            CG (1)
           </a>
         </li>
         
