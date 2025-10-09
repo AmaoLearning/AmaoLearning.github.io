@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-09-25T05:23:00.964Z" itemprop="dateUpdated">2025-09-25</time>
+              <time  class="article-updated" datetime="2025-10-09T08:26:05.858Z" itemprop="dateUpdated">2025-10-09</time>
             </h2>
           
           
@@ -160,7 +160,14 @@
       
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
-        <h2 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h2><h3 id="A-算法"><a href="#A-算法" class="headerlink" title="A*算法"></a>A*算法</h3><p>对路径点$n$的评估采用$f(n)=g(n)+h(n)$，其中：</p>
+        <h2 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h2><p>总思路：</p>
+<ol>
+<li>state</li>
+<li>action</li>
+<li>openlist</li>
+<li>engineering</li>
+</ol>
+<h3 id="A-算法"><a href="#A-算法" class="headerlink" title="A*算法"></a>A*算法</h3><p>对路径点$n$的评估采用$f(n)=g(n)+h(n)$，其中：</p>
 <ul>
 <li>$g(n)$表示从起点到n的实际距离。</li>
 <li>$h(n)$表示从n到终点的估算距离，常用如欧氏距离、曼哈顿距离（坐标轴平行距离）等，可自定义。</li>
@@ -173,6 +180,82 @@
 <li>如果$g(n)$为0，该算法退化为只考虑与终点距离的纯贪婪算法。</li>
 </ul>
 <figure class="highlight pgsql"><figcaption><span>python</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"># 来源: https://mat.uab.cat/~alseda/MasterOpt/AStar-Algorithm.pdf<br>Put node_start <span class="hljs-keyword">in</span> the <span class="hljs-keyword">OPEN</span> list <span class="hljs-keyword">with</span> f(node_start) = h(node_start) (initialization)<br><span class="hljs-keyword">while</span> the <span class="hljs-keyword">OPEN</span> list <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> empty &#123;<br>    Take <span class="hljs-keyword">from</span> the <span class="hljs-keyword">open</span> list the node node_current <span class="hljs-keyword">with</span> the lowest<br>        f(node_current) = g(node_current) + h(node_current)<br>    <span class="hljs-keyword">if</span> node_current <span class="hljs-keyword">is</span> node_goal we have <span class="hljs-built_in">found</span> the solution; break<br>    Generate <span class="hljs-keyword">each</span> state node_successor that come <span class="hljs-keyword">after</span> node_current<br>    <span class="hljs-keyword">for</span> <span class="hljs-keyword">each</span> node_successor <span class="hljs-keyword">of</span> node_current &#123;<br>        <span class="hljs-keyword">Set</span> successor_current_cost = g(node_current) + w(node_current, node_successor)<br>        <span class="hljs-keyword">if</span> node_successor <span class="hljs-keyword">is</span> <span class="hljs-keyword">in</span> the <span class="hljs-keyword">OPEN</span> list &#123;<br>            <span class="hljs-keyword">if</span> g(node_successor) ≤ successor_current_cost <span class="hljs-keyword">continue</span><br>        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> node_successor <span class="hljs-keyword">is</span> <span class="hljs-keyword">in</span> the CLOSED list &#123;<br>            <span class="hljs-keyword">if</span> g(node_successor) ≤ successor_current_cost <span class="hljs-keyword">continue</span><br>            <span class="hljs-keyword">Move</span> node_successor <span class="hljs-keyword">from</span> the CLOSED list <span class="hljs-keyword">to</span> the <span class="hljs-keyword">OPEN</span> list<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">Add</span> node_successor <span class="hljs-keyword">to</span> the <span class="hljs-keyword">OPEN</span> list<br>            <span class="hljs-keyword">Set</span> h(node_successor) <span class="hljs-keyword">to</span> be the heuristic distance <span class="hljs-keyword">to</span> node_goal<br>        &#125;<br>        <span class="hljs-keyword">Set</span> g(node_successor) = successor_current_cost<br>        <span class="hljs-keyword">Set</span> the parent <span class="hljs-keyword">of</span> node_successor <span class="hljs-keyword">to</span> node_current<br>    &#125;<br>    <span class="hljs-keyword">Add</span> node_current <span class="hljs-keyword">to</span> the CLOSED list<br>&#125;<br><span class="hljs-keyword">if</span>(node_current != node_goal) <span class="hljs-keyword">exit</span> <span class="hljs-keyword">with</span> error (the <span class="hljs-keyword">OPEN</span> list <span class="hljs-keyword">is</span> empty)<br></code></pre></td></tr></table></figure>
+<h3 id="Minimax"><a href="#Minimax" class="headerlink" title="Minimax"></a>Minimax</h3><p>零和游戏中，为了做出最佳决策，在有限种情况时，考虑递归地构建所谓决策树。</p>
+
+    <figure class="figure-image">
+      <img src="/images/2025/intro-ai/Minimax.svg.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+<p>首先我们需要最大化自己的收益，即树根节点，从而需要在各种情况即第一层子节点中选择，而第一层子节点一般是对手的决策。但理想情况下，对手会选择最大化他的收益、即最小化我们的收益的决策。从而以上分析可以写为：</p>
+<script type="math/tex; mode=display">V_0=\max\limits_{a_0}\min\limits_{a_{-0}}(a_0, a_{-0})</script><p>其中$a_0$是我们第一层决策，$a_{-0}$是对手的第一层决策。</p>
+<p>Minimax算法就是考虑自己和对手的每一层决策，在所有可能中选择最大化己方收益。可以直观地用递归算法表示：</p>
+<figure class="highlight crmsh"><figcaption><span>python</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs crmsh">function minimax(<span class="hljs-keyword">node</span><span class="hljs-title">, depth</span>, maximizingPlayer) is<br>    if depth = <span class="hljs-number">0</span> <span class="hljs-keyword">or</span> <span class="hljs-keyword">node</span> <span class="hljs-title">is</span> a terminal <span class="hljs-keyword">node</span> <span class="hljs-title">then</span><br>        return the heuristic value of <span class="hljs-keyword">node</span><br>    <span class="hljs-title">if</span> maximizingPlayer then<br>        value := −∞<br>        for each child of <span class="hljs-keyword">node</span> <span class="hljs-title">do</span><br>            value := max(value, minimax(child, depth − <span class="hljs-number">1</span>, <span class="hljs-literal">FALSE</span>))<br>        return value<br>    else (* minimizing player *)<br>        value := +∞<br>        for each child of <span class="hljs-keyword">node</span> <span class="hljs-title">do</span><br>            value := min(value, minimax(child, depth − <span class="hljs-number">1</span>, <span class="hljs-literal">TRUE</span>))<br>        return value<br></code></pre></td></tr></table></figure>
+<p>在此基础上，我们还可启发式地引入<strong>Alpha-Beta剪枝</strong>。其想法是考虑某个需要最大化收益的节点时，其某些子节点的值已经比考虑过的子节点的结果要小，我们可以放心地不去考虑这些已经比较小的子节点的子树，最小化收益节点同理。例如以下树：</p>
+
+    <figure class="figure-image">
+      <img src="/images/2025/intro-ai/AB_pruning.svg.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+<p>在算法实现中，我们会设置两个全局变量$\alpha$和$\beta$分别表示已考虑的最大化节点中的最大收益和已考虑的最小化节点中的最小收益。在最大化节点中，我们可以将子节点收益与$\beta$进行比较，即与最大化节点的父节点（最小化节点）的最小收益（最优情况）相比较，显然如果比它大，该子节点就不会被采用，进而排在它后面的其他子节点就不用考虑了。最小化节点也类似，综合起来可以写成如下递归算法：</p>
+<figure class="highlight oxygene"><figcaption><span>python</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs oxygene"># α=−∞, β=+∞ initially<br><span class="hljs-keyword">function</span> <span class="hljs-title function_">alphabeta</span><span class="hljs-params">(node, depth, α, β, maximizingPlayer)</span> <span class="hljs-title function_">is</span><br>    <span class="hljs-title function_">if</span> <span class="hljs-title function_">depth</span> == 0 <span class="hljs-title function_">or</span> <span class="hljs-title function_">node</span> <span class="hljs-title function_">is</span> <span class="hljs-title function_">terminal</span> <span class="hljs-title function_">then</span><br>        <span class="hljs-title function_">return</span> <span class="hljs-title function_">the</span> <span class="hljs-title function_">heuristic</span> <span class="hljs-title function_">value</span> <span class="hljs-title function_">of</span> <span class="hljs-title function_">node</span><br>    <span class="hljs-title function_">if</span> <span class="hljs-title function_">maximizingPlayer</span> <span class="hljs-title function_">then</span><br>        <span class="hljs-title function_">value</span> := −∞<br>        <span class="hljs-keyword">for</span> <span class="hljs-keyword">each</span> child <span class="hljs-keyword">of</span> node <span class="hljs-keyword">do</span><br>            value := max(value, alphabeta(child, depth − <span class="hljs-number">1</span>, α, β, <span class="hljs-keyword">FALSE</span>))<br>            <span class="hljs-keyword">if</span> value ≥ β <span class="hljs-keyword">then</span><br>                <span class="hljs-keyword">break</span> <span class="hljs-comment">(* β cutoff *)</span><br>            α := max(α, value)<br>        return value<br>    <span class="hljs-keyword">else</span><br>        value := +∞<br>        <span class="hljs-keyword">for</span> <span class="hljs-keyword">each</span> child <span class="hljs-keyword">of</span> node <span class="hljs-keyword">do</span><br>            value := min(value, alphabeta(child, depth − <span class="hljs-number">1</span>, α, β, <span class="hljs-keyword">TRUE</span>))<br>            <span class="hljs-keyword">if</span> value ≤ α <span class="hljs-keyword">then</span><br>                <span class="hljs-keyword">break</span> <span class="hljs-comment">(* α cutoff *)</span><br>            β := min(β, value)<br>        return value<br><br></code></pre></td></tr></table></figure>
+<h3 id="Hybrid-A"><a href="#Hybrid-A" class="headerlink" title="Hybrid A*"></a>Hybrid A*</h3><p>用于无人车自动驾驶的改进版A*算法，它考虑了车有朝向和必须转弯的刚体特性，设计了独特的决策模型。车的刚体模型如下图：</p>
+
+    <figure class="figure-image">
+      <img src="/images/2025/intro-ai/hybrid_kinematic_model.webp" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+<p>转向角度和当前位置会被离散化，方便构建有限的决策树。由此，该模型中每一步新的openlist将会与naive A*不同：</p>
+
+    <figure class="figure-image">
+      <img src="/images/2025/intro-ai/hybrid_openlist.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+<p>有时可能两种不同的决策会使小车走到同一位置，我们可以通过比如给予转向更少的奖励等手段，剪枝其他决策：</p>
+
+    <figure class="figure-image">
+      <img src="/images/2025/intro-ai/hybrid_prune.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+<p>最后，启发函数既需要考虑车的刚体特性，还需要考虑路上可能的障碍物。<a target="_blank" rel="noopener" href="https://www.diva-portal.org/smash/get/diva2:1057261/FULLTEXT01.pdf">原论文</a>作者Karl的选择是取不考虑障碍物、仅有刚体特性的<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Dubins_path">Dubins Path</a>或者<a target="_blank" rel="noopener" href="https://lavalle.pl/planning/node822.html">Reeds-Shepp Path</a>（考虑倒车的前者），和仅考虑障碍物的naive A*两种启发式函数中的较大值。两种启发式函数示意图如下：</p>
+
+    <figure class="figure-image">
+      <img src="/images/2025/intro-ai/hybrid_h.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+<h3 id="CSP问题与Backtracking"><a href="#CSP问题与Backtracking" class="headerlink" title="CSP问题与Backtracking"></a>CSP问题与Backtracking</h3><p>Constraint Satisfaction Problems(CSP)是搜索问题的一种，它有着有限的变量、有限的值域和描述了可用子集（一组变量赋值为一个状态）的清晰的约束条件。典型问题有染色问题、排时间表等等。可以将需要赋值的变量视作节点、约束条件视作边，就可以得到一个CSP图。</p>
+<p>暴力解法为<strong>Backtracking</strong>（回溯法），即每步给一个变量赋值，检查是否满足约束，不满足则更换赋值甚至往回给上个变量赋值。算法如下：</p>
+
+    <figure class="figure-image">
+      <img src="/images/2025/intro-ai/csp_backtrack.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+<p>这样做最坏情况需要遍历所有状态，我们希望预知失败，这些方法称为<strong>Filtering</strong>。一种简单的Filtering改进是<strong>Forward Checking</strong>，每给一个变量赋值，我们检查相关约束条件，并更新下个变量可用的值域，这样当可用值域为空集但仍有未赋值变量时就失败了。下面是一个例子：</p>
+
+    <figure class="figure-image">
+      <img src="/images/2025/intro-ai/csp_forward.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+<p>更进一步，在每一步赋值时，我们还可以检查每两个变量之间的约束条件从而提前发现冲突，这种Filtering方法称为<strong>Arc Consistency</strong>：</p>
+
+    <figure class="figure-image">
+      <img src="/images/2025/intro-ai/csp_ac3.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+<p>其缺点是只检查两两间约束而忽略全局，时间复杂度高且仍在Backtracking的框架中。</p>
+<p>此外，我们可以引入变量<strong>Ordering</strong>来加速发现失败，比如<strong>Minimum Remaining Values</strong>(MRV)优先给那些值域最窄的变量赋值、<strong>Least Constraining Value</strong>(LCV)为变量赋予最少削减其他变量值域的值。</p>
+<p>一般的CSP问题使用回溯法时间复杂度最差为$O(d^n)$（d为值域大小，n为变量数），而无环树状CSP时间复杂度最差为$O(nd^2)$（回溯最差$O(nd^2)=O(n)\; arcs \cdot O(d^2) \; backtracking$，赋值最差$O(nd)=O(n)\; nodes \cdot O(d) \; values$）。</p>
+<p>总结来说，CSP问题的基础算法为Backtracking，可以使用Filtering(Forward Checking\AC-3), Ordering(MRV\LCV), Special Structure等技巧加速算法。</p>
+<p><a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_5_CSP.pdf">参考PPT</a></p>
+
       </section>
 
       
