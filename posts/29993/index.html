@@ -36,7 +36,7 @@
 
   
 
-  <title>GhostScript：PDF压缩 | 阿毛的小书桌</title>
+  <title>实用工具汇总 | 阿毛的小书桌</title>
 
   
 
@@ -118,12 +118,17 @@
     <div class="header-content">
       <div class="post-text layout-block">
         <div class="layout-margin">
-          <h1 class="title-wrap">GhostScript：PDF压缩</h1>
+          <h1 class="title-wrap">实用工具汇总</h1>
           <h2 class="title-sub-wrap">
             <strong>MaoCaiMao</strong>
             <span>发布于</span>
             <time  class="article-date" datetime="2025-10-13T16:00:00.000Z" itemprop="datePublished">2025-10-14</time>
           </h2>
+          
+            <h2 class="last-time">
+              <span>最后更新于</span>
+              <time  class="article-updated" datetime="2025-10-16T04:37:59.720Z" itemprop="dateUpdated">2025-10-16</time>
+            </h2>
           
           
           <ul class="wrap-list dark">
@@ -155,10 +160,24 @@
       
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
-        <h2 id="GhostScript"><a href="#GhostScript" class="headerlink" title="GhostScript"></a>GhostScript</h2><p>来自Adobe，支持Linux和Windows，Windows可以直接在官网上<a target="_blank" rel="noopener" href="https://www.ghostscript.com/releases/gsdnld.html">下载安装程序</a>。接着可以将bin文件夹加入环境变量，我由于用的不多所以直接用<strong>gswin64c.exe</strong>文件的路径运行。只能用命令行运行，注意输入和输出文件路径最好写成<strong>完整路径</strong>并用<strong>双引号</strong>括住。下面是常用命令：</p>
+        <h3 id="GhostScript：PDF压缩"><a href="#GhostScript：PDF压缩" class="headerlink" title="GhostScript：PDF压缩"></a>GhostScript：PDF压缩</h3><p>来自Adobe，支持Linux和Windows，Windows可以直接在官网上<a target="_blank" rel="noopener" href="https://www.ghostscript.com/releases/gsdnld.html">下载安装程序</a>。接着可以将bin文件夹加入环境变量，我由于用的不多所以直接用<strong>gswin64c.exe</strong>文件的路径运行。只能用命令行运行，注意输入和输出文件路径最好写成<strong>完整路径</strong>并用<strong>双引号</strong>括住。下面是常用命令：</p>
 <figure class="highlight routeros"><figcaption><span>bash</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs routeros">gswin64c <span class="hljs-attribute">-sDEVICE</span>=pdfwrite <span class="hljs-attribute">-dCompatibilityLevel</span>=<span class="hljs-string">&quot;1.4&quot;</span> -dNOPAUSE -dQUIET -dBATCH <span class="hljs-attribute">-sOutputFile</span>=<span class="hljs-string">&quot;compressed.pdf&quot;</span> <span class="hljs-string">&quot;source.pdf&quot;</span><br></code></pre></td></tr></table></figure>
 <p>此外还可以添加选项<code>-dPDFSETTINGS=/ebook</code>或者<code>-dPDFSETTINGS=/screen</code>选择栅格化图片，通过损失图片质量进一步减轻pdf体积。</p>
 <p>参考：<a target="_blank" rel="noopener" href="https://gist.github.com/ptheywood/bf0cba769d601538a0ba">Instructions for PDF compression via Ghostscript on Windows</a></p>
+<h3 id="Magic-Wormhole：点对点加密传输"><a href="#Magic-Wormhole：点对点加密传输" class="headerlink" title="Magic Wormhole：点对点加密传输"></a>Magic Wormhole：点对点加密传输</h3><p>基于TCP和IP协议开发的点对点一次性文件传输工具，在主机间传输基于P2P连接，传输速率高，<strong>适合无法使用SCP的情况</strong>。工具支持全平台，需要在发送方和接收方均安装<strong>magic-wormhole</strong>软件才能使用。</p>
+<p><strong>Ubuntu安装</strong>：<br><figure class="highlight bash"><figcaption><span>bash</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> apt install magic-wormhole<br></code></pre></td></tr></table></figure></p>
+<p><strong>Windows安装</strong>：<br>可以从github上下载已发行版本：<a target="_blank" rel="noopener" href="https://github.com/aquacash5/magic-wormhole-exe">https://github.com/aquacash5/magic-wormhole-exe</a>，或者使用软件管理工具<a target="_blank" rel="noopener" href="https://docs.chocolatey.org/en-us/choco/setup/">Chocolatey</a>，后者安装magic-wormhole的指令如下：<br><figure class="highlight cmake"><figcaption><span>bash</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs cmake">choco <span class="hljs-keyword">install</span> magic-wormhole<br></code></pre></td></tr></table></figure></p>
+<p><strong>使用方法</strong>：<br>最简单的使用方法是发送方send某个文件，magic-wormhole会生成一个一次性专用码，在接收方receive并输入这个码就能建立连接，开始传输。</p>
+<p>Sender:</p>
+<blockquote>
+<p>% wormhole send README.md<br>Sending 7924 byte file named ‘README.md’<br>On the other computer, please run: wormhole receive<br>Wormhole code is: 7-crossover-clockwork</p>
+<p>Sending (&lt;-10.0.1.43:58988)..<br>100%|=========================| 7.92K/7.92K [00:00&lt;00:00, 6.02MB/s]<br>File sent.. waiting for confirmation<br>Confirmation received. Transfer complete.</p>
+</blockquote>
+<p>Receiver:</p>
+<blockquote>
+<p>% wormhole receive<br>Enter receive wormhole code: 7-crossover-clockwork<br>Receiving file (7924 bytes) into: README.md<br>ok? (y/n): y<br>Receiving (-&gt;tcp:10.0.1.43:58986)..<br>100%|===========================| 7.92K/7.92K [00:00&lt;00:00, 120KB/s]<br>Received file written to README.md</p>
+</blockquote>
+<p>参考：<a target="_blank" rel="noopener" href="https://magic-wormhole.readthedocs.io/en/latest/welcome.html">https://magic-wormhole.readthedocs.io/en/latest/welcome.html</a></p>
 
       </section>
 
