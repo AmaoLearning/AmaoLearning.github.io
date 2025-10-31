@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-10-13T12:50:43.412Z" itemprop="dateUpdated">2025-10-13</time>
+              <time  class="article-updated" datetime="2025-10-31T09:54:14.543Z" itemprop="dateUpdated">2025-10-31</time>
             </h2>
           
           
@@ -794,6 +794,13 @@
       <figcaption></figcaption>
     </figure>
   </p>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><ul>
+<li><strong><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/297481800">Cost Volume</a></strong>：随着深度学习而兴起的概念，是指在有多视角输入时，将原图或者特征图与相邻视角逐像素、逐视差(disparity)地计算相似度。相似度的计算方法有一定灵活性，常见方法有L2误差、前后特征耦合以及互相关系数(如<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Cross-correlation#Zero-normalized_cross-correlation_(ZNCC">ZNCC</a>))等<ul>
+<li>在RGB图片情况下，维度为$D \times H \times W$，即 视差 x 高 x 宽。在传统多视角立体匹配问题中，可以将视差替换为深度，衡量不同深度的代价从而估计深度</li>
+<li>在批量多通道特征图情况下，维度为$B \times C \times D \times H \times W$，即 批量 x 通道 x 视差 x 高 x 宽。通常会作为NN的输入</li>
+</ul>
+</li>
+</ul>
 
       </section>
 
