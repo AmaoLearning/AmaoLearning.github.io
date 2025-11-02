@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-10-09T08:26:05.858Z" itemprop="dateUpdated">2025-10-09</time>
+              <time  class="article-updated" datetime="2025-11-02T12:18:08.491Z" itemprop="dateUpdated">2025-11-02</time>
             </h2>
           
           
@@ -160,7 +160,12 @@
       
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
-        <h2 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h2><p>总思路：</p>
+        <p>参考课程：</p>
+<ul>
+<li>AI3603 SJTU</li>
+<li>cmu15-281</li>
+</ul>
+<h2 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h2><p>总思路：</p>
 <ol>
 <li>state</li>
 <li>action</li>
@@ -255,7 +260,54 @@
 <p>一般的CSP问题使用回溯法时间复杂度最差为$O(d^n)$（d为值域大小，n为变量数），而无环树状CSP时间复杂度最差为$O(nd^2)$（回溯最差$O(nd^2)=O(n)\; arcs \cdot O(d^2) \; backtracking$，赋值最差$O(nd)=O(n)\; nodes \cdot O(d) \; values$）。</p>
 <p>总结来说，CSP问题的基础算法为Backtracking，可以使用Filtering(Forward Checking\AC-3), Ordering(MRV\LCV), Special Structure等技巧加速算法。</p>
 <p><a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_5_CSP.pdf">参考PPT</a></p>
+<h3 id="Local-Search"><a href="#Local-Search" class="headerlink" title="Local Search"></a>Local Search</h3><p>常用于解决CSP问题（如<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%85%AB%E7%9A%87%E5%90%8E%E9%97%AE%E9%A2%98">n皇后问题</a>），但是它通常只记录最佳状态而非全局考虑，目的是在大型问题中以较少的内存寻找一个可以接受的解。对于LS算法，我们用<strong>Complete</strong>和<strong>Optimal</strong>评价其解题能力。我们也经常会绘制问题的状态空间示意图（如下）来观察算法的可行性：</p>
 
+    <figure class="figure-image">
+      <img src="/images/2025/intro-ai/ls_1.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+<ul>
+<li><strong>Complete</strong>：如果存在解，算法一定能找到一个解。通常LS算法都是不完备的，就算最优解存在也可能会卡在局部最优解或者平坦高原。</li>
+<li><strong>Optimal</strong>：理论保证总能找到最优解。</li>
+</ul>
+<ol>
+<li><strong>迭代优化</strong>：从随机状态出发，迭代地为变量重赋值。比如随机选择造成冲突的变量，为其挑选造成冲突最少的值，直到问题解决。会卡在局部最优解而<em>不完备</em>。</li>
+<li><p><strong>（Steeping-ascent）Hill Climbing</strong>：从随机状态出发，贪婪地选择最好的相邻状态直到局部最优解。显然<em>不完备</em>。该算法有许多变种，如局部最优时就从别的起点重新开始的Random-restart Hill Climbing（完备）、根据梯度大小随机选择邻域的Stochastic Hill Climbing、选择第一个更优邻域的First-choice Hill Climbing。</p>
+ 
+    <figure class="figure-image">
+      <img src="/images/2025/intro-ai/ls_2.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  </li>
+<li><strong>Random Walk</strong>：均匀随机选择邻域。<em>完备</em>但低效。</li>
+<li><p><strong>Simulated Annealing</strong>：随机选择邻域，但以一定概率选择表现更差的邻域，概率由温度决定，而温度会以一定曲线随迭代轮数下降。灵感来源于钢铁退火。理论上温度无限时<em>完备</em>且高效。</p>
+ 
+    <figure class="figure-image">
+      <img src="/images/2025/intro-ai/ls_3.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+</li>
+<li><p><strong>Local Beam Search</strong>：追踪k个状态，每轮选择这k个状态的所有邻域中最好的k个状态。<em>不完备</em>且状态容易聚集。变种如根据表现随机选择k个邻域的Stochastic Beam Search。</p>
+</li>
+<li><p><strong>Genetic Algorithms</strong>：将状态表达为统一长度编码，从k个状态开始，每次依照表现（Fitness）选择k对父母，每对父母通过交叉（Crossover）产生子嗣，子嗣的编码以一定概率发生变异（Mutation），灵感来源于达尔文进化论。算法的效果取决于Fitness、Selection、Crossover（如PMX、OX）、Mutation（如旅行商问题中可以用简单的编码内交换）等操作的设计水平。轮次有限时<em>不完备</em>。</p>
+ 
+    <figure class="figure-image">
+      <img src="/images/2025/intro-ai/ls_4.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+ 
+    <figure class="figure-image">
+      <img src="/images/2025/intro-ai/ls_5.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_16_RL_I.pdf">参考PPT</a></p>
+<h2 id="Reinforcement-Learning"><a href="#Reinforcement-Learning" class="headerlink" title="Reinforcement Learning"></a>Reinforcement Learning</h2>
       </section>
 
       
