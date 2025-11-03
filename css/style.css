@@ -1415,3 +1415,12 @@ html.show-mobile-nav .navbar-list {
     display: none;
   }
 }
+@media screen and (max-width: 1080px) {
+  .content-container.post-container .article-info {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+  .content-container.post-container .widget-info {
+    display: none;
+  }
+}
