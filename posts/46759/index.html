@@ -122,12 +122,12 @@
           <h2 class="title-sub-wrap">
             <strong>MaoCaiMao</strong>
             <span>发布于</span>
-            <time  class="article-date" datetime="2025-09-18T08:18:37.000Z" itemprop="datePublished">2025-09-18</time>
+            <time  class="article-date" datetime="2025-09-17T16:00:00.000Z" itemprop="datePublished">2025-09-18</time>
           </h2>
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-11-03T10:13:49.779Z" itemprop="dateUpdated">2025-11-03</time>
+              <time  class="article-updated" datetime="2025-11-03T10:56:03.783Z" itemprop="dateUpdated">2025-11-03</time>
             </h2>
           
           
@@ -163,7 +163,7 @@
         <p>参考课程：</p>
 <ul>
 <li>AI3603 SJTU</li>
-<li>cmu15-281</li>
+<li><a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/">cmu15-281</a></li>
 </ul>
 <h2 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h2><p>总思路：</p>
 <ol>
@@ -316,24 +316,32 @@
   
 <p>与之相伴的还有经常被使用的<strong>Discount</strong>（奖励随步数指数下降）和常见的<strong>Noise</strong>（有一定概率不选择最佳策略）。</p>
 <p>为了得到清晰的Value图，经常使用动态规划中的Bellman方法，存在<strong>Value Iteration</strong>和<strong>Policy Iteration</strong>两种实现。</p>
-<p>Value Iteration每轮检查每个状态是否更新Value直至收敛，每轮时间复杂度$O(|S|^2|A|)$：<br>
+<ul>
+<li><p>Value Iteration每轮检查每个状态是否更新Value直至收敛，每轮时间复杂度$O(|S|^2|A|)$：</p>
+  
     <figure class="figure-image">
       <img src="/images/2025/intro-ai/mdp_2.png" alt="" loading="lazy" />
       <figcaption></figcaption>
     </figure>
-  </p>
-<p>Policy Iteration从固定Policy出发，更新完一轮后寻找更好的Policy并重复直至收敛，每轮时间复杂度$O(|S|^2)$：<br>
+  
+</li>
+<li><p>Policy Iteration从固定Policy出发，更新完一轮后寻找更好的Policy并重复直至收敛，每轮时间复杂度$O(|S|^2)$：</p>
+  
     <figure class="figure-image">
       <img src="/images/2025/intro-ai/mdp_3.png" alt="" loading="lazy" />
       <figcaption></figcaption>
     </figure>
-  </p>
-<p>两种算法的比较：<br>
+  
+</li>
+<li><p>两种算法的比较：</p>
+  
     <figure class="figure-image">
       <img src="/images/2025/intro-ai/mdp_4.png" alt="" loading="lazy" />
       <figcaption></figcaption>
     </figure>
-  </p>
+  
+</li>
+</ul>
 <p>仅需要解一个状态的Value时：<br>
     <figure class="figure-image">
       <img src="/images/2025/intro-ai/mdp_5.png" alt="" loading="lazy" />
@@ -369,7 +377,7 @@
 <ol>
 <li><strong>Direct Evaluation</strong>：在固定策略下对某状态采样得到的值直接取平均。由于没有利用MDP特征，学习耗时较长。</li>
 <li><p><strong>Temporal Difference (Value) Learning</strong>：联合Policy Evaluation和指数平均移动，一次只更新单个状态。</p>
-<script type="math/tex; mode=display">\begin{aligned}Sample:\; &sample=R(s,\pi(s),s')+\gamma V^\pi(s') \\ Update: \; &V^\pi(s)\leftarrow (1-\alpha)V^\pi(s)+\alpha sample=V^\pi(s)+\alpha(sample-V\pi(s))\end{aligned} \\ Error：\; &E=\frac{1}{2}(sample - V^\pi(s))^2</script></li>
+<script type="math/tex; mode=display">\begin{aligned}Sample:\; &sample=R(s,\pi(s),s')+\gamma V^\pi(s') \\ Update: \; &V^\pi(s)\leftarrow (1-\alpha)V^\pi(s)+\alpha sample=V^\pi(s)+\alpha(sample-V\pi(s)) \\ Error:\; &E=\frac{1}{2}(sample - V^\pi(s))^2\end{aligned}</script></li>
 <li><p><strong>Q-Learning</strong>：利用TD Learning学习Q-Value图。</p>
 <script type="math/tex; mode=display">Q(s,a)\leftarrow Q(s,a)+\alpha[R(s,a,s')+\gamma\max\nolimits_{a'}Q(s',a')-Q(s,a)]</script><p> 这是一种off-policy learning，即通过不同的policy学到了最佳policy。反之on-policy learning则是仅学习到policy涉及的值。</p>
 </li>
@@ -390,8 +398,7 @@
 </li>
 </ol>
 <p><strong>思考</strong>：实际上，以上所有对Value的更新过程可以看作一种对贝尔曼方程（如下）的解的逼近做法，看起来类似于自回归，但单个Value仅为一个方程解，而自回归是在拟合一个关于时间的函数，所以两者有本质区别。</p>
-<pre><code>$$V^*(s)=\mathcal&#123;E&#125;[r+\gamma V^*(s&#39;)]$$
-</code></pre><p>参考PPT：<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_16_RL_I.pdf">RL_I</a>和<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_17_RL_II.pdf">RL_II</a></p>
+<script type="math/tex; mode=display">V^*(s)=\mathcal{E}[r+\gamma V^*(s')]</script><p>参考PPT：<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_16_RL_I.pdf">RL_I</a>和<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_17_RL_II.pdf">RL_II</a></p>
 
       </section>
 
@@ -408,7 +415,7 @@
           <h2 class="card-text--title text-ellipsis">渲染手册</h2>
         </a>
       
-      <div class="card-text--row">Newer</div>
+      <div class="card-text--row">下一篇</div>
     </div>
   </article>
 </div>
@@ -423,7 +430,7 @@
           <h2 class="card-text--title text-ellipsis">算术编码（AC）代码详解</h2>
         </a>
       
-      <div class="card-text--row">Older</div>
+      <div class="card-text--row">上一篇</div>
     </div>
   </article>
 </div>
@@ -689,6 +696,18 @@
 </section>
 
       
+<section class="widget-toc widget-item layout-margin content-padding--primary soft-size--large soft-style--box">
+  <div class="widget-title">
+    <svg class="icon icon-toc" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M134.50666666 767.46666668H460.8c27.73333333 0 50.24000001 22.50666668 50.24000001 50.23999999v50.13333333c0 27.73333333-22.50666668 50.24000001-50.24000001 50.24000001H134.50666666c-27.73333333 0-50.24000001-22.50666668-50.23999999-50.24000001v-50.13333333c0.10666668-27.73333333 22.50666668-50.24000001 50.24000001-50.24000001zM84.37333332 541.65333333h326.18666669c27.73333333 0 50.24000001 22.39999999 50.23999999 50.13333334v50.24000001c0 27.73333333-22.50666668 50.24000001-50.24000002 50.23999999H84.37333332c-27.73333333 0-50.24000001-22.50666668-50.23999999-50.23999999v-50.24000001c0-27.73333333 22.50666668-50.13333334 50.24000001-50.13333334zM134.50666666 315.83999999H460.8c27.73333333 0 50.24000001 22.50666668 50.24000001 50.24000001v50.24000001c0 27.73333333-22.50666668 50.13333334-50.24000001 50.13333333H134.50666666c-27.73333333 0-50.24000001-22.39999999-50.23999999-50.13333333v-50.24000001c0.10666668-27.84000001 22.50666668-50.24000001 50.24000001-50.23999999zM209.81333332 89.91999999h326.18666671c27.73333333 0 50.24000001 22.39999999 50.23999997 50.13333335v50.23999999c0 27.73333333-22.50666668 50.24000001-50.24000001 50.24000001H209.81333332c-27.73333333 0-50.24000001-22.50666668-50.23999999-50.24000001v-50.24000001c0-27.73333333 22.50666668-50.13333334 50.24000001-50.13333333zM692.05333333 623.36l274.66666669 176.00000002c23.36000001 14.93333333 30.08 45.97333334 15.14666666 69.33333332L954.77333334 910.93333333c-14.93333333 23.25333334-45.97333334 30.08-69.33333335 15.14666667l-274.66666666-176c-23.36000001-14.93333333-30.08-45.97333334-15.14666667-69.33333333l27.09333334-42.24000001c14.93333333-23.36000001 46.08000001-30.08 69.33333333-15.14666666z" fill="currentColor"></path>
+</svg>
+    <span>TITLES</span>
+  </div>
+  <div class="widget-body">
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2"><span class="toc-text">搜索</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#A-%E7%AE%97%E6%B3%95"><span class="toc-text">A*算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Minimax"><span class="toc-text">Minimax</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hybrid-A"><span class="toc-text">Hybrid A*</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CSP%E9%97%AE%E9%A2%98%E4%B8%8EBacktracking"><span class="toc-text">CSP问题与Backtracking</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Local-Search"><span class="toc-text">Local Search</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reinforcement-Learning"><span class="toc-text">Reinforcement Learning</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Markov-Decision-Process%EF%BC%88MDP%EF%BC%89"><span class="toc-text">Markov Decision Process（MDP）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Towards-Reinforcement-Learning"><span class="toc-text">Towards Reinforcement Learning</span></a></li></ol></li></ol>
+  </div>
+</section>
+
 
       
 <section class="widet-notice widget-item layout-margin content-padding--primary soft-size--large soft-style--box">

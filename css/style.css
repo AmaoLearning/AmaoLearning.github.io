@@ -100,7 +100,7 @@
   }
 }
 ::-webkit-scrollbar {
-  display: none;
+  width: 0px;
 }
 html,
 body,
@@ -962,7 +962,7 @@ html.show-mobile-nav .navbar-list {
   display: block;
   height: auto;
   margin: auto;
-  max-width: 100%;
+  max-width: 80%;
   box-sizing: initial;
   background-color: var(--theme-bg-primary);
   overflow: hidden;
@@ -1205,7 +1205,7 @@ html.show-mobile-nav .navbar-list {
 }
 .markdown-body .figure-image img {
   display: table;
-  max-width: 100%;
+  max-width: 60%;
   height: auto;
   border-radius: var(--soft-small-radius);
 }
@@ -1349,15 +1349,16 @@ html.show-mobile-nav .navbar-list {
   color: var(--theme-text-primary);
 }
 .content-container.post-container .widget-info .widget-toc .widget-body ol:not(:first-child) {
-  padding-left: 20px;
+  padding-left: 16px;
 }
 .content-container.post-container .widget-info .widget-toc .widget-body ol > li {
-  margin: 16px 0;
+  margin: 8px 0;
 }
 .content-container.post-container .widget-info .widget-toc .widget-body ol > li::marker {
   color: var(--theme-text-primary);
 }
 .content-container.post-container .widget-info .widget-toc .widget-body ol > li > a {
+  font-weight: bolder;
   color: var(--theme-text-primary);
   transition: color 0.3s ease;
 }
