@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-11-03T04:40:22.119Z" itemprop="dateUpdated">2025-11-03</time>
+              <time  class="article-updated" datetime="2025-11-03T10:13:49.779Z" itemprop="dateUpdated">2025-11-03</time>
             </h2>
           
           
@@ -306,7 +306,7 @@
   
 </li>
 </ol>
-<p><a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_16_RL_I.pdf">参考PPT</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_6_Local_Search.pdf">参考PPT</a></p>
 <h2 id="Reinforcement-Learning"><a href="#Reinforcement-Learning" class="headerlink" title="Reinforcement Learning"></a>Reinforcement Learning</h2><h3 id="Markov-Decision-Process（MDP）"><a href="#Markov-Decision-Process（MDP）" class="headerlink" title="Markov Decision Process（MDP）"></a>Markov Decision Process（MDP）</h3><p>强化学习经常可以看成MDP，即每一步行动仅根据当下的状态而选择。MDP中需要理解的概念如下：</p>
 
     <figure class="figure-image">
@@ -346,7 +346,52 @@
       <figcaption></figcaption>
     </figure>
   </p>
-<p>MDP是RL的前奏，这一部分中所有状态转移概率、奖励信息都是已知的，所以是一个可以全局考虑的离线问题。但是RL中状态转移概率和奖励信息可能都未知，就需要试错探索和更新策略，这才是Learning。</p>
+<p>MDP是RL的前奏，这一部分中所有状态转移概率、奖励信息都是已知的，所以是一个可以全局考虑的离线问题。但是RL中这些信息可能都未知，就需要试错探索和更新策略，这才是Learning。</p>
+<p>参考PPT：<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_14_MDPs_I.pdf">MDP_I</a>、<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_15_MDPs_II.pdf">MDP_II</a></p>
+<h3 id="Towards-Reinforcement-Learning"><a href="#Towards-Reinforcement-Learning" class="headerlink" title="Towards Reinforcement Learning"></a>Towards Reinforcement Learning</h3><ul>
+<li>条件：T和R未知，可以重复试验（episodes）</li>
+<li>目标：找到最佳Policy。</li>
+<li>常见概念：  
+    <figure class="figure-image">
+      <img src="/images/2025/intro-ai/rl_1.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+</li>
+</ul>
+<p><strong>Model-Based Learning</strong>：较容易想到对T和R进行经验性建模，下面是例子。<br>    
+    <figure class="figure-image">
+      <img src="/images/2025/intro-ai/rl_2.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  </p>
+<p><strong>Model-Free Learning</strong>：不直接建模T和R，而是直接学习Value图。策略固定时也称为Passive Reinforcement Learning。</p>
+<ol>
+<li><strong>Direct Evaluation</strong>：在固定策略下对某状态采样得到的值直接取平均。由于没有利用MDP特征，学习耗时较长。</li>
+<li><p><strong>Temporal Difference (Value) Learning</strong>：联合Policy Evaluation和指数平均移动，一次只更新单个状态。</p>
+<script type="math/tex; mode=display">\begin{aligned}Sample:\; &sample=R(s,\pi(s),s')+\gamma V^\pi(s') \\ Update: \; &V^\pi(s)\leftarrow (1-\alpha)V^\pi(s)+\alpha sample=V^\pi(s)+\alpha(sample-V\pi(s))\end{aligned} \\ Error：\; &E=\frac{1}{2}(sample - V^\pi(s))^2</script></li>
+<li><p><strong>Q-Learning</strong>：利用TD Learning学习Q-Value图。</p>
+<script type="math/tex; mode=display">Q(s,a)\leftarrow Q(s,a)+\alpha[R(s,a,s')+\gamma\max\nolimits_{a'}Q(s',a')-Q(s,a)]</script><p> 这是一种off-policy learning，即通过不同的policy学到了最佳policy。反之on-policy learning则是仅学习到policy涉及的值。</p>
+</li>
+</ol>
+<p><strong>Exploration</strong>：既需要学习到未走过的区域，又要保持较优的策略。</p>
+<ol>
+<li><strong>Random Actions</strong>：每一步以小概率$\epsilon$随机行动，其余概率以最佳策略行动。为了最后能仅执行最佳策略，可以随时间减小$\epsilon$。</li>
+<li><p><strong>Exploration Function</strong>：奖励未经探索或鲜少探索的状态，这种奖励会随探索次数增加而逐渐降低，如</p>
+<script type="math/tex; mode=display">\begin{aligned}&f(u,n)=u+k/n \\ &Q(s,a)\leftarrow_\alpha R(s,a,s')+\gamma\max\nolimits_{\alpha'}f(Q(s',a'),N(s',a'))\end{aligned}</script><p> <strong>Regret</strong>是当前策略获得的奖励和最佳策略奖励（事后之明）的误差，前两种探索方式中后一种的Regret更小，因为额外奖励。</p>
+</li>
+</ol>
+<p><strong>Generalizing States</strong>：由于复杂问题或者真实世界中状态几乎无限多，我们可以用有限种情况来估计所有情况的Q-Value。</p>
+<ol>
+<li>States或Q-state可以使用特征向量来建模，每个维度描述了某个状态中的某个特征，如离终点的距离、敌人距离、局部环境特征等等。</li>
+<li><p>Linear Value Function：用特征和权重对Value和Q-Value进行一阶线性表示</p>
+<script type="math/tex; mode=display">V_w(s)=w_1f_1(s)+w_2f_2(s)+...+W_nf_n(s) \\ Q_w(s,a)=w_1f_1(s,a)+w_2f_2(s,a)+...+w_nf_n(s,a)</script><p> 权重的更新则可以通过对Error求偏导计算，非线性表示的更新规则相同</p>
+<script type="math/tex; mode=display">\begin{aligned}w_i\leftarrow w_i-\alpha\frac{\partial Error(w_1,...,w_n)}{\partial w_i}=w_i-\alpha(Q_w(s,a)-sample)f_i(s,a)\end{aligned}</script><p> NN的引入可以构造更复杂的表示函数，知名案例有Deep Q-Networks、AlphaGo等。</p>
+</li>
+</ol>
+<p><strong>思考</strong>：实际上，以上所有对Value的更新过程可以看作一种对贝尔曼方程（如下）的解的逼近做法，看起来类似于自回归，但单个Value仅为一个方程解，而自回归是在拟合一个关于时间的函数，所以两者有本质区别。</p>
+<pre><code>$$V^*(s)=\mathcal&#123;E&#125;[r+\gamma V^*(s&#39;)]$$
+</code></pre><p>参考PPT：<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_16_RL_I.pdf">RL_I</a>和<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_17_RL_II.pdf">RL_II</a></p>
 
       </section>
 
