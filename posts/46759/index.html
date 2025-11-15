@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-11-03T10:56:03.783Z" itemprop="dateUpdated">2025-11-03</time>
+              <time  class="article-updated" datetime="2025-11-15T08:50:09.175Z" itemprop="dateUpdated">2025-11-15</time>
             </h2>
           
           
@@ -373,6 +373,15 @@
       <figcaption></figcaption>
     </figure>
   </p>
+<ul>
+<li><strong>Dyna-Q</strong>：维护一个依据真实经验进行模拟训练的Value图，每次真实交互后进行N次模拟更新，从而充分利用已有经验。这样会使得学习速度显著加快，策略收敛加快，适合于样本昂贵的场景。基本算法如下：  
+    <figure class="figure-image">
+      <img src="/images/2025/intro-ai/rl_dq.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+</li>
+</ul>
 <p><strong>Model-Free Learning</strong>：不直接建模T和R，而是直接学习Value图。策略固定时也称为Passive Reinforcement Learning。</p>
 <ol>
 <li><strong>Direct Evaluation</strong>：在固定策略下对某状态采样得到的值直接取平均。由于没有利用MDP特征，学习耗时较长。</li>
@@ -381,6 +390,7 @@
 <li><p><strong>Q-Learning</strong>：利用TD Learning学习Q-Value图。</p>
 <script type="math/tex; mode=display">Q(s,a)\leftarrow Q(s,a)+\alpha[R(s,a,s')+\gamma\max\nolimits_{a'}Q(s',a')-Q(s,a)]</script><p> 这是一种off-policy learning，即通过不同的policy学到了最佳policy。反之on-policy learning则是仅学习到policy涉及的值。</p>
 </li>
+<li><strong>SARSA</strong>：State-Aciton-Reward-State-Aciton，是一种on-policy learning。与Q-Learning的区别仅在于更新Q值时直接依据当前策略，即<script type="math/tex; mode=display">Q(s,a)\leftarrow Q(s,a)+\alpha[R(s,a,s')+\gammaQ(s',a')-Q(s,a)]</script></li>
 </ol>
 <p><strong>Exploration</strong>：既需要学习到未走过的区域，又要保持较优的策略。</p>
 <ol>
@@ -740,20 +750,14 @@
         </li>
         
         <li class="categories-list-item">
-          <a href="/categories/MeshLab/">
-            MeshLab (1)
-          </a>
-        </li>
-        
-        <li class="categories-list-item">
           <a href="/categories/%E6%95%B0%E6%8D%AE%E5%8E%8B%E7%BC%A9/">
             数据压缩 (3)
           </a>
         </li>
         
         <li class="categories-list-item">
-          <a href="/categories/%E6%9D%82%E8%B0%88/">
-            杂谈 (1)
+          <a href="/categories/MeshLab/">
+            MeshLab (1)
           </a>
         </li>
         
@@ -764,14 +768,20 @@
         </li>
         
         <li class="categories-list-item">
-          <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
-            读书笔记 (1)
+          <a href="/categories/%E6%9D%82%E8%B0%88/">
+            杂谈 (1)
           </a>
         </li>
         
         <li class="categories-list-item">
           <a href="/categories/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/">
             信息收集 (1)
+          </a>
+        </li>
+        
+        <li class="categories-list-item">
+          <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
+            读书笔记 (1)
           </a>
         </li>
         
