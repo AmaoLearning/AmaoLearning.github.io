@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-11-15T08:50:09.175Z" itemprop="dateUpdated">2025-11-15</time>
+              <time  class="article-updated" datetime="2025-11-22T08:05:57.995Z" itemprop="dateUpdated">2025-11-22</time>
             </h2>
           
           
@@ -163,7 +163,7 @@
         <p>参考课程：</p>
 <ul>
 <li>AI3603 SJTU</li>
-<li><a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/">cmu15-281</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/">CMU 15-281</a></li>
 </ul>
 <h2 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h2><p>总思路：</p>
 <ol>
@@ -409,6 +409,57 @@
 </ol>
 <p><strong>思考</strong>：实际上，以上所有对Value的更新过程可以看作一种对贝尔曼方程（如下）的解的逼近做法，看起来类似于自回归，但单个Value仅为一个方程解，而自回归是在拟合一个关于时间的函数，所以两者有本质区别。</p>
 <script type="math/tex; mode=display">V^*(s)=\mathcal{E}[r+\gamma V^*(s')]</script><p>参考PPT：<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_16_RL_I.pdf">RL_I</a>和<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_17_RL_II.pdf">RL_II</a></p>
+<h2 id="Probabilistic-Graphical-Models"><a href="#Probabilistic-Graphical-Models" class="headerlink" title="Probabilistic Graphical Models"></a>Probabilistic Graphical Models</h2><h3 id="Bayesian-Nets"><a href="#Bayesian-Nets" class="headerlink" title="Bayesian Nets"></a>Bayesian Nets</h3><p>贝叶斯网络用节点表示随机变量，用有向连接的父子关系表示条件概率，显然为DAG。联合概率即被表示为：</p>
+<pre><code>$$ P(X_1,...,X_N)=\prod\nolimits_i P(X_i|Parents(X_i)) $$
+</code></pre>
+    <figure class="figure-image">
+      <img src="/images/2025/intro-ai/bn_2.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+<p><strong>Markov Blanket</strong>：变量的马尔可夫毯包含它的父节点、子节点和子节点的其他父节点，已知它的马尔科夫毯会使其与其他所有变量条件独立。</p>
+<p><strong>Normalization</strong>：有时我们比较同一已知条件的条件概率大小，此时跳过其分母，如</p>
+<script type="math/tex; mode=display">P(Q|e)=\frac{\sum_{h_1}\sum_{h_2}P(Q,h_1,h_2,e)}{P(e)}\propto\sum_{h_1}\sum_{h_2}P(Q,h_1,h_2,e)</script><p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Variable_elimination"><strong>Variable Elimination</strong></a>：一种简单的精确条件概率（Exact Inference from Conditional Probability Table）算法，其思想是列出所有隐藏变量并优先将它们通过求和消除，这过程中隐藏变量的顺序会影响最后逐点相乘的计算量，找到最优顺序是NP-hard问题。算法框架如下</p>
+<figure class="highlight stylus"><figcaption><span>python</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs stylus">function <span class="hljs-built_in">VariableElimination</span>(Q , e, bn) returns <span class="hljs-selector-tag">a</span> distribution over Q<br>    factors ← <span class="hljs-selector-attr">[ ]</span><br>    <span class="hljs-keyword">for</span> each <span class="hljs-selector-tag">var</span> <span class="hljs-keyword">in</span> <span class="hljs-built_in">ORDER</span>(bn.vars) do<br>        factors ← <span class="hljs-selector-attr">[MAKE-FACTOR(var, e)|factors]</span><br>        <span class="hljs-keyword">if</span> <span class="hljs-selector-tag">var</span> is <span class="hljs-selector-tag">a</span> hidden variable then<br>            factors ← <span class="hljs-built_in">SUM-OUT</span>(<span class="hljs-selector-tag">var</span>,factors)<br>    return <span class="hljs-built_in">NORMALIZE</span>(<span class="hljs-built_in">POINTWISE-PRODUCT</span>(factors))<br></code></pre></td></tr></table></figure>
+<p><strong>Sampling</strong>：与精确相对，Approximate Inference from CPT，有以下几种采样方法</p>
+<ol>
+<li><strong>Prior Sampling</strong>：对贝叶斯网络中的所有变量进行采样，采样和概率算法如下 <figure class="highlight stata"><figcaption><span>python</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs stata">w=1.0<br><span class="hljs-keyword">For</span> i=1, 2, …, <span class="hljs-keyword">n</span><br>    <span class="hljs-keyword">Sample</span> <span class="hljs-keyword">xi</span> from P(<span class="hljs-keyword">Xi</span>| Parents(<span class="hljs-keyword">Xi</span>))<br>    w = w * P(<span class="hljs-keyword">xi</span>| Parents(<span class="hljs-keyword">Xi</span>))<br><span class="hljs-keyword">Return</span> (x1, x2, …, xn), w<br></code></pre></td></tr></table></figure></li>
+<li><strong>Rejection Sampling</strong>：为求条件概率，丢弃所有不合条件的采样，算法如下 <figure class="highlight stata"><figcaption><span>python</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs stata"><span class="hljs-keyword">IN</span>: evidence instantiation<br><span class="hljs-keyword">For</span> i=1, 2, …, <span class="hljs-keyword">n</span><br>    <span class="hljs-keyword">Sample</span> <span class="hljs-keyword">xi</span> from P(<span class="hljs-keyword">Xi</span>| Parents(<span class="hljs-keyword">Xi</span>))<br>    <span class="hljs-keyword">If</span> <span class="hljs-keyword">xi</span> not consistent with evidence<br>        Reject: <span class="hljs-keyword">Return</span>, and <span class="hljs-keyword">no</span> <span class="hljs-keyword">sample</span> is generated <span class="hljs-keyword">in</span> this cycle<br><span class="hljs-keyword">Return</span> (x1, x2, …, xn)<br></code></pre></td></tr></table></figure></li>
+<li><strong>Likelihood Weighting</strong>：为充分利用采样，通过先验条件变量的概率给予权重，采样非条件变量，从而达到固定条件变量的目的，算法如下 <figure class="highlight stata"><figcaption><span>python</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs stata"><span class="hljs-keyword">IN</span>: evidence instantiation<br>w = 1.0<br><span class="hljs-keyword">for</span> i=1, 2, …, <span class="hljs-keyword">n</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">Xi</span> is <span class="hljs-keyword">an</span> evidence variable<br>        <span class="hljs-keyword">xi</span> = observation <span class="hljs-keyword">xi</span> <span class="hljs-keyword">for</span> <span class="hljs-keyword">Xi</span><br>        <span class="hljs-keyword">Set</span> w = w * P(<span class="hljs-keyword">xi</span>| Parents(<span class="hljs-keyword">Xi</span>))<br>    <span class="hljs-keyword">else</span><br>        <span class="hljs-keyword">Sample</span> <span class="hljs-keyword">xi</span> from P(<span class="hljs-keyword">Xi</span>| Parents(<span class="hljs-keyword">Xi</span>))<br><span class="hljs-keyword">return</span> (x1, x2, …, xn), w<br></code></pre></td></tr></table></figure></li>
+<li><strong>Gibbs Sampling</strong>：为充分利用已知的先验变量和已抽取的后验变量，我们每次仅对一个非条件变量进行采样，并以固定的先验值和采样过的后验值为条件，v重复此采样过程。采样中可以每隔一定采样次数计入一个采样，以达到采样稳态分布的目的。这是一种Markov Chain Monte Carlo方法，对复杂的多维变量概率问题非常有效。算法框架如下： <figure class="highlight livecodeserver"><figcaption><span>python</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs livecodeserver">IN: Arbitrary instantiation consistent <span class="hljs-keyword">with</span> <span class="hljs-keyword">the</span> evidence<br><span class="hljs-keyword">for</span> k(technically infinite) sampling times<br>    Resample xi <span class="hljs-built_in">from</span> P(Xi| all other variables) <span class="hljs-keyword">for</span> Xi <span class="hljs-keyword">not</span> <span class="hljs-keyword">among</span> <span class="hljs-keyword">the</span> evidence variables<br></code></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>参考PPT：<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_18_Bayes_Nets_inked.pdf">Bayes Nets</a>, <a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_19_Bayes_Nets_Independence.pdf">Bayes Nets Independence</a>, <a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_20_Bayes_Nets_Inference_inked.pdf">Bayes Nets Inference</a>, <a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_21_Bayes_Nets_Sampling_inked.pdf">Bayes Nets Sampling</a></p>
+<h3 id="Hidden-Markov-Models"><a href="#Hidden-Markov-Models" class="headerlink" title="Hidden Markov Models"></a>Hidden Markov Models</h3><p>在贝叶斯网络的基础上，从时间或空间的角度上观察一个随机变量（或称状态）序列，或者说一个（一阶）马尔可夫链，我们有以下基本假设：</p>
+<ul>
+<li>状态转移概率来自一个稳态分布</li>
+<li>以现在状态为条件时，过去状态与未来状态相互独立</li>
+<li>每个状态只依赖上一个状态</li>
+</ul>
+<p>马尔可夫链的状态转移公式很简单：</p>
+<script type="math/tex; mode=display">\begin{aligned}P(X_t)&=\sum_{x_{t-1},...,x_0}P(X_t|x_{t-1})P(x_{t-1}|x_{t-2})...P(x_0) \\ &=\sum_{x_{t-1}}P(X_t|x_{t-1})\sum_{x_{t-2},...,x_0}P(x_0,...,x_{t-1}) \\ &=\sum_{x_{t-1}}P(X_t|x_{t-1})P(x_{t-1})\end{aligned}</script><p><strong>隐马尔可夫模型</strong>（HMM）中，状态是不直接可见的，只能观察到由当前状态引发的先验，现实中语音识别、机器翻译等等都是这种模型。精确查询HMM的联合分布可以用以下公式：</p>
+<script type="math/tex; mode=display">P(X_0,X_1,E_1,...,X_T,E_T)=P(X_0)\prod_{t=1:T}P(X_t|X_{t-1})P(E_t|X_t)</script>
+    <figure class="figure-image">
+      <img src="/images/2025/intro-ai/bn_3.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+<p>除联合分布外，精确查询HMM通常有以下几种情况：<br>
+    <figure class="figure-image">
+      <img src="/images/2025/intro-ai/bn_4.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  </p>
+<p>其中Filtering可以看作以现在和过去的先验为条件，当前的状态的条件概率，其公式推导过程如下：</p>
+<script type="math/tex; mode=display">\begin{aligned}P(X_t|e_{1:t}) &=P(X_t|e_t, e_{1:t-1}) \\ &=\alpha P(X_t,e_t|e_{1:t-1}) \\ &=\alpha \sum_{x_{t-1}}P(x_{t-1},X_t,e_t|e_{1:t-1}) \\ &=\alpha \sum_{x_{t-1}}P(x_{t-1}|e_{1:t-1})P(X_t|x_{t-1})P(e_t|X_t) \\ &=\alpha(normalize) \; P(e_t|X_t)(update) \; \sum_{x_{t-1}}P(x_t|x_{t-1})P(x_{t-1}|e_{1:t-1})(predict) \\ &recursively\; computing\; ... \end{aligned}</script><p>时间和空间复杂度为$O(|X|^2), \;|X|$是状态数，通常非常大。</p>
+<p><strong>Particle Filtering</strong>：从状态极多甚至连续的空间中近似查询HMM的方法，其核心思想是。该方法为求$p(x_t|e_{1:t})$，首先随机进行N个采样（或称粒子），接下来在三个步骤间循环：</p>
+<ol>
+<li>预测：直接根据状态转移模型生成新粒子，$x_t^{i}~p(x_t|x_{t-1}^i)$。</li>
+<li>权重更新：根据观测调整所有粒子的可信度（初始为1），$\tilde{w}_t^i=w_{t-1}^i\cdot p(e_t|x_t^i)$，再归一化$w_t^i=\tilde{w}_t^i/(\sum_{j=1}^N \tilde{w}_t^j)$。</li>
+<li>重采样：按照新权重重新采样N个粒子，从而将粒子聚集到权重大的状态，淘汰权重小的状态，解决粒子退化的问题。</li>
+</ol>
+<p>在第二步中更新得到的权重和第三步中重采样的粒子实际在$|X|=N$的空间内近似计算了$p(x_t|e_{1:t})$：</p>
+<script type="math/tex; mode=display">p(x_{t}|e_{1:t})\approx \sum\nolimits_{i=1}^N w_t^i\delta(x_t-x_t^i)</script><p>参考PPT：<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_22_Bayes_Nets_HMMs_inked.pdf">Bayes Nets HMMs</a>, <a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_23_HMMs_and_Particle_Filters_inked.pdf">HMMs and Particle Filters</a></p>
 
       </section>
 
@@ -714,7 +765,7 @@
     <span>TITLES</span>
   </div>
   <div class="widget-body">
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2"><span class="toc-text">搜索</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#A-%E7%AE%97%E6%B3%95"><span class="toc-text">A*算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Minimax"><span class="toc-text">Minimax</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hybrid-A"><span class="toc-text">Hybrid A*</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CSP%E9%97%AE%E9%A2%98%E4%B8%8EBacktracking"><span class="toc-text">CSP问题与Backtracking</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Local-Search"><span class="toc-text">Local Search</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reinforcement-Learning"><span class="toc-text">Reinforcement Learning</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Markov-Decision-Process%EF%BC%88MDP%EF%BC%89"><span class="toc-text">Markov Decision Process（MDP）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Towards-Reinforcement-Learning"><span class="toc-text">Towards Reinforcement Learning</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2"><span class="toc-text">搜索</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#A-%E7%AE%97%E6%B3%95"><span class="toc-text">A*算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Minimax"><span class="toc-text">Minimax</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hybrid-A"><span class="toc-text">Hybrid A*</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CSP%E9%97%AE%E9%A2%98%E4%B8%8EBacktracking"><span class="toc-text">CSP问题与Backtracking</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Local-Search"><span class="toc-text">Local Search</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reinforcement-Learning"><span class="toc-text">Reinforcement Learning</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Markov-Decision-Process%EF%BC%88MDP%EF%BC%89"><span class="toc-text">Markov Decision Process（MDP）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Towards-Reinforcement-Learning"><span class="toc-text">Towards Reinforcement Learning</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Probabilistic-Graphical-Models"><span class="toc-text">Probabilistic Graphical Models</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Bayesian-Nets"><span class="toc-text">Bayesian Nets</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Hidden-Markov-Models"><span class="toc-text">Hidden Markov Models</span></a></li></ol></li></ol>
   </div>
 </section>
 
@@ -750,26 +801,26 @@
         </li>
         
         <li class="categories-list-item">
-          <a href="/categories/%E6%95%B0%E6%8D%AE%E5%8E%8B%E7%BC%A9/">
-            数据压缩 (3)
-          </a>
-        </li>
-        
-        <li class="categories-list-item">
           <a href="/categories/MeshLab/">
             MeshLab (1)
           </a>
         </li>
         
         <li class="categories-list-item">
-          <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
-            学习笔记 (5)
+          <a href="/categories/%E6%95%B0%E6%8D%AE%E5%8E%8B%E7%BC%A9/">
+            数据压缩 (3)
           </a>
         </li>
         
         <li class="categories-list-item">
           <a href="/categories/%E6%9D%82%E8%B0%88/">
             杂谈 (1)
+          </a>
+        </li>
+        
+        <li class="categories-list-item">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+            学习笔记 (5)
           </a>
         </li>
         
