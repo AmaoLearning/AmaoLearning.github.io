@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-11-22T08:05:57.995Z" itemprop="dateUpdated">2025-11-22</time>
+              <time  class="article-updated" datetime="2025-11-24T11:29:44.178Z" itemprop="dateUpdated">2025-11-24</time>
             </h2>
           
           
@@ -390,7 +390,7 @@
 <li><p><strong>Q-Learning</strong>：利用TD Learning学习Q-Value图。</p>
 <script type="math/tex; mode=display">Q(s,a)\leftarrow Q(s,a)+\alpha[R(s,a,s')+\gamma\max\nolimits_{a'}Q(s',a')-Q(s,a)]</script><p> 这是一种off-policy learning，即通过不同的policy学到了最佳policy。反之on-policy learning则是仅学习到policy涉及的值。</p>
 </li>
-<li><strong>SARSA</strong>：State-Aciton-Reward-State-Aciton，是一种on-policy learning。与Q-Learning的区别仅在于更新Q值时直接依据当前策略，即<script type="math/tex; mode=display">Q(s,a)\leftarrow Q(s,a)+\alpha[R(s,a,s')+\gammaQ(s',a')-Q(s,a)]</script></li>
+<li><strong>SARSA</strong>：State-Aciton-Reward-State-Aciton，是一种on-policy learning。与Q-Learning的区别仅在于更新Q值时直接依据当前策略，即<script type="math/tex; mode=display">Q(s,a)\leftarrow Q(s,a)+\alpha[R(s,a,s')+\gamma Q(s',a')-Q(s,a)]</script></li>
 </ol>
 <p><strong>Exploration</strong>：既需要学习到未走过的区域，又要保持较优的策略。</p>
 <ol>
@@ -410,13 +410,36 @@
 <p><strong>思考</strong>：实际上，以上所有对Value的更新过程可以看作一种对贝尔曼方程（如下）的解的逼近做法，看起来类似于自回归，但单个Value仅为一个方程解，而自回归是在拟合一个关于时间的函数，所以两者有本质区别。</p>
 <script type="math/tex; mode=display">V^*(s)=\mathcal{E}[r+\gamma V^*(s')]</script><p>参考PPT：<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_16_RL_I.pdf">RL_I</a>和<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~15281-f19/lectures/15281_Fa19_Lecture_17_RL_II.pdf">RL_II</a></p>
 <h2 id="Probabilistic-Graphical-Models"><a href="#Probabilistic-Graphical-Models" class="headerlink" title="Probabilistic Graphical Models"></a>Probabilistic Graphical Models</h2><h3 id="Bayesian-Nets"><a href="#Bayesian-Nets" class="headerlink" title="Bayesian Nets"></a>Bayesian Nets</h3><p>贝叶斯网络用节点表示随机变量，用有向连接的父子关系表示条件概率，显然为DAG。联合概率即被表示为：</p>
-<pre><code>$$ P(X_1,...,X_N)=\prod\nolimits_i P(X_i|Parents(X_i)) $$
-</code></pre>
+<script type="math/tex; mode=display">P(X_1,...,X_N)=\prod\nolimits_i P(X_i|Parents(X_i))</script>
     <figure class="figure-image">
       <img src="/images/2025/intro-ai/bn_2.png" alt="" loading="lazy" />
       <figcaption></figcaption>
     </figure>
   
+<p>描述所有联合变量情况的表太过庞大，其中许多关系并非必要，这也使得贝叶斯网络过于庞大。我们利用<strong>条件独立</strong>（Conditional Independence）削减网络规模。</p>
+<div class="admonition note"><p class="admonition-title">条件独立
+</p><p>如是否下雨、是否交通拥堵和是否打伞三个二元随机变量，虽然下雨大概率导致交通拥堵和打伞，但是有了是否下雨这个条件后交通拥堵与打伞间没有必然联系，因而是否交通拥堵和是否打伞关于是否下雨相互条件独立。这种关系比变量间的独立性更容易存在，因为它精细地描述了事物间的因果关系，排除了一些不重要的联系。条件独立用符号表示为：<br>
+$$\forall x,y,z; P(x|y,z)=P(x|z) ; or ; P(x,y|z)=P(x|z)P(y|z)$$</p>
+</div>
+
+<p>运用条件独立的贝叶斯网络中有两种常见结构：</p>
+<ol>
+<li><strong>共同原因</strong>：$X\leftarrow Y \rightarrow Z: P(x,y,z)=P(y)P(x|y)P(z|y)$，已知Y后X与Z相互条件独立，这表明观察到的共同原因会阻断效果间依赖，证明：<script type="math/tex; mode=display">P(z|x,y)=\frac{P(x,y,z)}{P(x,y)}=\frac{P(y)P(x|y)P(z|y)}{P(y)P(x|y)}=P(z|y)</script></li>
+<li><strong>共同效果</strong>：$X\rightarrow Z \leftarrow Y: P(x,y,z)=P(x)P(y)P(z|x,y)$，X和Y相互独立，但已知Z后X、Y不一定相互独立，这表明观察到的共同效果会激发两个原因的依赖关系，独立性的证明：<script type="math/tex; mode=display">P(x,y)=\sum_z P(x,y,z)=\sum_z P(x)P(y)P(z|x,y)=P(x)P(y)</script></li>
+</ol>
+<p><strong>贝叶斯球</strong>（Bayes Ball）：一种在贝叶斯网络里判断已知条件下变量间是否相互条件独立的方法，步骤：</p>
+<ol>
+<li>给已知随机变量<strong>着色</strong></li>
+<li>在某个待判断变量处放置一个球</li>
+<li>球能以任意方向通过active path，而被inactive path阻挡</li>
+<li>球可达另一待判断变量，则表明这两个变量在已知条件下<strong>不条件独立</strong></li>
+</ol>
+<p>Active Path与Inactive Path：主要是根据共同原因、共同效果和链状连接的性质进行判断<br>
+    <figure class="figure-image">
+      <img src="/images/2025/intro-ai/bn_1.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  </p>
 <p><strong>Markov Blanket</strong>：变量的马尔可夫毯包含它的父节点、子节点和子节点的其他父节点，已知它的马尔科夫毯会使其与其他所有变量条件独立。</p>
 <p><strong>Normalization</strong>：有时我们比较同一已知条件的条件概率大小，此时跳过其分母，如</p>
 <script type="math/tex; mode=display">P(Q|e)=\frac{\sum_{h_1}\sum_{h_2}P(Q,h_1,h_2,e)}{P(e)}\propto\sum_{h_1}\sum_{h_2}P(Q,h_1,h_2,e)</script><p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Variable_elimination"><strong>Variable Elimination</strong></a>：一种简单的精确条件概率（Exact Inference from Conditional Probability Table）算法，其思想是列出所有隐藏变量并优先将它们通过求和消除，这过程中隐藏变量的顺序会影响最后逐点相乘的计算量，找到最优顺序是NP-hard问题。算法框架如下</p>
