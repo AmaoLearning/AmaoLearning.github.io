@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-11-28T09:11:53.315Z" itemprop="dateUpdated">2025-11-28</time>
+              <time  class="article-updated" datetime="2026-01-05T10:06:05.923Z" itemprop="dateUpdated">2026-01-05</time>
             </h2>
           
           
@@ -194,7 +194,7 @@
 </li>
 <li>BFS : 算法是将按bfs序访问到的节点分层，即每访问到一个节点，将它的后继未访问节点加入下一层，该层访问完毕后开始访问下一层的节点。<ol>
 <li>Shortest Path without Weight : 距离即BFS层数，路径可用pre数组记录前驱节点。</li>
-<li>Shortest Path with Positive Weight (Minimal Spanning Tree): <strong>Dijstra</strong>，$|V|$轮每次加入树的节点是离起点最近的，然后更新该节点通往的其他节点的距离，可以用最小堆来维护。时间复杂度不用堆为$O(|V|^2(找|V|次最近点)+|E|（遍历所有边)$，用Fibonacci堆为$O(|E|+|V|\log |V|)$，均摊分析Fibonacci摘顶为$O(\log n)$其他为$O(1)$。</li>
+<li>Shortest Path with Positive Weight (Minimal Spanning Tree): <strong>Dijkstra</strong>，$|V|$轮每次加入树的节点是离起点最近的，然后更新该节点通往的其他节点的距离，可以用最小堆来维护。时间复杂度不用堆为$O(|V|^2(找|V|次最近点)+|E|（遍历所有边)$，用Fibonacci堆为$O(|E|+|V|\log |V|)$，均摊分析Fibonacci摘顶为$O(\log n)$其他为$O(1)$。</li>
 <li>Shortest Path with Negative Weight : <strong>Bellman-Ford</strong>，遍历所有边$|V|$轮，如果没有负边，生成树在$|V|-1$就结束了；否则，会有生成树内的节点在第$|V|$轮被重复更新。时间复杂度为$O(|V||E|)$。</li>
 </ol>
 </li>
@@ -244,6 +244,10 @@
 <li>All Pair Shortest Path Floyd-Warshall：维护$dist[k,u,v]$表格（从u出发到v的仅考虑${v_1,…,v_k}$k个点的最短距离），更新规则如下，实际上也可以一直更新$dist[u,v]$表格。时间复杂度为$O(|V|^3)$。<script type="math/tex; mode=display">dist[k,u,v]=\min \{dist[k-1,u,v],dist[k-1,u,k]+dist[k-1,k,v]\}</script></li>
 <li>Traveling Salesman Problem：维护$f[S,v]$（$S$为所用节点集合，可以用0和1串的十进制表示，$v$表示终点的最短路），更新规则如下，最终结果为$f[V,v]$，时间复杂度为$O(|V|^2 2^{|V|})$。<script type="math/tex; mode=display">f[S,v]=\min_{k\in V}\{f[S-\{k\},k]+d(k,v)\}</script></li>
 <li>Maximize Independent Set on Trees：独立集是相互间没有边的节点集合。维护$f[v]$（以$v$为根的子树的最大集），更新规则如下。时间复杂度为$O(n)$。<script type="math/tex; mode=display">f[v]=\max \{\sum_{u\in children(v)}f[u], \sum_{u\in grandchildren(v)}f[u]+1\}</script> 也可以贪心地使用DFS，总是选择更靠近叶子的节点，丢弃其父节点。拓扑序可以用二叉树的中序遍历。</li>
+</ul>
+</li>
+<li>Channel Coding:<ul>
+<li>Viterbi Algorithm in the Trellis Diagram：Trellis Diagram作为卷积码编码方式的一种，存有每种寄存器状态在不同序列索引下的转换路径。Viterbi算法用于找到最佳解码路径，按编码索引顺序累积每一条路径的代价（路径输出码与接收码的汉明距离），在路径交汇处丢弃累积代价较大的路径，于是在每一索引为每个状态保留了一条最优路径，直到索引结束输出累积代价最小的路径输出码作为预测码。等价于有向无环图的Dijkstra算法。</li>
 </ul>
 </li>
 </ol>
@@ -907,7 +911,7 @@
       
     </div>
      
-    <p>&copy; 2025 <a href="/" target="_blank">MaoCaiMao</a></p>
+    <p>&copy; 2026 <a href="/" target="_blank">MaoCaiMao</a></p>
 
     
 
