@@ -36,7 +36,7 @@
 
   
 
-  <title>从JPEG开始学习的图像有损压缩 | 阿毛的小书桌</title>
+  <title>亲人访谈 | 阿毛的小书桌</title>
 
   
 
@@ -67,7 +67,7 @@
 <!-- header container -->
 <header class="header-container post">
   
-    <div class="post-image" style="background-image: url(/images/2025/jpeg.png)"></div>
+    <div class="post-image" style="background-image: url(/images/const/banner.png)"></div>
   
 
   <!-- navbar -->
@@ -118,27 +118,20 @@
     <div class="header-content">
       <div class="post-text layout-block">
         <div class="layout-margin">
-          <h1 class="title-wrap">从JPEG开始学习的图像有损压缩</h1>
+          <h1 class="title-wrap">亲人访谈</h1>
           <h2 class="title-sub-wrap">
             <strong>MaoCaiMao</strong>
             <span>发布于</span>
-            <time  class="article-date" datetime="2025-03-17T08:18:14.000Z" itemprop="datePublished">2025-03-17</time>
+            <time  class="article-date" datetime="2026-01-19T13:09:34.000Z" itemprop="datePublished">2026-01-19</time>
           </h2>
-          
-            <h2 class="last-time">
-              <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-11-28T09:13:31.800Z" itemprop="dateUpdated">2025-11-28</time>
-            </h2>
           
           
           <ul class="wrap-list dark">
   
-    <li><a href="/categories/%E6%95%B0%E6%8D%AE%E5%8E%8B%E7%BC%A9/">📒 数据压缩</a></li>
+    <li><a href="/categories/%E6%9D%82%E8%B0%88/">📒 杂谈</a></li>
     
 </ul>
           <ul class="wrap-list dark">
-  
-    <li><a href="/tags/%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86-%E5%8E%8B%E7%BC%A9/">🏷️ 数字图像处理 压缩</a></li>
   
 </ul>
         </div>
@@ -162,189 +155,46 @@
       
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
-        <h2 id="从JPEG开始学习的图像处理"><a href="#从JPEG开始学习的图像处理" class="headerlink" title="从JPEG开始学习的图像处理"></a>从JPEG开始学习的图像处理</h2><p><code>JPEG</code>常用的简化编码格式为<code>JFIF(JPEG File Interchange Format)</code>，在编码时，它的流程一般为：</p>
-<ol>
-<li>颜色空间变换 $ RGB \rightarrow Y’C_BC_R $</li>
-<li>对色度降采样</li>
-<li>分块进行<strong>离散余弦变换DCT</strong></li>
-<li>量化减少高频信息</li>
-<li>熵编码</li>
-</ol>
-<h3 id="颜色空间变换"><a href="#颜色空间变换" class="headerlink" title="颜色空间变换"></a>颜色空间变换</h3><p>$Y’C_BC_R$（256 level）空间中，$Y’$表示像素的亮度，$C_B$和$C_R$分别表示红色和蓝色分量，这种表示方法常用于数据彩色电视和DVD中。</p>
-<p>具体从RGB向该空间的转换方式(ITU-R BT.601)如下：</p>
-<script type="math/tex; mode=display">\begin{equation}\begin{aligned}
-    Y &= 0.299 R + 0.587 G + 0.114 B \\
-    Cb &= - 0.1687 R - 0.3313 G + 0.5 B + 128 \\
-    Cr &= 0.5 R - 0.4187 G - 0.0813 B + 128
-\end{aligned}\end{equation}</script><p>反向转换方式如下：</p>
-<script type="math/tex; mode=display">\begin{equation}\begin{aligned}
-    R &= Y + 1.402 (Cr-128) \\
-    G &= Y - 0.34414 (Cb-128) - 0.71414 (Cr-128) \\
-    B &= Y + 1.772 (Cb-128)
-\end{aligned}\end{equation}</script><h3 id="降采样"><a href="#降采样" class="headerlink" title="降采样"></a>降采样</h3><p>我们使用该YCbCr系统的原因是人眼对色度的敏感度不及对亮度的敏感度，在压缩影像中，以4:2:2 $Y’CbCr$作例，它只需$R’G’B’$（4:4:4）三分之二的带宽。带宽的减少在肉眼上几乎没有影像上差别。</p>
-<p>具体来说4:2:2 $Y’CbCr$中Y信号的采样频率为13.5MHz，而其他两个信号的采样频率为6.75MHz，缺失的色度信息通过内插值或复制前一色度来补全。</p>
-<p>这里的比例（以J:a:b为例）更具体的解释如下：</p>
-<ul>
-<li>在一个可见区域内有J个像素宽且高为2个像素</li>
-<li>a：在第一行J个像素中色度采样次数。</li>
-<li>b：在第一行与第二行之间色度采样变化的次数（4:4:1和4:2:1不符合该规则）。</li>
-<li>Alpha：偶尔会出现，一般与J相等。</li>
-</ul>
-
-    <figure class="figure-image">
-      <img src="/images/2025/YCrCb.png" alt="降采样示例，容易看出4:4:4没有降采样" loading="lazy" />
-      <figcaption>降采样示例，容易看出4:4:4没有降采样</figcaption>
-    </figure>
-  
-<h3 id="分块离散余弦变换"><a href="#分块离散余弦变换" class="headerlink" title="分块离散余弦变换"></a>分块离散余弦变换</h3><p>每个通道都会被分块，分块后的最小单位称为<code>Minimum Coded Unit(MCU，在视频压缩中也被称作macroblock)</code>，具体来说各比例与分块方法的对应关系如下：</p>
-<ul>
-<li>4:4:4 —— 8 x 8</li>
-<li>4:2:2 —— 16 x 8</li>
-<li>4:2:0 —— 16 x 16</li>
-</ul>
-<p>如果出现了非整数倍的大小，需要向残缺的最小单元填充元素，通常填充与边缘元素相同的元素，很显然这样并不能完全消除瑕疵。</p>
-<p>接下来对每个最小单元进行<code>离散余弦变换</code>，我们使用normalized, two-dimensional type-II discrete cosine transform（逆变换为type-III DCT），以下面的8 x 8 8-bit 矩阵为例：</p>
-
-    <figure class="figure-image">
-      <img src="/images/2025/DCT.png" alt="" loading="lazy" />
-      <figcaption></figcaption>
-    </figure>
-  
-<p>首先将整个矩阵中心化，让中值变为0，在如上的8-bit图中，即把每个数减去128：</p>
-
-    <figure class="figure-image">
-      <img src="/images/2025/DCT1.png" alt="" loading="lazy" />
-      <figcaption></figcaption>
-    </figure>
-  
-<p>再计算离散余弦系数，8 x 8矩阵的计算公式如下：</p>
-<script type="math/tex; mode=display">\begin{equation} G_{u,v}= \frac{1}{4}\alpha(u)\alpha(v)\sum_{x=0}^7\sum_{y=0}^7g_{x,y}\cos[\frac{(2x+1)u\pi}{16}]\cos[\frac{(2y+1)v\pi}{16}] \end{equation}</script><p>上式中，</p>
-<ul>
-<li>$u,v$分别为水平、竖直方向的空间频率，范围为$[0, 8)$。</li>
-<li>$\begin{aligned}\alpha(u)=\begin{cases}\frac{1}{\sqrt{2}} &amp;if\;u=0 \\ 1 &amp;otherwise \end{cases}\end{aligned}$，用于将变换正交化。</li>
-<li>$g_{x,y}$为该坐标的像素值。</li>
-<li>$G_{u,v}$即该坐标的DCT系数。</li>
-</ul>
-
-    <figure class="figure-image">
-      <img src="/images/2025/DCT2.png" alt="" loading="lazy" />
-      <figcaption></figcaption>
-    </figure>
-  
-<p>可以看到左上角的低频分量、尤其是直流分量（坐标（0，0））相较右下角的高频分量的DCT系数大很多，这意味着大部分信息其实为低频信息，我们将会在量化步骤中除去人眼难以察觉的高频分量。</p>
-<p>此外，DCT计算会暂时性地增大数据存储空间，因为原本的8-bit信息被扩张为表示浮点数的11或更多bit（通常为16-bit）。这一点通常不被重视，因为在同一时间内通常只有图片的一小部分被进行DCT。</p>
-<div class="admonition info"><p class="admonition-title">离散余弦变换的拓展理解
-</p><p>离散傅里叶变换(DFT)系数的一维公式：<br>
-$$ \begin{aligned} \hat{x}[k] =\sum_{n=0}^{N-1}x[n]e^{-j\frac{2\pi}{N}nk} =\sum_{n=0}^{N-1}x[n]\cos(\frac{2\pi}{N}nk)-j\sin(\frac{2\pi}{N}nk) \end{aligned} $$</p>
-<p>DCT的一维公式：<br>
-$$ F_k=\sum_{n=0}^{N-1}f_n\cos(\frac{\pi k(z+\frac{1}{2})}{N}) \<br>
-f_n = \sum_{n=0}^{N-1}x[n]\cos(\frac{\pi k(z+\frac{1}{2})}{N})$$</p>
-<p>通过比较公式我们可以发现，DCT的信号周期约为DFT的两倍，且经过了半整数的采样位移，并且默认源函数为实偶函数，因此结果中只有余弦项。</p>
-</div>
-
-<h3 id="量化"><a href="#量化" class="headerlink" title="量化"></a>量化</h3><p>在图像处理领域，<code>量化</code>是一种将一定范围的值压缩成单个离散值的有损压缩技巧，用这种方法通常能减少需要表示的符号。</p>
-<p>常见的压缩应用有：</p>
-<ul>
-<li>颜色量化——减少用来表示图片的颜色数量</li>
-<li>灰度量化——减少灰度等级数，计算公式：
-    <figure class="figure-image">
-      <img src="/images/2025/Quantization.png" alt="" loading="lazy" />
-      <figcaption></figcaption>
-    </figure>
-  
-其中$Q(x)$是量化后的值，x是原始值，$\delta$是量化区间的大小，此处用区间的中间值表示该区间的所有量化值。</li>
-<li>图像压缩中的频率量化，我们在下面主要介绍这种量化方式。</li>
-</ul>
-<p>我们使用<code>量化矩阵</code>来控制DCT处理后的矩阵中的每个值，许多编码器允许自定义量化矩阵，在JPEG标准中常用的50%质量量化矩阵如下图：</p>
-
-    <figure class="figure-image">
-      <img src="/images/2025/Quantization1.png" alt="" loading="lazy" />
-      <figcaption></figcaption>
-    </figure>
-  
-<p>接着进行如下计算：</p>
-<script type="math/tex; mode=display">\begin{equation} B_{j,k}=round(\frac{G_{j,k}}{Q_{j,k}}) for\;j=0,1,2,...,7; k=0,1,2,...,7 \end{equation}</script>
-    <figure class="figure-image">
-      <img src="/images/2025/Quantization2.png" alt="" loading="lazy" />
-      <figcaption></figcaption>
-    </figure>
-  
-<p>可以注意到结果中高频分量大部分都被量化为0，这一部分是因为高频分量幅值小，另一部分原因是量化矩阵对高频分量的削减更狠，这是因为人眼对亮度的高频分量的强度差异感受较弱。</p>
-<p>增加或减少量化阶段使用的除数可以改变最终的压缩率，在存储精度足够高的情况下，量化是JFIF中唯一有损的步骤。</p>
-<h3 id="熵编码"><a href="#熵编码" class="headerlink" title="熵编码"></a>熵编码</h3><p>JPEG的熵编码采用<code>“之字形”(zigzag)</code>顺序、<code>游程编码(run-length encoding,RLE)算法</code>和<code>哈夫曼编码</code>。JPEG也可以使用压缩率稍好的<code>算术编码(arithmetic coding)</code>来替代哈夫曼编码，但前者编解码时间更长、使用需要专利费且压缩体积通常只比后者小5-7%。</p>
-<p>编码时，坐标为(0,0)的量化DC系数被编码为与上一个块相同坐标的系数的差，且与下面的游程编码方式不同，<strong>DC编码通常不含RUNLENGTH</strong>，其余坐标则不使用这种差分预测。</p>
-
-    <figure class="figure-image">
-      <img src="/images/2025/zigzag.png" alt="" loading="lazy" />
-      <figcaption></figcaption>
-    </figure>
-  
-
-    <figure class="figure-image">
-      <img src="/images/2025/zigzag2.png" alt="使用了之字形排列的实例" loading="lazy" />
-      <figcaption>使用了之字形排列的实例</figcaption>
-    </figure>
-  
-<p>这种编码方式称为基线<code>顺序(sequential)</code>编码，它一次对单个块的系数进行编码（以锯齿状方式），JPEG 标准提供了通用的 Huffman 表；编码器还可以选择生成针对正在编码的图像中的实际频率分布进行优化的 Huffman 表。</p>
-<p>游程编码的工作原理是检查每个非零 AC 系数x，并确定前一个 AC 系数之前有多少个零。利用此信息，可以创建两个符号：</p>
-<div class="table-container">
+        <h2 id="想要多了解一点"><a href="#想要多了解一点" class="headerlink" title="想要多了解一点"></a>想要多了解一点</h2><h3 id="序"><a href="#序" class="headerlink" title="序"></a>序</h3><p>虽然已经2026年了，我却没有像去年一样总结过去、展望未来的冲动。一方面我没有什么努力去追求的事物，可追求的可能已经被不自觉放弃了；另一方面我又沉迷于短视频、游戏之中无法自拔，夸张地说，深夜打开后下一秒就是天明。这或许能够解释成逃避现实，毕竟现实里没有什么值得庆幸的胜利（音乐品味逐渐变“黑”算一种吗）。</p>
+<p>因此当我静下来时，不禁思考起我为什么而活，想到大学期间仍有印象的欢欣时分，似乎都发生在与我在乎的人交往的过程中。或是派对、或是桌游，或是聊天、或是旅游。我无非是想做一些事，同时希望有他们陪着，此刻我没有什么想做的事了，就更思念他们的陪伴。我才发觉，似乎我并没有多了解ta。</p>
+<p>跨年时与朋友聚会喝酒，朋友被问道最悲伤的一件事时，他谈到了亲人因脑梗而失忆的事。双亲和他们的双亲都健在的我无疑是幸运的，但是时间决不是宽容的。我想趁着还有时间好好了解他们，与他们相处的时间，最长也最短。</p>
+<h3 id="访谈格式"><a href="#访谈格式" class="headerlink" title="访谈格式"></a>访谈格式</h3><div class="table-container">
 <table>
 <thead>
 <tr>
-<th>符号1</th>
-<th>符号2</th>
+<th style="text-align:left">形式</th>
+<th style="text-align:left">一问一答，录音，视条件录像。</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>(RUNLENGTH, SIZE)</td>
-<td>AMPLITUDE</td>
+<td style="text-align:left">工具</td>
+<td style="text-align:left">手机录音，acepro录像，速记备忘录</td>
+</tr>
+<tr>
+<td style="text-align:left">场所</td>
+<td style="text-align:left">大部分在对方家中，其余自选，尽量在人少的时候，不是很严肃的场合。</td>
+</tr>
+<tr>
+<td style="text-align:left">准备</td>
+<td style="text-align:left">尽可能搜集对方的信息，至少掌握出生年月</td>
+</tr>
+<tr>
+<td style="text-align:left">问题提纲</td>
+<td style="text-align:left">1. 出生地和童年经历、儿时兴趣爱好（童年画像） <br> 2. 儿时家庭环境、经济条件、父母态度 <br> 3. 上学时情况 <br> 4. 童年最难忘的一件事，影响最大的一件事 <br> 5. 找工作、第一份工作、职业生涯 <br> 6. 工作中的启发、教训，失败的事、后悔的事、开心的事 <br> 7. 怎么认识配偶的、恋爱到结婚的过程 <br> 8. 结婚前后身边的变化、自己的变化 <br> 9. 未来想做什么事</td>
+</tr>
+<tr>
+<td style="text-align:left">Bonus</td>
+<td style="text-align:left">收集对方各个时期的照片</td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>符号1通常占一个字节，其中符号1中的两个元素各占4位信息。高位表示该系数前零的数量，低位表示对x的值进行编码所需的位数。符号2即x的位表示。JPEG定义了两个特殊的霍夫曼码字。一个用于在剩余系数为零时提前结束序列（称为“块结束”或“EOB”）即<code>(0, 0)</code>，另一个用于在零的运行超过 15 个之前达到非零 AC 系数。在这种情况下，在给定的非零 AC 系数之前遇到 16 个零，符号 1被“特殊”编码为：<code>(15, 0)(0)</code>。</p>
-<p>因此，前面的序列会被编码成：<br>(0, 2)(-3); (1, 2)(-3); (0, 2)(-2); (0, 3)(-6); (0, 2)(2); (0, 3)(-4); (0, 1)(1); (0, 2)(-3); (0, 1)(1); (0, 1)(1);<br>(0, 3)(5); (0, 1)(1); (0, 2)(2); (0, 1)(-1); (0, 1)(1); (0, 1)(-1); (0, 2)(2); (5, 1)(-1); (0, 1)(-1); (0, 0);</p>
-<p>上面各项的符号1可以通过查表得到唯一的哈夫曼编码表示（标准JPEG表如下图所示，亮度和色度分量有不同的表，DC系数与AC系数的表也不同），重复的符号1则<strong>在查表结果的基础上加上重复次数</strong>；符号2（幅值）则<strong>直接以二进制格式</strong>接在符号1的哈夫曼编码后。示例：</p>
-<blockquote>
-<p>符号1：(run_length=2, size=3) → Huffman码字 1101（假设）。<br>符号2：幅值5 → 二进制 101（3位）。<br>完整编码：1101 101。</p>
-</blockquote>
-
-    <figure class="figure-image">
-      <img src="/images/2025/table.png" alt="亮度的DC系数表" loading="lazy" />
-      <figcaption>亮度的DC系数表</figcaption>
-    </figure>
-  
-
-    <figure class="figure-image">
-      <img src="/images/2025/table1.png" alt="亮度的AC系数表（节选）" loading="lazy" />
-      <figcaption>亮度的AC系数表（节选）</figcaption>
-    </figure>
-  
-<p>此外baseline JPEG还可以支持<code>渐进(progressive)</code>编码，渐进编码一次性对所有块中位置相似的一批系数进行编码（称为扫描），然后对下一批所有块的系数进行编码，依此类推。例如，如果将图像分成 N 个 8×8 块$B_0,B_1,…,B_{N-1}$，然后在第一次扫描中采用 3 扫描逐行编码对直流分量$B_i(0,0)$进行编码，在第二次扫描中可以对更多AC分量进行编码，如$B_i(0,1)$到$B_i(1,1)$，则编码顺序为：$B_0(0,1),B_0(1,0),B_0(1,1),B_1(0,1),B_1(1,0),…,B_{N-1}(2,0),B_{N-1}(1,1)$，接着继续后面的扫描。基线渐进式JPEG 编码通常比基线顺序式JPEG 提供更好的压缩率，因为它能够在每次“扫描”或“通过”（包括相似位置的系数）时使用针对不同频率量身定制的不同霍夫曼表，尽管差异不是太大。</p>
-<div class="admonition info"><p class="admonition-title">关于哈夫曼编码的拓展知识
-</p><p>根据<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Shannon%27s_source_coding_theorem">香农的信源编码理论</a>，给定分布的香农熵就是理论上表示该分布中所有符号的最少bit数，在下面的表中可以看出哈夫曼编码的bit期望非常接近其香农熵。JPEG中哈夫曼编码表构建的具体细节可看<a target="_blank" rel="noopener" href="https://www.w3.org/Graphics/JPEG/itu-t81.pdf">专利书</a>，内容有点复杂，看不懂了(Q w Q)。</p>
-</div>
-
-
-    <figure class="figure-image">
-      <img src="/images/2025/huffman.png" alt="哈夫曼编码的实例，主要关注它与信息论的联系" loading="lazy" />
-      <figcaption>哈夫曼编码的实例，主要关注它与信息论的联系</figcaption>
-    </figure>
-  
-<h2 id="解码"><a href="#解码" class="headerlink" title="解码"></a>解码</h2><ol>
-<li>还原DC系数（即$S_{00}$）</li>
-<li>逐元素乘以量化矩阵（还原不了编码时的精度了）</li>
-<li>逆离散余弦变换：<script type="math/tex; mode=display">f_{x,y}=\frac{1}{4}\sum_{u=0}^7\sum_{v=0}^7\alpha(u)\alpha(v)F_{u,v}\cos[\frac{(2x+1)u\pi}{16}]\cos[\frac{(2y+1)v\pi}{16}]</script> 符号解释：<ul>
-<li>$x, y$分别是还原后像素的坐标；</li>
-<li>$\alpha(u)$与DCT相同；</li>
-<li>$F_{u,v}$是逆变换前矩阵的有损DCT系数；</li>
-<li>$f_{x,y}$即逆变换后的值；<br>再将逆变换后的值<strong>约到整数后加128</strong>，对于超出$[0,255]$范围的值则要做修剪处理；</li>
+<h3 id="访谈成果"><a href="#访谈成果" class="headerlink" title="访谈成果"></a>访谈成果</h3><p>从下面几项选：</p>
+<ul>
+<li>回忆录（博客）</li>
+<li>配上画面与字幕、剪辑后的录音</li>
 </ul>
-</li>
-</ol>
-<p>为了比较压缩前后的质量，可以计算残差矩阵（$original - uncompressed$），也可以用<strong>平均绝对值残差</strong>来衡量压缩还原后的图片质量。</p>
-<p>更多信息如已实现JPEG的库、其他JPEG版本等请见<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/JPEG">英文wiki</a>。</p>
 
       </section>
 
@@ -352,32 +202,14 @@ f_n = \sum_{n=0}^{N-1}x[n]\cos(\frac{\pi k(z+\frac{1}{2})}{N})$$</p>
       
         <nav class="article-nav">
           
-            <div class="article-nav-item layout-padding">
-  <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
-    
-      <div class="card-cover" background-image-lazy data-img="/images/2025/png_cover.png"></div>
-    
-    <div class="card-text">
-      
-        <a href="/posts/13679/" itemprop="url">
-          <h2 class="card-text--title text-ellipsis">哈基LZ77，不对，是PNG</h2>
-        </a>
-      
-      <div class="card-text--row">下一篇</div>
-    </div>
-  </article>
-</div>
-          
           
             <div class="article-nav-item layout-padding">
   <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
     
-      <div class="card-cover" background-image-lazy data-img="/images/2025/杂谈.jpg"></div>
-    
     <div class="card-text">
       
-        <a href="/posts/17101/" itemprop="url">
-          <h2 class="card-text--title text-ellipsis">2025新年闲谈</h2>
+        <a href="/posts/65129/" itemprop="url">
+          <h2 class="card-text--title text-ellipsis">难以归类的小ideas</h2>
         </a>
       
       <div class="card-text--row">上一篇</div>
@@ -646,18 +478,6 @@ f_n = \sum_{n=0}^{N-1}x[n]\cos(\frac{\pi k(z+\frac{1}{2})}{N})$$</p>
 </section>
 
       
-<section class="widget-toc widget-item layout-margin content-padding--primary soft-size--large soft-style--box">
-  <div class="widget-title">
-    <svg class="icon icon-toc" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
-  <path d="M134.50666666 767.46666668H460.8c27.73333333 0 50.24000001 22.50666668 50.24000001 50.23999999v50.13333333c0 27.73333333-22.50666668 50.24000001-50.24000001 50.24000001H134.50666666c-27.73333333 0-50.24000001-22.50666668-50.23999999-50.24000001v-50.13333333c0.10666668-27.73333333 22.50666668-50.24000001 50.24000001-50.24000001zM84.37333332 541.65333333h326.18666669c27.73333333 0 50.24000001 22.39999999 50.23999999 50.13333334v50.24000001c0 27.73333333-22.50666668 50.24000001-50.24000002 50.23999999H84.37333332c-27.73333333 0-50.24000001-22.50666668-50.23999999-50.23999999v-50.24000001c0-27.73333333 22.50666668-50.13333334 50.24000001-50.13333334zM134.50666666 315.83999999H460.8c27.73333333 0 50.24000001 22.50666668 50.24000001 50.24000001v50.24000001c0 27.73333333-22.50666668 50.13333334-50.24000001 50.13333333H134.50666666c-27.73333333 0-50.24000001-22.39999999-50.23999999-50.13333333v-50.24000001c0.10666668-27.84000001 22.50666668-50.24000001 50.24000001-50.23999999zM209.81333332 89.91999999h326.18666671c27.73333333 0 50.24000001 22.39999999 50.23999997 50.13333335v50.23999999c0 27.73333333-22.50666668 50.24000001-50.24000001 50.24000001H209.81333332c-27.73333333 0-50.24000001-22.50666668-50.23999999-50.24000001v-50.24000001c0-27.73333333 22.50666668-50.13333334 50.24000001-50.13333333zM692.05333333 623.36l274.66666669 176.00000002c23.36000001 14.93333333 30.08 45.97333334 15.14666666 69.33333332L954.77333334 910.93333333c-14.93333333 23.25333334-45.97333334 30.08-69.33333335 15.14666667l-274.66666666-176c-23.36000001-14.93333333-30.08-45.97333334-15.14666667-69.33333333l27.09333334-42.24000001c14.93333333-23.36000001 46.08000001-30.08 69.33333333-15.14666666z" fill="currentColor"></path>
-</svg>
-    <span>TITLES</span>
-  </div>
-  <div class="widget-body">
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8EJPEG%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0%E7%9A%84%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86"><span class="toc-text">从JPEG开始学习的图像处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A2%9C%E8%89%B2%E7%A9%BA%E9%97%B4%E5%8F%98%E6%8D%A2"><span class="toc-text">颜色空间变换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%8D%E9%87%87%E6%A0%B7"><span class="toc-text">降采样</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E5%9D%97%E7%A6%BB%E6%95%A3%E4%BD%99%E5%BC%A6%E5%8F%98%E6%8D%A2"><span class="toc-text">分块离散余弦变换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8F%E5%8C%96"><span class="toc-text">量化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%86%B5%E7%BC%96%E7%A0%81"><span class="toc-text">熵编码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E7%A0%81"><span class="toc-text">解码</span></a></li></ol>
-  </div>
-</section>
-
 
       
 <section class="widet-notice widget-item layout-margin content-padding--primary soft-size--large soft-style--box">
