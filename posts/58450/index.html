@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-11-28T09:13:10.765Z" itemprop="dateUpdated">2025-11-28</time>
+              <time  class="article-updated" datetime="2026-02-05T15:38:06.171Z" itemprop="dateUpdated">2026-02-05</time>
             </h2>
           
           
@@ -168,7 +168,13 @@
 <p>git@github.com: Permission denied(publickey).fatal: Could not read from remote repository.<br>Please make sure you have the correct access rights and the repository exists.</p>
 </blockquote>
 <p>可能是因为本地的ssh-agent误关闭，可以依照<a target="_blank" rel="noopener" href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent">官方指南</a>重新启动：</p>
-<figure class="highlight bash"><figcaption><span>bash</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">eval</span> <span class="hljs-string">&quot;<span class="hljs-subst">$(ssh-agent -s)</span>&quot;</span><br>ssh-add ~/.ssh/id_ed25519 <br></code></pre></td></tr></table></figure>
+<figure class="highlight bash"><figcaption><span>bash</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">eval</span> <span class="hljs-string">&quot;<span class="hljs-subst">$(ssh-agent -s)</span>&quot;</span><br>ssh-add ~/.ssh/id_ed25519 <br>   <br></code></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="Github设置"><a href="#Github设置" class="headerlink" title="Github设置"></a>Github设置</h3><ol>
+<li><p>国内有些服务器没办法https连接github服务器，但是可以通过ssh服务器连接。此时可以全局替换<code>https://github.com/</code>链接为ssh链接，即</p>
+<figure class="highlight scss"><figcaption><span>bash</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs scss">git config <span class="hljs-attr">--global</span> url.&quot;git<span class="hljs-keyword">@github</span>.<span class="hljs-attribute">com</span>:<span class="hljs-string">&quot;.insteadOf &quot;</span><span class="hljs-attribute">https</span>://github.com/<span class="hljs-string">&quot;</span><br></code></pre></td></tr></table></figure>
+<p>这样可以解决<code>git clone --recursive ...</code>中克隆submodule自动使用https链接导致的无法连接。</p>
 </li>
 </ol>
 
@@ -476,7 +482,7 @@
     <span>TITLES</span>
   </div>
   <div class="widget-body">
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Github%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98"><span class="toc-text">Github连接问题</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Github%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98"><span class="toc-text">Github连接问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Github%E8%AE%BE%E7%BD%AE"><span class="toc-text">Github设置</span></a></li></ol>
   </div>
 </section>
 
