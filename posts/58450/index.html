@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2026-02-05T15:38:06.171Z" itemprop="dateUpdated">2026-02-05</time>
+              <time  class="article-updated" datetime="2026-02-07T08:10:05.679Z" itemprop="dateUpdated">2026-02-07</time>
             </h2>
           
           
@@ -160,7 +160,7 @@
       
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
-        <h3 id="Github连接问题"><a href="#Github连接问题" class="headerlink" title="Github连接问题"></a>Github连接问题</h3><ol>
+        <h3 id="Github"><a href="#Github" class="headerlink" title="Github"></a>Github</h3><ol>
 <li>通常情况下ssh连接比http连接更稳定。</li>
 <li>自23年以后github要求git的远程操作都要通过ssh公私钥进行认证。</li>
 <li><p>公私钥配置成功一段时间后，出现如下Permission denied错误：</p>
@@ -176,6 +176,9 @@
 <figure class="highlight scss"><figcaption><span>bash</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs scss">git config <span class="hljs-attr">--global</span> url.&quot;git<span class="hljs-keyword">@github</span>.<span class="hljs-attribute">com</span>:<span class="hljs-string">&quot;.insteadOf &quot;</span><span class="hljs-attribute">https</span>://github.com/<span class="hljs-string">&quot;</span><br></code></pre></td></tr></table></figure>
 <p>这样可以解决<code>git clone --recursive ...</code>中克隆submodule自动使用https链接导致的无法连接。</p>
 </li>
+</ol>
+<h3 id="Github使用Trick"><a href="#Github使用Trick" class="headerlink" title="Github使用Trick"></a>Github使用Trick</h3><ol>
+<li>当本地与远端存在需要合并的冲突时，直接<code>git pull</code>会产生一个<strong>merge提交</strong>，然而使用<code>git pull --rebase</code>可以让本地新提交的节点直接连在远端节点之后，从而使提交历史只有一条branch，更简洁。</li>
 </ol>
 
       </section>
@@ -482,7 +485,7 @@
     <span>TITLES</span>
   </div>
   <div class="widget-body">
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Github%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98"><span class="toc-text">Github连接问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Github%E8%AE%BE%E7%BD%AE"><span class="toc-text">Github设置</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Github"><span class="toc-text">Github</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Github%E8%AE%BE%E7%BD%AE"><span class="toc-text">Github设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Github%E4%BD%BF%E7%94%A8Trick"><span class="toc-text">Github使用Trick</span></a></li></ol>
   </div>
 </section>
 
