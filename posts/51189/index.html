@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2026-05-22T14:56:00.622Z" itemprop="dateUpdated">2026-05-22</time>
+              <time  class="article-updated" datetime="2026-05-22T17:42:17.020Z" itemprop="dateUpdated">2026-05-23</time>
             </h2>
           
           
@@ -425,8 +425,8 @@
 <li>还有时间戳可唯一标识该包</li>
 </ul>
 </li>
-<li>TCP估计往返时间 (RTT) 时仅为传输一次 (非重传) 的报文段测量SampleRTT，且一般只在特定时间做一次测量。并且每次的结果会以<strong>指数加权移动平均</strong>得到EstimatedRTT:<script type="math/tex; mode=display">EstimatedRTT=(1-\alpha) * EstimatedRTT + \alpha * SampleRTT</script>还会测量RTT偏差DevRTT：$ DevRTT=(1-\beta) <em> DevRTT + \beta </em> |SampleRTT - EstimatedRTT| $，最终超时时间会被设为$ TimeoutInterval=EstimatedRTT + 4 * DevRTT $。推荐值为1秒，超时后该值还会被加倍。</li>
-<li>TCP可靠传输使用单一的超时定时器（减小开销）、累积ACK（减少重传）、超时时间加倍、快速重传（冗余ACK）、由于接收方缓存机制因此一次至多重传一个包（GBN与SR的结合）。</li>
+<li>TCP估计往返时间 (RTT) 时仅为传输一次 (非重传) 的报文段测量SampleRTT，且一般只在特定时间做一次测量。并且每次的结果会以<strong>指数加权移动平均</strong>得到EstimatedRTT:<script type="math/tex; mode=display">EstimatedRTT=(1-\alpha) * EstimatedRTT + \alpha * SampleRTT</script>还会测量RTT偏差DevRTT：<script type="math/tex">DevRTT=(1-\beta) * DevRTT + \beta * |SampleRTT - EstimatedRTT|</script>，最终超时时间会被设为<script type="math/tex">TimeoutInterval=EstimatedRTT + 4 * DevRTT</script>。推荐值为1秒，超时后该值还会被加倍。</li>
+<li>TCP可靠传输使用单一的超时定时器（减小开销）、累积ACK（减少重传，三个冗余ACK才快速重传）、超时时间加倍、快速重传（冗余ACK）、由于接收方缓存机制因此一次至多重传一个包（GBN与SR的结合，接收方总发送等待的下一个连续包ACK）。</li>
 <li><strong>流量控制</strong>是为了防止接收方缓存溢出，在TCP报文段中维护一个接收窗口字段 (rwnd)，$rwnd=RevBuffer - [LastByteRevd - LastByteRead]$，我们需要$rwnd \geq 0$。此外，当一方接收缓存已满即$rwnd = 0$且没有任何数据需要发送时，如果其缓存已清空，它也不会发新报文段。为解决该问题，我们让发送方继续发送一个报文段且接收方再发送的确认报文里将包含一个非0的rwnd。</li>
 </ol>
 <h3 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h3><ol>
@@ -438,7 +438,12 @@
 </li>
 </ol>
 <h3 id="TCP拥塞控制"><a href="#TCP拥塞控制" class="headerlink" title="TCP拥塞控制"></a>TCP拥塞控制</h3><ol>
-<li>TCP拥塞控制算法分为慢启动、拥塞避免和快速恢复三个技巧，非常易于理解，直接看PPT。</li>
+<li>TCP拥塞控制算法分为慢启动、拥塞避免和快速恢复三个技巧，非常易于理解<ul>
+<li>慢启动：发送窗口cwnd从1MSS开始指数增大</li>
+<li>拥塞避免：cwnd&gt;=ssthreshhou开始线性增长</li>
+<li>快速恢复：阈值等于上一次的窗口峰值砍半，窗口减半+3</li>
+</ul>
+</li>
 <li>TCP RENO有快恢复（收到3个冗余ACK就减半并+3，阈值减到当前峰值的一半），TCP Tahoe直接减到1并慢启动。超时时都会减到1并慢启动。</li>
 <li>TCP吞吐量在确定最大值的理想情况下，平均为$ 0.75 \times WindowSize / RTT $。若与带宽相联系，我们引入丢包率$L$，则平均为$1.22 \times MSS / RTT \sqrt{L}$。</li>
 </ol>
@@ -457,7 +462,7 @@
 </li>
 <li><p><strong>检验和</strong>：将每k(如16)个bit数据当作整数加和，和的反码即检验和。接收方只要看所有整数包括检验和的和是否为全1即可。</p>
 </li>
-<li><strong>循环冗余检测(Cyclic Redundancy Check, CRC or Polymial Code)</strong>：要素包括长度为d+r的CRC比特、长度为r+1的生成多项式G、长度为r的CRC比特R。其中$R=D \cdot 2^r XOR G$，$CRC=D \cdot 2^r XOR \; R$，即把R替换补位零来做异或，检测方式为CRC是否为G的倍数。CRC能检测所有小于r+1比特的差错。</li>
+<li><strong>循环冗余检测(Cyclic Redundancy Check, CRC or Polymial Code)</strong>：要素包括长度为d+r的CRC比特、长度为r+1的生成多项式G、长度为r的CRC比特R。其中$R=D \cdot 2^r XOR \; G$，$CRC=D \cdot 2^r XOR \; R$，即把R替换补位零来做异或，检测方式为CRC是否为G的倍数。CRC能检测所有小于r+1比特的差错。</li>
 </ol>
 <h3 id="多路访问链路和协议"><a href="#多路访问链路和协议" class="headerlink" title="多路访问链路和协议"></a>多路访问链路和协议</h3><ul>
 <li>多路访问问题(multiple access problem)：如何协调多个发送和接收节点对一个共享广播信道的访问；</li>
@@ -479,7 +484,7 @@
 <li><strong>载波侦听(carrier sensing)</strong>：等待使用同一信道的其他正在传输的节点；</li>
 <li><strong>碰撞检测(collision detection)</strong>：传输的同时侦听此信道，如果有另一个节点正在传输干扰帧，立即停止传输。接着等待随机时间后进入载波侦听状态。发生原因：端到端传输路径中可能经过多条信道，有时前方的信道正闲，但必须给来自后方的数据让路。有该机制的协议称为<strong>CSMA/CD</strong>（用在以太网中），而发现碰撞后的等待时间使用下面的算法：</li>
 <li><strong>二进制指数后退(binary expotional backoff)</strong>：在同一帧经历连续n次碰撞后，节点均匀地从${0, 1, …, 2^n-1}$中选择一个值乘以512作为等待时间，集合长度随碰撞次数呈指数增长。</li>
-<li>CSMA/CD效率$\approx \frac{1}{1+5d_{prop}/d_{trans}}$，$d_prop$为信号能量在两个适配器间传播所需地最大时间，$d_trans$为传输一个最大长度的以太网帧的时间。</li>
+<li>CSMA/CD效率$\approx \frac{1}{1+5d_{prop}/d_{trans}}$，$d_{prop}$为信号能量在两个适配器间传播所需地最大时间，$d_{trans}$为传输一个最大长度的以太网帧的时间。</li>
 <li><strong>CSMA/CA</strong>（用在IEEE 802.11中）：有ACK，接收方接收完后等待SIFS时间后发送ACK</li>
 <li><strong>RTS-CTS</strong>：发送方先用CSMA发送request-to-send（RTS）包到BS，BS广播clear-to-send（CTS）作为回应，其他节点推迟传输，发送方开始传输</li>
 </ul>
@@ -493,10 +498,22 @@
 </li>
 <li><strong>LAN</strong>：<ol>
 <li><strong>MAC地址</strong>：48位（6字节），一般用16进制表示，每个网络适配器都有一个MAC地址，并且是独一无二的。广播地址（FF-FF-FF-FF-FF-FF）</li>
-<li><strong>Address resolution protocol（ARP）</strong>：<ol>
-<li><strong>ARP表</strong>：记录<IP地址；MAC地址；TTL（存在时间）>三元组</li>
+<li><strong>Address resolution protocol（ARP）</strong>：依赖以太网的广播功能<ol>
+<li><strong>ARP表</strong>：记录(IP地址；MAC地址；TTL（存在时间）)三元组</li>
 <li>只为同一LAN内的主机工作，发送方广播ARP查询分组（含IP），匹配方发送响应ARP分组。</li>
 <li><strong>向子网外发送数据报</strong>：向连接子网的路由器发送IP数据报（链路层目的地址为路由器MAC地址），路由器查询ARP表并将链路层目的地址改写为下一跳路由器或者最终目的MAC地址。</li>
+<li><strong>ARP欺骗</strong>：通过发送伪造的ARP响应可以声称假身份，从而实现中间人拦截</li>
+</ol>
+</li>
+<li><strong>Neighbor Discovery Protocol (NDP)</strong>：IPv6引入，ARP的升级版，纯网络层协议<ol>
+<li><strong>解析地址</strong>：获取未知MAC地址时会通过已知IPv6地址生成组播请求而非广播，降低网络总体负担</li>
+<li><strong>Duplicate Address Detection (DAD)</strong>: 发送自己IP地址的请求报文确保没有回复</li>
+<li><strong>无状态地址自动配置 (SLAAC)</strong>：上线后通过路由器获知网络前缀，结合自己的MAC地址生成IPv6地址，再DAD。</li>
+<li><strong>First-Hop Security</strong>：<ul>
+<li>RA Guard (路由器通告保护)：直接在交换机上配置，只允许特定的上联端口转发路由器通告</li>
+<li>ND Inspection (ND 检测)：交换机通过监听合法的地址分配过程，在内存中维护一张合法“IPv6-MAC-端口”绑定表</li>
+</ul>
+</li>
 </ol>
 </li>
 <li><strong>以太网（Ethernet）</strong>：无连接，不可靠，使用无时隙、二进制退避的CSMA/CD</li>
