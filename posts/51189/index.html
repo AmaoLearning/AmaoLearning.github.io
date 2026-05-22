@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2025-11-28T09:12:03.770Z" itemprop="dateUpdated">2025-11-28</time>
+              <time  class="article-updated" datetime="2026-05-22T14:56:00.622Z" itemprop="dateUpdated">2026-05-22</time>
             </h2>
           
           
@@ -161,7 +161,7 @@
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
         <p><strong>资料</strong>：《计算机网络：自顶向下》第七版和上课PPT</p>
-<h3 id="Chapter-1-Introduction"><a href="#Chapter-1-Introduction" class="headerlink" title="Chapter 1 Introduction"></a>Chapter 1 Introduction</h3><ol>
+<h2 id="Chapter-1-Introduction"><a href="#Chapter-1-Introduction" class="headerlink" title="Chapter 1 Introduction"></a>Chapter 1 Introduction</h2><ol>
 <li>网络结构：<ol>
 <li>网络边缘：服务器、用户主机等终端</li>
 <li>连接网络与物理媒介：<ol>
@@ -188,7 +188,7 @@
 </li>
 <li>层次结构：应用层、传输层、网络层、链路层、物理层</li>
 </ol>
-<h3 id="Chapter-2-Application-Layer"><a href="#Chapter-2-Application-Layer" class="headerlink" title="Chapter 2 Application Layer"></a>Chapter 2 Application Layer</h3><ol>
+<h2 id="Chapter-2-Application-Layer"><a href="#Chapter-2-Application-Layer" class="headerlink" title="Chapter 2 Application Layer"></a>Chapter 2 Application Layer</h2><ol>
 <li>应用结构：<ol>
 <li>服务器-客户：服务器IP几乎永久，用户IP可以动态</li>
 <li>P2P(Peer to Peer)</li>
@@ -249,7 +249,11 @@
 </li>
 <li>DNS（Domain Name System）：UDP<ol>
 <li>服务器类型：Root name servers、Top-Level domain（TLD） servers、Authoritative DNS servers、Local name servers</li>
-<li>两种查询方式：（以LNS为中心）迭代查询、递归查询</li>
+<li>两种查询方式：（以LNS为中心）<ul>
+<li>迭代查询: LNS向其他DNS Server，其他Server只告诉LNS下个查询的地址，相比递归查询减小了公共DNS的计算压力</li>
+<li>递归查询: 终端设备向LNS，不在乎中间过程，只需要结果</li>
+</ul>
+</li>
 <li>会缓存映射关系，但一段时候后会删除</li>
 <li>Resource Records（RR）：（name，value，type，ttl）<ol>
 <li>Type=A：name=主机名，value=IP地址</li>
@@ -260,8 +264,13 @@
 </li>
 </ol>
 </li>
+<li>常用端口号：<ul>
+<li>SSH：22</li>
+<li>Telnet：23</li>
+</ul>
+</li>
 </ol>
-<h3 id="Chapter-4-Network-Layer-Data-Plane"><a href="#Chapter-4-Network-Layer-Data-Plane" class="headerlink" title="Chapter 4 Network Layer-Data Plane"></a>Chapter 4 Network Layer-Data Plane</h3><ol>
+<h2 id="Chapter-4-Network-Layer-Data-Plane"><a href="#Chapter-4-Network-Layer-Data-Plane" class="headerlink" title="Chapter 4 Network Layer-Data Plane"></a>Chapter 4 Network Layer-Data Plane</h2><ol>
 <li>平面概念：<ol>
 <li>数据平面即每台路由器的功能，决定到达路由器输入链路之一的数据报如何转发到它的输出链路之一</li>
 <li>控制平面即网络范围的逻辑，控制数据报端到端发送路径中路由器之间的路由方式</li>
@@ -289,8 +298,8 @@
 </li>
 <li>IP协议，在路由器中对应的Interface指路由器的链路口，即1，2，3，4等<ol>
 <li>文件头：40字节+选项</li>
-<li>CIDR：如200.23.16.0/23</li>
-<li>Dynamic Host Configuration Protocol（DHCP）：DHCP discover/offer/request/ack，使用流程即客户与服务器两次对话，封装在UDP数据报中</li>
+<li>CIDR（无类别域间路由）：如200.23.16.0/23</li>
+<li>Dynamic Host Configuration Protocol（DHCP）：DHCP discover/offer/request/ack，使用流程即客户与服务器两次对话，客户发现DHCP服务器、DHCP服务器提供IP租约、客户广播其已接受一个租约、DHCP服务器提供租约信息且其他DHCP服务器放弃租约。封装在UDP数据报中</li>
 <li>NAT：含有（源IP，端口）-（内部IP，端口）翻译表，对外表现为唯一IP</li>
 <li>IPv6：<ul>
 <li>无选项和检验和，固定40字节</li>
@@ -300,16 +309,17 @@
 </ol>
 </li>
 </ol>
-<h3 id="Chapter-5-Network-Layer-Control-Plane"><a href="#Chapter-5-Network-Layer-Control-Plane" class="headerlink" title="Chapter 5 Network Layer-Control Plane"></a>Chapter 5 Network Layer-Control Plane</h3><ol>
+<h2 id="Chapter-5-Network-Layer-Control-Plane"><a href="#Chapter-5-Network-Layer-Control-Plane" class="headerlink" title="Chapter 5 Network Layer-Control Plane"></a>Chapter 5 Network Layer-Control Plane</h2><ol>
 <li>路由协议：<ol>
 <li>link-state：Dijsktra算法，复杂度最优为$O(n\log n)$。每个节点通过广播得到完整的网络视图，自己计算整张表。</li>
-<li>Distance vector：Bellman-Ford算法，对于每个节点维护其与其他所有节点之间的距离，节点间通过互相通知以不断更新。当某条链路突然变大时，因为路由会广播不正确的路径，所以与它相关的路由变化很慢。解决方法是毒性逆转技术。</li>
+<li>Distance vector：Bellman-Ford算法，对于每个节点维护其与其他所有节点之间的距离，节点间通过互相通知以不断更新。当某条链路突然变大时，因为路由会广播不正确的路径，所以与它相关的路由变化很慢。解决方法是毒性逆转技术，离故障通路最近的路由会广播故障通路距离为无穷大，其他路由会得知；水平分割技术，不向接到新情报的方向发送情报</li>
 </ol>
 </li>
-<li>AS内路由或Interior Gateway Protocol(IGP)：<ol>
-<li>Routing Information Protocol(RIP)</li>
-<li>Open Shortest Path First(OSPF)：link-state，允许多条相同代价路径，信息加密。使单个AS内部可分层，即分为与外界沟通的主干区域和非主干区域。</li>
-<li>Interior Gateway Routing Protocol(IGRP)</li>
+<li>AS（自治系统）内路由或Interior Gateway Protocol(IGP)：<ol>
+<li>Routing Information Protocol(RIP)：基于DV算法，跳数大于15视为不可达，每30秒广播一次路由表</li>
+<li>Open Shortest Path First(OSPF)：link-state，代价用带宽计算，允许多条相同代价路径，信息加密。使单个AS内部可分层，即分为与外界沟通的主干区域和非主干区域。</li>
+<li>Interior Gateway Routing Protocol(IGRP)：升级版RIP，距离用带宽等复合度量，跳数大于255视为不可达，每90秒广播一次路由表，思科私有协议，已淘汰。</li>
+<li>Enhanced Interior Gateway Routing Protocol(EIGRP)：扩散更新算法，距离用带宽等复合度量，为每个目标路由维护最短路径和备用路径，优势是资源消耗小、路径切换快，劣势是仅思科设备支持</li>
 </ol>
 </li>
 <li>AS间路由Border Gateway Protocol（BGP）：网关即AS间存在链路的路由器<ol>
@@ -326,8 +336,8 @@
 </li>
 <li>因特网控制信息协议ICMP：通知网络信息如发生错误、目标不可达等。ping使用80 echo request和00 echo reply</li>
 <li>简单网络管理协议SNMP：应用层协议<ol>
-<li>请求响应模式</li>
-<li>陷阱报文：代理通知管理信息库（MIB）某个对象值改变</li>
+<li>请求响应模式：Manager服务器轮询设备上的Agent获取状态</li>
+<li>陷阱报文：设备异常时，Agent通知管理信息库（MIB）某个对象值改变</li>
 </ol>
 </li>
 </ol>
@@ -400,7 +410,7 @@
 <script type="math/tex; mode=display">\begin{aligned} & CLOSED(无连接) \xrightarrow{发送SYN报文} SYN\_SENT \xrightarrow{接收SYN和ACK，发送ACK} \\
 & ESTABLISHED \xrightarrow{发送终止报文} FIN\_WAIT\_1 \xrightarrow{等待接收服务器ACK} \\
 & FIN\_WAIT\_2 \xrightarrow{接收服务器终止报文，发送ACK} TIME\_WAIT \xrightarrow{等待30s} CLOSED
-\end{aligned}</script><p>服务器端$CLOSED-LISTEN-SYN_RCVD-ESTABLISHED-CLOSE_WAIT-LAST_ACK$。</p>
+\end{aligned}</script><p>服务器端<script type="math/tex">CLOSED-LISTEN-SYN\_{RCVD}-ESTABLISHED-CLOSE\_{WAIT}-LAST\_{ACK}</script>。</p>
 <p>当客户端发送了一个目标主机目的端口不接受连接的SYN报文时，目标主机会回送一个<strong>RST bit为1</strong>的报文以提示没有该socket。</p>
 </li>
 <li><p><strong>最大报文段长度</strong> (MSS) 通常与发送端的最大链路层帧长度 (又称最大传输单元，MTU) 相同，它是一个TCP报文段中应用层数据的最大长度。</p>
@@ -808,7 +818,7 @@
     <span>TITLES</span>
   </div>
   <div class="widget-body">
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Chapter-1-Introduction"><span class="toc-text">Chapter 1 Introduction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Chapter-2-Application-Layer"><span class="toc-text">Chapter 2 Application Layer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Chapter-4-Network-Layer-Data-Plane"><span class="toc-text">Chapter 4 Network Layer-Data Plane</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Chapter-5-Network-Layer-Control-Plane"><span class="toc-text">Chapter 5 Network Layer-Control Plane</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0-%E8%BF%90%E8%BE%93%E5%B1%82"><span class="toc-text">第三章 运输层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E8%B7%AF%E5%88%86%E8%A7%A3%E4%B8%8E%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8"><span class="toc-text">多路分解与多路复用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#UDP"><span class="toc-text">UDP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93"><span class="toc-text">可靠数据传输</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TCP"><span class="toc-text">TCP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6"><span class="toc-text">拥塞控制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TCP%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6"><span class="toc-text">TCP拥塞控制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E7%AB%A0-%E9%93%BE%E8%B7%AF%E5%B1%82%E5%92%8CLAN-8%E5%88%86%E9%80%89%E6%8B%A9%E9%A2%98-8%E5%88%86%E5%A4%A7%E9%A2%98"><span class="toc-text">第六章 链路层和LAN 8分选择题+8分大题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B7%AE%E9%94%99%E6%A3%80%E6%B5%8B%E5%92%8C%E7%BA%A0%E6%AD%A3%E6%8A%80%E6%9C%AF"><span class="toc-text">差错检测和纠正技术</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E8%B7%AF%E8%AE%BF%E9%97%AE%E9%93%BE%E8%B7%AF%E5%92%8C%E5%8D%8F%E8%AE%AE"><span class="toc-text">多路访问链路和协议</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Chapter-1-Introduction"><span class="toc-text">Chapter 1 Introduction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Chapter-2-Application-Layer"><span class="toc-text">Chapter 2 Application Layer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Chapter-4-Network-Layer-Data-Plane"><span class="toc-text">Chapter 4 Network Layer-Data Plane</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Chapter-5-Network-Layer-Control-Plane"><span class="toc-text">Chapter 5 Network Layer-Control Plane</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0-%E8%BF%90%E8%BE%93%E5%B1%82"><span class="toc-text">第三章 运输层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E8%B7%AF%E5%88%86%E8%A7%A3%E4%B8%8E%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8"><span class="toc-text">多路分解与多路复用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#UDP"><span class="toc-text">UDP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E9%9D%A0%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93"><span class="toc-text">可靠数据传输</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TCP"><span class="toc-text">TCP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6"><span class="toc-text">拥塞控制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TCP%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6"><span class="toc-text">TCP拥塞控制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%85%AD%E7%AB%A0-%E9%93%BE%E8%B7%AF%E5%B1%82%E5%92%8CLAN-8%E5%88%86%E9%80%89%E6%8B%A9%E9%A2%98-8%E5%88%86%E5%A4%A7%E9%A2%98"><span class="toc-text">第六章 链路层和LAN 8分选择题+8分大题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B7%AE%E9%94%99%E6%A3%80%E6%B5%8B%E5%92%8C%E7%BA%A0%E6%AD%A3%E6%8A%80%E6%9C%AF"><span class="toc-text">差错检测和纠正技术</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E8%B7%AF%E8%AE%BF%E9%97%AE%E9%93%BE%E8%B7%AF%E5%92%8C%E5%8D%8F%E8%AE%AE"><span class="toc-text">多路访问链路和协议</span></a></li></ol></li></ol>
   </div>
 </section>
 
