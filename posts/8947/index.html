@@ -158,7 +158,7 @@
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
         <p>最近准备各种面试时整理了许多知识，包括<a target="_blank" rel="noopener" href="https://github.com/HKUDS/nanobot">Nanobot</a>源码拆解、Agent、AI Infra和LLM知识学习，这里将学习大纲分享出来。</p>
-<p>面试时体感是Agent会问得很细、几乎是每项功能/机制都要了解其作用流程（毕竟Agent也就是一个Prompt处理程序）；AI Infra和LLM部分则考到概念部分即可，对注意力架构、推理端Infra框架、FlashAttention、国产开源模型框架的理解要求相对深，并且最好要有自己在云端部署开源模型的经验。</p>
+<p>面试时体感是Agent会问得很细、几乎是每项功能/机制都要了解其作用流程（毕竟Agent也就是一个Prompt处理程序）；AI Infra和LLM部分则考到概念部分即可，对注意力架构、推理端Infra框架（vLLM、SGLang）、FlashAttention、国产开源模型框架的理解要求相对深，并且最好要有自己在云端部署开源模型的经验。</p>
 <h2 id="1-Nanobot交互模式流程"><a href="#1-Nanobot交互模式流程" class="headerlink" title="1. Nanobot交互模式流程"></a>1. Nanobot交互模式流程</h2><ul>
 <li style="list-style: none"><input type="checkbox" checked></input> bus.publish_inbound(InboundMessage)<ul>
 <li>MessageBus统一对外的消息对象In/OutboundMessage，对内则以OpenAI格式messages处理，是连接Channel与AgentLoop的桥梁</li>
