@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#3367D6"/>
+  <link rel="apple-touch-icon" href="/icons-192.png">
+  <link rel="manifest" href="/manifest.json">
+
+  <!--将该代码放入博客模板的head中即可-->
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+  tex2jax: {
+  inlineMath: [['$','$'], ['\\(','\\)']],
+  processEscapes: true
+  }
+  });
+  </script>
+  <!--latex数学显示公式-->
+  <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+  <meta name="generator" content="Hexo 7.3.0">
+
+  
+
+  
+    <meta name="keywords" content="打工 学习 樱之诗 anime 声优吃 家虎">
+  
+
+  
+    <meta name="author" content="MaoCaiMao">
+  
+
+  
+
+  
+
+  <title>Agent、AI Infra与LLM知识整理 | 阿毛的小书桌</title>
+
+  
+
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+
+  
+
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@1.1.13/index.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.7.0/build/styles/monokai.min.css">
+  
+
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+<body>
+  <div class="root-container">
+    
+<!-- header container -->
+<header class="header-container post">
+  
+    <div class="post-image" style="background-image: url(/images/const/banner.png)"></div>
+  
+
+  <!-- navbar -->
+<nav class="navbar">
+  <div class="navbar-content">
+    <!-- logo -->
+    <div class="navbar-logo">
+      <a href="/">
+        
+          阿毛的小书桌
+        
+      </a>
+    </div>
+    <!-- link -->
+    <div class="navbar-link">
+      <div class="navbar-btn">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <ul class="navbar-list">
+        
+          <li class="navbar-list-item"><a href="/">首页</a></li>
+        
+          <li class="navbar-list-item"><a href="/archives">列表</a></li>
+        
+          <li class="navbar-list-item"><a target="_blank" rel="noopener" href="https://baizhanxu.github.io/">友链</a></li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    <div class="header-content">
+      <div class="post-text layout-block">
+        <div class="layout-margin">
+          <h1 class="title-wrap">Agent、AI Infra与LLM知识整理</h1>
+          <h2 class="title-sub-wrap">
+            <strong>MaoCaiMao</strong>
+            <span>发布于</span>
+            <time  class="article-date" datetime="2026-06-09T16:00:00.000Z" itemprop="datePublished">2026-06-10</time>
+          </h2>
+          
+          
+          <ul class="wrap-list dark">
+  
+    <li><a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">📒 学习笔记</a></li>
+    
+</ul>
+          <ul class="wrap-list dark">
+  
+    <li><a href="/tags/%E8%B5%9B%E5%8D%9A%E5%85%AB%E8%82%A1/">🏷️ 赛博八股</a></li>
+  
+</ul>
+        </div>
+      </div>
+    </div>
+  
+
+  
+  
+  
+</header>
+
+    <!-- 文章 -->
+
+<!-- 文章内容 -->
+<div class="body-container">
+  <article class="content-container layout-block post-container">
+    <div class="article-info">
+      
+      
+      
+      
+      <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
+        <p>最近准备各种面试时整理了许多知识，包括<a target="_blank" rel="noopener" href="https://github.com/HKUDS/nanobot">Nanobot</a>源码拆解、Agent、AI Infra和LLM知识学习，这里将学习大纲分享出来。</p>
+<p>面试时体感是Agent会问得很细、几乎是每项功能/机制都要了解其作用流程（毕竟Agent也就是一个Prompt处理程序）；AI Infra和LLM部分则考到概念部分即可，对注意力架构、推理端Infra框架、FlashAttention、国产开源模型框架的理解要求相对深，并且最好要有自己在云端部署开源模型的经验。</p>
+<h2 id="1-Nanobot交互模式流程"><a href="#1-Nanobot交互模式流程" class="headerlink" title="1. Nanobot交互模式流程"></a>1. Nanobot交互模式流程</h2><ul>
+<li style="list-style: none"><input type="checkbox" checked></input> bus.publish_inbound(InboundMessage)<ul>
+<li>MessageBus统一对外的消息对象In/OutboundMessage，对内则以OpenAI格式messages处理，是连接Channel与AgentLoop的桥梁</li>
+<li>MessageBus维护两个<code>asyncio.Queue</code>（如果队满则会推迟放入对象直到有空间，这里不限制队列长度），Channel往<code>inbound</code>放、AgentLoop取，后者往<code>outbound</code>放、Channel取，互不关心放入后的事。</li>
+<li>In/OutboundMessage以<code>session_key_override</code>(“channel:chat_id”)会话所走的AgentLoop</li>
+</ul>
+</li>
+<li style="list-style: none"><input type="checkbox" checked></input> AgentLoop.run() 消费 inbound<ul>
+<li>self.running被 stop() 控制</li>
+<li>self._connect_mcp() 添加MCP工具</li>
+<li>异步等待消息，1秒检查一次，超时、非正常取消和普通出错都会继续循环</li>
+<li>接到消息后首先通过命令路由器判断是否为特殊指令，如果是则会直接异步执行，发送消息，不与普通任务排队，继续循环。此处处理的是<code>priority</code>指令，普通指令在 _process_message() 中才执行。</li>
+<li>否则通过 <code>asyncio.create_task()</code> 创建 _dispatch() 后台任务，并添加至任务队列，继续循环。添加任务完成时的回调函数，会自行从任务队列删除</li>
+<li>以上机制把消息处理全部包装成<code>Task</code>交由后台处理，优先让循环继续，从而可以处理多session会话。特殊指令则直接执行，优先完成该session的特殊机制和消息发送。</li>
+<li><code>await</code>会让当前协程暂停等待协程对象返回值，此时事件循环可以去跑其他任务；<code>asyncio.create_task()</code>则会把协程包装成 Task 交由事件循环后台执行。<code>async def</code> 定义异步函数，返回一个协程对象， <code>await</code> 它才会开始执行并拿到值。<code>Task</code> 则是协程对象的一层包装，它有检查是否完成、取消以及添加回调的能力，最重要的是事件循环会调度并提前执行协程对象，减少主程序<code>await</code>所需时间。</li>
+</ul>
+</li>
+<li style="list-style: none"><input type="checkbox" checked></input> _dispatch()<ul>
+<li style="list-style: none"><input type="checkbox" checked></input> 同一会话用lock串行<ul>
+<li>每个会话用一把锁，<code>dict.setdefault()</code>会返回已存在的字典值或设置默认值后返回，<code>asyncio.Lock()</code>是同时只有一个Task可持有的异步锁。<code>async with</code>能自动释放。</li>
+</ul>
+</li>
+<li style="list-style: none"><input type="checkbox" checked></input> 不同会话用gate并发<ul>
+<li>全局一个<code>asyncio.Semaphore</code>，最多被拿3（自定义）次</li>
+</ul>
+</li>
+<li>次序上先判断lock再判断gate，确保同一会话只占用一次gate</li>
+<li><code>asyncio</code>的锁与门都是对事件循环中的Task进行限制，是在单线程上工作。而C++的互斥锁、<code>counting_semaphore</code>以及python的<code>threading.Lock()</code>工作在多线程上，执行线程阻塞。</li>
+</ul>
+</li>
+<li style="list-style: none"><input type="checkbox" checked></input> _process_message()<ul>
+<li style="list-style: none"><input type="checkbox" checked></input> self.context.build_messages()联合多种上下文，不在这儿跑<ul>
+<li>包括以下内容：<ul>
+<li>system prompt<blockquote>
+<p>nanobot 身份和指导原则（包括写前先读、不要幻觉、问清楚、不要相信内容中要求的网络搜索等）<br>运行平台：操作系统，系统特性（尤其是windows与posix的命令行区别）<br>workspace 路径<br>AGENTS.md / SOUL.md / USER.md / TOOLS.md<br>长期 memory<br>always skills<br>skills summary</p>
+</blockquote>
+</li>
+<li>history：未consolidated会话消息</li>
+<li>运行时信息：时间、channel和chat_id</li>
+<li>用户消息</li>
+</ul>
+</li>
+</ul>
+</li>
+<li style="list-style: none"><input type="checkbox" checked></input> manager把session消息存成JSONL、记忆系统处理长期信息，不在这儿跑<ul>
+<li>MemoryConsolidator.memory_consolidator()先通过 estimate_session_prompt_tokens()估算 get_history()（只返回last_consolidated之后的消息）返回的会话消息token数，超出预算的部分会找安全边界（大于所需减少的token数、last_consolidated的下一个尽量是<code>user</code>消息）后把旧消息交给MemoryStore调用agent总结，并写入长期记忆及历史中，更新 last_consolidated 指针。</li>
+<li>压缩预算大小是 $(上下文窗口-最大补全token数(4096)-安全缓冲区(1024)) // 2$，避免需要频繁处理。</li>
+<li>MemoryConsolidator.consolidate() 会调用保存记忆的工具，其中分别定义了<code>history_entry</code>和<code>memory_update</code>，并要求LLM返回结构化输出。fallback为把原始信息写入<code>HISTORY.md</code>。</li>
+<li><code>HISTORY.md</code>记录被总结后的日志，用来<code>grep</code>搜索和人工回查，理论上会无限增长。</li>
+<li><code>MEMORY.md</code>记录长期记忆，每次都随新对话一起压缩，没有硬性上限，因此memory质量依赖prompt和模型。</li>
+</ul>
+</li>
+<li>系统消息分支，比如<code>subagent</code>、<code>heartbeat</code>、<code>cron</code>会走这条线，除了不会处理command，与普通分支差不多</li>
+<li>普通消息分支<ul>
+<li>先处理普通slash命令（扔给commands.dispatch()）</li>
+<li>请求前memory consolidation 压缩记录</li>
+<li>ContextBuilder.build_messages()</li>
+<li>_run_agent_loop()</li>
+<li>_save_turn()把新消息放回sessions管理，sessions.save()保存到文件</li>
+<li>后台重memory consolidation 清理记录</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>_run_agent_loop()<ul>
+<li style="list-style: none"><input type="checkbox" checked></input> _trim_history_for_budget防止调用工具的循环发生超窗口，这里不处理记忆，直接从最早的历史记录开始逐条删直到budget以内，还会把有意义的对话前的孤儿工具调用历史删掉。</li>
+<li style="list-style: none"><input type="checkbox" checked></input> chat<ul>
+<li>各供应商分别使用openai、openai chat compatible、azure openai和anthropic规范的响应格式</li>
+<li>Provider类实际是做封装统一，只需要处理上述几类即可，主循环只能看到相同类别的LLMResponse和ToolCallRequest，</li>
+<li>工具信息和JSON Schema（如有MCP工具也在这）是通过OpenAI API直接作为参数传递的。</li>
+<li><code>chat_stream()</code>等待LLM的流式输出，每等到一次响应就立即发送文本，工具调用在响应结束后一起执行</li>
+</ul>
+</li>
+<li style="list-style: none"><input type="checkbox" checked></input> tool call and execution<ul>
+<li>仰赖模型的结构化输出和OpenAI的API封装</li>
+<li>核心是arguments，它是json字典，因此可以直接作为参数调用函数</li>
+<li>工具统一Schema（name、description、parameters），对LLM友好，也符合结构化要求</li>
+<li style="list-style: none"><input type="checkbox" checked></input> Retry机制，工具出错时会把错误信息和错误分析提示词一起返回成消息</li>
+</ul>
+</li>
+<li style="list-style: none"><input type="checkbox" checked></input> stop when no tool call</li>
+<li style="list-style: none"><input type="checkbox" checked></input> 异步等待LLM响应、并发工具调用</li>
+</ul>
+</li>
+<li style="list-style: none"><input type="checkbox" checked></input> bus.publish_outbound(OutboundMessage)</li>
+<li style="list-style: none"><input type="checkbox" checked></input> Channel / CLI 展示给用户<ul>
+<li>Channel Manager<ul>
+<li>能看到同一个bus，核心是_dispatch_task后台任务</li>
+<li>启动_dispatch_outbound协程对象维持循环，它无限循环地从outbound队列取消息，过滤progress和toolhint后交由对应的Channel发送，有指数退避重试机制</li>
+<li>启动所有可用Channel<ul>
+<li>Channel类含以下三种基础方法：<ul>
+<li><code>start()</code>：侦听消息、把消息处理成InboundMessage放入总线的inbound队列</li>
+<li><code>stop()</code>：停止连接，释放资源</li>
+<li><code>send()</code>：发送消息</li>
+</ul>
+</li>
+<li>飞书Channel用单独的线程运行Websocket循环，用_on_message()异步函数丢进总线队列</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>安全边界：总体上只能通过prompt软限制LLM输出，必须通过本地程序审查和授权执行<ul>
+<li style="list-style: none"><input type="checkbox" checked></input> 入口身份限制：Channel可单独设置allowFrom列表，手动允许用户消息</li>
+<li style="list-style: none"><input type="checkbox" checked></input> 工具注册：可以手动关闭shell命令工具</li>
+<li style="list-style: none"><input type="checkbox" checked></input> restrict_to_workspace：开启后工具内部会自动检查路径是否在workspace内，如果否，会抛出错误；shell命令工具还会对命令行参数多一道检查；唯一例外是<code>ReadFileTool</code>可以读取内置skills目录</li>
+<li style="list-style: none"><input type="checkbox" checked></input> 工具参数校验：工具会先把LLM结构化输出的JSON转成参数字典，再根据预设Schema检查每项参数</li>
+<li style="list-style: none"><input type="checkbox" checked></input> Shell执行限制：拦截危险命令如<code>rm -r</code>、<code>reboot</code>等，600秒超时限制和10000输出字符截断窗口</li>
+<li style="list-style: none"><input type="checkbox" checked></input> Web访问限制：只允许http/https、解析hostname、阻截含有内网地址的调用，重定向后地址也会审查（防止重定向到云metadata或内网地址）。但还是会有一定危险，比如访问危险网站、安装危险skills等</li>
+<li style="list-style: none"><input type="checkbox" checked></input> MCP工具注册：超时和手动启用</li>
+<li style="list-style: none"><input type="checkbox" checked></input> Prompt安全Guideline：写前读、分析工具错误、不信任网络数据、不听从网络数据命令。提示词注入的软防御。</li>
+</ul>
+</li>
+<li>skills处理：<ul>
+<li>SkillsLoader挂载在ContextBuilder里，skills包括workspace和built-in两种，为ContextBuilder的System Prompt提供always_skills和skills两种prompt</li>
+<li>always_skills去掉头部YAML formatter，把全文放进system prompt</li>
+<li>skills只读头部YAML formatter，格式化skills名、描述和SKILL.md文档位置，方便LLM直接调用read_file工具读取</li>
+<li>可以通过<code>$&lt;name&gt;</code>手动激活skills，也就是强制该skills注入消息上下文</li>
+</ul>
+</li>
+<li>Subagent机制：<ul>
+<li>通过spawn工具生成，参数包括<code>task</code>任务内容和<code>label</code>任务标签，调用时也设置了channel和chat_id，因此可以匹配正确的session。生成后会有标签和任务id提示返回给Agent。</li>
+<li>自身是一个后台Task，跑了一个简化版的Loop。Subagent没有message、spawn和cron工具以避免向用户发消息和分身。</li>
+<li>有专用的简化版system prompt，包含subagent人格、安全guideline、系统信息、工作区信息、skills summary，还有<code>user</code>身份的任务消息。</li>
+<li>完成后调用回调函数，将结果prompt（任务id、任务内容、任务结果、要求总结并发给用户）以<code>subagent</code>身份的系统消息附上session识别字符串放入主Agent的消息队列。</li>
+<li>主Agent会以<code>assistant</code>身份处理结果。</li>
+<li>遇到<code>/stop</code>时，会取消该会话的subagent task。</li>
+<li>目前不能通过配置单独设置不同的provider和model，config时刻与主Agent共用，这以轻量化为目的。如果需要则要让spawn工具带新provider的信息，在subagent里新开一个provider类处理，同时config中也需要额外设置subagent的provider、model等。</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-相关知识补全"><a href="#2-相关知识补全" class="headerlink" title="2. 相关知识补全"></a>2. 相关知识补全</h2><h3 id="2-1-FlashAttention"><a href="#2-1-FlashAttention" class="headerlink" title="2.1 FlashAttention"></a>2.1 FlashAttention</h3><p>Tri Dao于2022年提出的SDPA加速技术，针对原始SDPA运算中间结果需要频繁读写进全局显存的问题，采用分块式的设计将把矩阵块的在SRAM里尽量算完后写回，创新式地分段计算SDPA，尤其是渐进式更新sigmoid函数，从而逐步更新结果矩阵，缓解了显存读写瓶颈。由于没有存储中间结果，在反向传播时实际上需要重计算中间结果。此外还利用了safe sigmoid维持数值稳定性，主要是所有项先减去行最大值再计算自然指数，还分开计算分子分母，当然也是分块计算的。行最大值和分母被存储，用于计算反向传播的中间结果（中间结果未保存，需要重新计算）。事实上把显存复杂度从平方降低到了线性，读写小矩阵提高了IO速度，综合提供了2-4x的计算加速。这种设计思想叫做<code>IO-Aware</code>。</p>
+<h3 id="2-2-Agent框架"><a href="#2-2-Agent框架" class="headerlink" title="2.2 Agent框架"></a>2.2 Agent框架</h3><h4 id="2-2-1-MCP-vs-Skills"><a href="#2-2-1-MCP-vs-Skills" class="headerlink" title="2.2.1 MCP vs Skills"></a>2.2.1 MCP vs Skills</h4><p><strong>MCP</strong>是Anthropic推动的开放网络通信协议标准，主要采用服务器-客户端架构。服务器端是一个动态运行的实时服务，为客户端（Agent）提供开放的工具接口和数据。相当于云端工具，由于MCP跟工具一样，它会拥有极详尽的工具定义和参数JSON Schema，并且与工具一起预加载到消息上下文中，因此上下文消耗极高。通过延迟加载/语义搜索发现定向加载MCP工具可以缓解上下文压力。</p>
+<p><strong>Skills</strong>是开源高级指令规范（Markdown/YAML），包含轻量级指导文本、代码片段、触发条件和工作流步骤等，有独特的按需加载机制。更像是某项业务的指导书，用较短的文本教Agent如何完成某项任务，并且可以使用所提供的功能性代码。</p>
+<h4 id="2-2-2-超长上下文管理"><a href="#2-2-2-超长上下文管理" class="headerlink" title="2.2.2 超长上下文管理"></a>2.2.2 超长上下文管理</h4><h5 id="2-2-2-1-多模态上下文管理"><a href="#2-2-2-1-多模态上下文管理" class="headerlink" title="2.2.2.1 多模态上下文管理"></a>2.2.2.1 多模态上下文管理</h5><p>比如视觉数据转换成token的数量（取决于Patch大小），100万token可能只相当于1000帧、30秒视频。</p>
+<ol>
+<li>动态分辨率：高分辨率图像切分成VE能处理的块大小、整体resize成相同块大小，两边每块分别编码并拼接作为视觉特征。本质是降低Patch数量的同时通过不同的切分手段保持一定有效性。</li>
+<li>mRAG：最原始的做法是把数据通过编码器（如CLIP）压缩成高维向量存入向量库，以RAG的方式进行。但也有使用专门视频、音频标注模型描述每帧画面后再作为信息补充给LLM的。</li>
+</ol>
+<h5 id="2-2-2-2-长思维链推理"><a href="#2-2-2-2-长思维链推理" class="headerlink" title="2.2.2.2 长思维链推理"></a>2.2.2.2 长思维链推理</h5><p><strong>思维链(CoT)</strong>是Google于2022年发现的LLM涌现出的能力，最初分为<strong>少样本CoT</strong>（给QA及推理过程示例）和<strong>零样本CoT</strong>（无样本的推理命令，如<code>Let&#39;s think step by step</code>）。这过程中可以使用多轮对话，<strong>Prompt-Chaining</strong>让人手动把问题的解决过程一步步拆开、前一步的结果放进后一步作为示例上下文，但针对任务不同、很费人工，<strong>Auto-CoT</strong>技术先对问题集聚类、让LLM对于聚类中心的问题自己生成零样本示例再进行少样本CoT。</p>
+<p>对于长推理任务，Shunyu Yao于2023年提出了<strong>思维树（ToT）</strong>，定义任务所需思维/步骤的数量以及每步的候选项数，每步都要求评估当前是否有希望得到正确答案，每步选择5个最优的勾选项继续步骤，总体类似于遗传算法。其中评估可以让LLM自己评估，也可以通过强化学习等训练出类似控制器的组件，不过后者比较依赖数据集。</p>
+<p>现代Agent通过与外部环境交互可以验证自己的部分推测，我认为这是Claude Code与Codex的<code>/goal</code>模式核心，即一个不变的上下文：要干什么、如何检验、结束条件是什么，结束条件通常是某项指标达标或者一份报告，抑或是消耗token budget。而Karpathy的<code>Autoresearch</code>则想法大致类似，没有明确的结束条件，但是对于实验步骤、可改动文件的规定等的更死，并且主动要求使用<code>git</code>和日志管理进度（主动回滚）。前者是一个根植于Agent程序的上下文构建和循环机制，而后者类似一个明确规定了实验操作的Skills。</p>
+<p><code>AI-Scientist-v2</code>是2026年5月发表在Nature正刊上的科研Agent，比<code>/goal</code>更严格定义科研任务、比<code>Autoresearch</code>更全面地涵盖科研步骤，它进行了科研流程的每一步：对人类提供的话题提出论文idea（包括论文所需要的所有部分）、简单查重、在有限步骤内树形搜索、消融实验、绘图、引用、写文、自动预审稿。然而仍有许多问题：提出幼稚的idea，陷于错误的implementation，幻觉引用等等。最大贡献在于把实验过程的树分为多个阶段，每个阶段有自己专属的节点prompt以区分当前正在做的步骤，并且让Agent自己判断是否进入下个阶段。</p>
+<p>但是Agent仍不具备体系化的专业知识（或许可以把某领域的专业知识写成树状的文件结构，再变成skills加上脚本注明retrieve方法，方便agent检索），以及人类般灵活调整目标的能力（这一点则可能要求agent对于目标有回退的能力，即一级目标、二级目标、三级目标这样先提出来，当目标重复实现多次都失败后就记录失败目标、回退至上级目标、要求找其他方法）。或许这些可以成为长任务Agent的下一个目标。</p>
+<h5 id="2-2-2-3-记忆管理系统"><a href="#2-2-2-3-记忆管理系统" class="headerlink" title="2.2.2.3 记忆管理系统"></a>2.2.2.3 记忆管理系统</h5><p>将单纯的输出结果堆叠进上下文窗口，改造成一个“仿生记忆分层操作系统”，LLM当作CPU、上下文窗口当作RAM，外部存储文件当作硬盘。<code>Nanobot</code>的记忆和上下文系统就是一个例子。</p>
+<ol>
+<li>工作记忆：上下文窗口中的内容，包括系统信息、工作区信息、当前任务prompt、长期记忆、最近几轮的对话等等。</li>
+<li>情节记忆：过去所有的对话、所有运行过的工具历史，按照时间线写入外部数据库，方便查询。</li>
+<li>语义记忆：长期记忆，总结过去一段时间的对话写入外部数据库，被总结的对话将来不再放入上下文。类似于人类的记忆与遗忘。</li>
+</ol>
+<h3 id="2-3-一些早于Agent的LLM应用框架"><a href="#2-3-一些早于Agent的LLM应用框架" class="headerlink" title="2.3 一些早于Agent的LLM应用框架"></a>2.3 一些早于Agent的LLM应用框架</h3><h4 id="2-2-2-ReAct-Resoning-and-Act"><a href="#2-2-2-ReAct-Resoning-and-Act" class="headerlink" title="2.2.2 ReAct (Resoning and Act)"></a>2.2.2 ReAct (Resoning and Act)</h4><p>Shunyu Yao于2022年提出的LLM提示技术，它将“推理”与“行为”协同，让LLM执行“思考”、“行动”、“观察”的循环思维链，其中“行动”是与外部环境交互的行为（比如搜索），“观察”则是对外部环境的观察（比如搜索结果）。</p>
+<h4 id="2-2-3-RAG-Retrieval-Augmented-Generation"><a href="#2-2-3-RAG-Retrieval-Augmented-Generation" class="headerlink" title="2.2.3 RAG (Retrieval Augmented Generation)"></a>2.2.3 RAG (Retrieval Augmented Generation)</h4><p>Meta于2021年提出的LLM提示技术，它提供了一种知识检索的轻量型工具。该工具把大量文本分块并向量化作为知识库，对用户问题中的关键词通过相似度匹配获取最相近的知识块，作为回答用户问题的上下文。</p>
+<h3 id="2-4-AI-Infra"><a href="#2-4-AI-Infra" class="headerlink" title="2.4 AI Infra"></a>2.4 AI Infra</h3><p>先浅尝一下大模型的恐怖之处：</p>
+<p>FP16精度的500B参数权重差不多刚好需要1000GB即1TB显存</p>
+<p><strong>显存墙</strong>：每轮训练时反向传播的梯度值大概与模型参数量等同，优化器状态值（如Adam的动量）大概需要4-6倍模型参数量，保存用于计算梯度的前向传播的中间值则有多少要存多少。因此训练时的显存压力至少是推理时的6倍，这还需要乘上Batch Size。</p>
+<p><strong>算力墙</strong>：训练时反向传播的计算量大约是前向传播的2倍，因此训练时的算力需求至少是推理时的3倍。</p>
+<p>此外训练还需要同构集群，分布式训练需要高带宽的InfiniBand网络（通信墙），以及checkpointing容错机制处理某些硬件宕机的情况。</p>
+<h4 id="2-4-1-训练端：分布式并行策略"><a href="#2-4-1-训练端：分布式并行策略" class="headerlink" title="2.4.1 训练端：分布式并行策略"></a>2.4.1 训练端：分布式并行策略</h4><p>以下来自[Megatron-LM]</p>
+<h5 id="2-4-1-1-GPU间通信机制-NCCL-Primitives"><a href="#2-4-1-1-GPU间通信机制-NCCL-Primitives" class="headerlink" title="2.4.1.1 GPU间通信机制 (NCCL Primitives)"></a>2.4.1.1 GPU间通信机制 (NCCL Primitives)</h5><ol>
+<li><code>Broadcast</code>：单卡对所有其他卡广播。</li>
+<li><code>Gather</code>与<code>Scatter</code>：分别是让所有卡发数据给单卡拼起来、单卡把数据切碎发给所有卡。</li>
+<li><code>All-Gather</code>：所有卡广播自己的数据，并把收到的数据拼起来。</li>
+<li><code>Reduce</code>：规约，让所有卡把数据发给单卡，在接收过程中还能进行数学计算，通常是相加，单卡直接拿到数据之和。</li>
+<li><code>All-Reduce</code>：全规约，让所有卡把数据相加，并把数据之和广播让所有卡都拿到。</li>
+<li><code>Reduce-Scatter</code>：规约分发，让所有卡先把数据相加，再把数据之和切碎并分发给所有卡。</li>
+</ol>
+<h5 id="2-4-1-2-Data-Parallelism-ZeRO"><a href="#2-4-1-2-Data-Parallelism-ZeRO" class="headerlink" title="2.4.1.2 Data Parallelism (ZeRO)"></a>2.4.1.2 Data Parallelism (ZeRO)</h5><p>传统做法<strong>DPP</strong>：是每张卡上都有完整的模型权重，前向传播时每卡输入不同的Batch数据，各自反向传播算出梯度后，通过<code>All-Reduce</code>对所有卡计算得的梯度求平均，最后各自更新自己的优化器状态。这样每张卡都必须装下完整模型权重、梯度和优化器状态，并且每张卡的模型权重实际相近，非常冗余且对大模型不可行。</p>
+<ol>
+<li>ZeRO-1：<strong>优化器状态切分</strong>，每卡有完整模型和梯度，但优化器状态在所有卡上均分（即每张卡负责一部分参数的更新），每张卡计算完梯度后需要一次<code>Reduce-Scatter</code>平均并分发所有梯度，更新完自己负责的参数后，还需要一次<code>All-Gather</code>让所有卡拿到重新拼好的参数。均分优化器状态已经解决了最大的显存瓶颈，由于<code>All-Reduce</code>=<code>Reduce-Scatter</code>+<code>All-Gather</code>，因此相比DPP没有增加通信量。</li>
+<li>ZeRO-2：<strong>梯度切分</strong>，进一步切分梯度，每卡只要计算局部梯度，通过<code>Reduce</code>传给这部分梯度对应的卡。更新完成后还是需要<code>All-Gather</code>拼参数，但依旧没有增加通信量。</li>
+<li>ZeRO-3：<strong>参数切分</strong>，最后切分模型参数，前向计算通过<code>All-Gather</code>临时把参数拼起来给所有卡，算完立即释放。更加依赖高频通信，相比DPP真正提高了通信量。</li>
+</ol>
+<h5 id="2-4-1-3-Tensor-Parallelism"><a href="#2-4-1-3-Tensor-Parallelism" class="headerlink" title="2.4.1.3 Tensor Parallelism"></a>2.4.1.3 Tensor Parallelism</h5><p>单层网络的参数量单卡已经装不下时，就需要张量并行（层内并行），它对自注意力层和MLP进行了矩阵切分。以MLP为例，它将矩阵一分为二：</p>
+<ol>
+<li><p>假如我们有$Z=GeLU(XW_1)W_2$</p>
+<script type="math/tex; mode=display">X\in R^{B \times D}, W_1\in R^{D \times B}, W_2\in R^{B \times D}</script><script type="math/tex; mode=display">Y=GeLU(XW_1) \in R^{B \times B},\; Z=YW_2\in R^{B\times D}</script></li>
+<li><p>先把$W_1$按列切分分别放到两张卡上，$X$复制到两张卡上，各自计算一部分输出；再把$W_2$按行切分分别放到两张卡上，计算第二次矩阵乘，这次输出必须通过通信相加才能得到最终输出。</p>
+<script type="math/tex; mode=display">W_{1,1},W_{1,2}\in R^{D\times \frac{B}{2}},\; W_{2,1},W_{2,2}\in R^{\frac{B}{2} \times D}</script><script type="math/tex; mode=display">Y_1=GeLU(XW_{1,1}),\;Y_2=GeLU(XW_{1,2}) \in R^{B \times \frac{B}{2}}, \\ Z_1=Y_1 W_{2,1},Y_2 W_{2,2}\in R^{B\times D},\;Z=Z_1+Z_2</script></li>
+<li>因此用TP的每层都需要所有卡的通信，由于其频繁性，TP通常只能在同机器内通过NVLink运行。</li>
+</ol>
+<p>在多头注意力中则可以<strong>按注意力头切分</strong>，即按行切分投影矩阵，让不同GPU负责不同头，计算完SDPA后乘以自己那部分对应的输出投影矩阵，最后All-Reduce相加即得到输出。</p>
+<h5 id="2-4-1-4-Pipeline-Parallelism"><a href="#2-4-1-4-Pipeline-Parallelism" class="headerlink" title="2.4.1.4 Pipeline Parallelism"></a>2.4.1.4 Pipeline Parallelism</h5><p>TP每层通信对于极深的模型可能造成较大时延，我们可以进行层间切分（流水线并行），比如8层的模型让GPU 0 负责1-4层、GPU 1 负责5-8层，数据变得流水线传递。</p>
+<p>单纯流水线的<strong>痛点</strong>是每轮GPU 0 把输出交给GPU 1后，直到后者把反向传播梯度传回来前都闲置着（流水线气泡）。</p>
+<p><strong>1F1B (One Forward, One Backward)</strong>策略把大Batch输入拆成小Micro-batch，算完一个Mb的前向后可以立马切换去算前一个Mb的反向。</p>
+<h4 id="2-4-1-5-其他问题"><a href="#2-4-1-5-其他问题" class="headerlink" title="2.4.1.5 其他问题"></a>2.4.1.5 其他问题</h4><ol>
+<li>TP开大后训练速度为什么可能变慢，通信开销来自哪？<ul>
+<li>通信开销是每个被切分的层都要执行一次<code>All-Reduce</code>把输出拼出来。</li>
+<li>变慢的可能原因有：<ul>
+<li>并行数量超出单机卡数，从而TP开始依赖外部通信网络，外部InfiniBand带宽远低于内部NVLink。因此TP并行数不要超过单机卡数。</li>
+<li>矩阵过小导致没喂饱GPU，无法发挥Tensor Core的峰值算力。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>训练时具体如何选择分布式策略？<ul>
+<li>TP：单层参数量极大时，优先设为单机GPU数量。</li>
+<li>PP：看单机TP能装下几层，至少设为能装下所有层的机器数量；Micro-Batch数量则需要额外调整，通常是PP的4-8倍。</li>
+<li>DP：TP * PP即一个模型副本所需要的最小GPU数量，集群里剩下的所有卡可以用于DP以尽量增大Batch Size。再加上ZeRO-1减少优化器显存。</li>
+</ul>
+</li>
+<li>Fully Async（完全异步）训练会带来什么问题？<ul>
+<li>Fully Async（异步SGD）指算完梯度的节点不等待其他节点平均梯度，直接去更新全局参数</li>
+<li>这会导致算得慢的节点用来自版本号较低的模型算出的梯度，强行去更新版本号已经更高的模型。</li>
+</ul>
+</li>
+<li>训推分离的好处？<ul>
+<li>训练需要同构集群和InfiniBand；推理可以无需训练级算力、处理好高并发即可</li>
+<li>训练是一个长时间的批处理任务，不能接受任何外部干扰；推理的并发量波动较大，与训练集群可能抢占显存或带宽资源，所以应当保持隔离。</li>
+</ul>
+</li>
+</ol>
+<h4 id="2-4-2-推理端：长上下文推理优化"><a href="#2-4-2-推理端：长上下文推理优化" class="headerlink" title="2.4.2 推理端：长上下文推理优化"></a>2.4.2 推理端：长上下文推理优化</h4><p>推理端的核心痛点在于，自回归解码的范式需要前面所有Token的KV矩阵，为了不重复计算，它们会被存进显存中，即KV Cache。它的体积可能巨大，而每个用户由于请求token数不同，每块KV Cache的体积差异很大，不适合分配同样大小连续的显存空间，即显存碎片化问题，包括请求了没用上的内部碎片和空隙不够用的外部碎片。</p>
+<h5 id="2-4-2-1-vLLM与PagedAttention"><a href="#2-4-2-1-vLLM与PagedAttention" class="headerlink" title="2.4.2.1 vLLM与PagedAttention"></a>2.4.2.1 vLLM与PagedAttention</h5><p>vLLM是UC伯克利开源的主流LLM高速推理与部署服务框架，最主要特性是PagedAttention和连续批处理。</p>
+<p>Woosuk Kwon于2023年提出PagedAttetion，把KV Cache自身切成token数较低（如16）的小块，维护一张逻辑表记录所有小块的物理地址，这样基本消除了显存外部碎片、内部碎片也因为分块体积较小可以忽略不计。思想上与虚拟内存、内存池/对象池的概念比较相近。Batch Size较大时这些频繁访存的开销几乎可以忽略不计，而吞吐量可以翻倍。</p>
+<p>它还有几项好处：</p>
+<ol>
+<li>连续批处理：由于GPU只能计算矩形矩阵乘法，所以传统批处理都需要把短请求padding到与最长请求一样长，从而导致大量无效计算，而新请求由于显存被占满又进不来。每次批处理计算时都只需要计算固定大小的KV矩阵与请求token，较长的请求和KV Cache被分解成与其他请求大小相同的workload，从而使较短的请求在计算完成后，它的Cache位置可以被标记为可用，从而让新的请求token进来。</li>
+<li>Prompt Caching (SGLang)：如果token块也被切块，为它计算全局唯一的哈希值，并且配备指向KV Cache地址的指针。新请求进来后也会被切块计算哈希值，如果能匹配到，则可以直接引用已存在的KV Cache。而显存中的token块被引用时会累积引用请求数，并且使用一种特殊的前缀树：基数树（Radix Tree）管理Cache新增与剔除。在基数树中，被引用的节点计数增加，新节点成为该节点的子节点，当节点数量已满时，驱除计数最少的节点。</li>
+</ol>
+<h5 id="2-4-2-2-长上下文优化"><a href="#2-4-2-2-长上下文优化" class="headerlink" title="2.4.2.2 长上下文优化"></a>2.4.2.2 长上下文优化</h5><h6 id="2-4-2-2-1-RingAttention"><a href="#2-4-2-2-1-RingAttention" class="headerlink" title="2.4.2.2.1 RingAttention"></a>2.4.2.2.1 RingAttention</h6><p>当一个用户的长请求Q和KV Cache无法在一张卡中完整保存时，需要将Q和长Cache切分成多个存在不同卡中。</p>
+<p><strong>RingAttention</strong>利用了FlashAttention的<strong>Online Softmax</strong>算法，Q_i固定在一张卡上，当前有的KV_i块会与Q_i计算SDPA以更新临时输出O_i，而每轮计算的同时向环状拓扑上的下个GPU发送自己的或者上次收到的KV_j块，而自己也会收到来自上个GPU的KV_k块。当某个KV_i块回到时i点，每张卡的Q_i都已经用所有KV_i块更新过O_i了，也就得到了输出。</p>
+<p><strong>StripedAttention</strong>瞄准自回归推理的因果性发现了前者的缺点，Q_0不需要KV_1及以后的KV，因此GPU 0有大量时间都在无效运算，而GPU n-1跑的时间最长。因此对Q采用交织化/条带化分配，给所有卡按序轮流分配token，从而几乎让所有卡的负载均衡。</p>
+<p><strong>Context Parallelism (CP, Megatron-LM)</strong>则更进一步，针对复杂集群提出了优化。首先由于拓扑复杂，P2P Ring通信并不高效，CP在前向计算前用TP的方式<code>All-Gather</code>收发KV块，反向计算后用<code>Reduce-Scatter</code>分布梯度；其次引入双缓冲机制，在计算当前SDPA时，下一个KV块已经在进来了；最后对于所有MLP激活值也进行切分，与Sequence Parallelism的不同点则在于后者只切分了<code>Layernorm</code>和<code>Dropout</code>输出值。</p>
+<h6 id="2-4-2-2-2-KV-Cache压缩与丢弃"><a href="#2-4-2-2-2-KV-Cache压缩与丢弃" class="headerlink" title="2.4.2.2.2 KV Cache压缩与丢弃"></a>2.4.2.2.2 KV Cache压缩与丢弃</h6><ol>
+<li>H2O (Heavy-Hitter Oracle) / SnapKV 发现Attention权重集中在少数token上，如首句、特殊标点和刚刚提到的物体，因此推理时可以动态评估token重要性，丢弃不重要的KV Cache。以及还有其他各种各样的压缩方式，比如通过相似性、频域信息等判断token重要性，MLLM还要压缩其他数据的token。</li>
+<li>低比特量化：常见的是将FP16 KV Cache压成INT8、INT4、FP8。</li>
+</ol>
+<h5 id="2-4-2-3-投机采样"><a href="#2-4-2-3-投机采样" class="headerlink" title="2.4.2.3 投机采样"></a>2.4.2.3 投机采样</h5><p>每次生成一个token使得Tensor Core算力相对大模型从全局显存读取权重的时间被浪费了，因此可以引入一个小模型（Draft Model，比如1B）先猜出下面5个token。接着5个token一起被喂给大模型（如70B），让它通过一次前向计算验证这些token的合理性。猜对的token和大模型新生成的token一起返回，从而让token吞吐量翻倍。</p>
+<h3 id="2-5-现代LLM框架"><a href="#2-5-现代LLM框架" class="headerlink" title="2.5 现代LLM框架"></a>2.5 现代LLM框架</h3><h4 id="2-5-1-LLM的新组件"><a href="#2-5-1-LLM的新组件" class="headerlink" title="2.5.1 LLM的新组件"></a>2.5.1 LLM的新组件</h4><h5 id="2-5-1-1-RoPE"><a href="#2-5-1-1-RoPE" class="headerlink" title="2.5.1.1 RoPE"></a>2.5.1.1 RoPE</h5><p><strong>旋转位置编码</strong>源自Jianlin Su于2021年发表的RoFormer论文，这是一种可以表示相对位置关系的乘性绝对位置编码，具有数值稳定性、易外推性和极低的计算复杂度。让我们从二维开始：</p>
+<p>假设我们有一个位置索引为m的2维query向量$q$，一个位置索引为n的2维key向量$k$。我们需要它们经过位置编码后的内积能是m-n的函数，因此自然联想到复数表示，并且我们用复数表示向量，即</p>
+<script type="math/tex; mode=display">f(q, m)=q e^{im\theta}=(q_1 + i q_2)(\cos im\theta + i\sin im\theta)=\begin{bmatrix}&\cos m\theta &-\sin m\theta \\ &\sin m\theta &\cos m\theta\end{bmatrix} \\ <f(q,m), f(k,n)>= qk^*e^{i(m-n)\theta}</script><p>作者把高维向量分成$d/2$个子空间，每个空间上进行二维旋转，就得到了高维向量的旋转编码，可以直观理解为每个平面是向量关于某个轴进行旋转时的旋转平面。此外，为了捕捉不同频域的信息，每个子空间i的$\theta_i=10000^{-(2i-1)/d}$。由于每维结果都相当于两个相邻分量加权加减，因此高维向量的旋转编码结果还可以通过简单的逐元素相乘和变换元素位置获取。</p>
+<p>它的易外推性体现在通过改变$\theta$的大小可以无需训练或少训练地让可容纳绝对位置变大，新的位置相对旧位置相当于内插结果，对于LLM来说易于理解。</p>
+<h5 id="2-5-1-2-激活函数和门控单元"><a href="#2-5-1-2-激活函数和门控单元" class="headerlink" title="2.5.1.2 激活函数和门控单元"></a>2.5.1.2 激活函数和门控单元</h5><blockquote>
+<p>We offer no explanation as to why these architectures seem to work; we attribute their success, as all else, to divine benevolence. —— Noam Shazeer, <a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2002.05202"><em>GLU Variants Improve Transformer</em></a>, 2020</p>
+</blockquote>
+<p>下文中$\sigma(x)=sigmoid(x)$。</p>
+<ol>
+<li>GLU (Gated Linear Units)于2017年提出，来自LSTM的门控机制，作为一种神经网络层，通用形式为$GLU(x,W,V,b,c)=\sigma(Wx+b) \odot (Vx+c)$，相当于线性层接门控机制，通常认为用更多的参数量换到更好的效果；</li>
+<li>GELU (Gaussian Error Linear Unit)于2016年提出，$GELU(x)=x \odot \Phi(x)\;\Phi$是标准正态分布的累积误差函数，优点是导数连续、不会剪裁梯度、近似计算的复杂度小；</li>
+<li>GEGLU是把门控单元替换为了GELU的GLU，$GEGLU(x,W,V,b,c)=GELU(Wx+b) \odot (Vx+c)$；</li>
+<li>SwiGLU<ol>
+<li>Swish由Google Brain于2017年提出，$Swish(x)=x \odot \sigma(x)$，优点是非线性、不会梯度消失，缺点是sigmoid计算量；</li>
+<li>SwiGLU于2021年由Google DeepMind提出，采用Swish作为激活函数，$SwiGLU(x,W,V,b,c)=swish(Wx+b)\odot (Vx+c)$；</li>
+</ol>
+</li>
+</ol>
+<p>效果最好的是GEGLU和SwiGLU。</p>
+<h5 id="2-5-1-3-归一化"><a href="#2-5-1-3-归一化" class="headerlink" title="2.5.1.3 归一化"></a>2.5.1.3 归一化</h5><p>归一化的意义：稳定化梯度流（避免深层网络中梯度爆炸/消失）、防止输入因内部协变量漂移（激活值逐渐偏移）。</p>
+<p>为什么<code>BatchNorm</code>失效：文本请求的长度参差不齐；训练时Pipeline Parallelism的Batch Size较小，BN的均值及方差变化很大。</p>
+<ol>
+<li><p>LayerNorm于2016年提出，不在Batch维度，而是在特征维度上逐token进行归一化：</p>
+<script type="math/tex; mode=display">\mu = \frac{1}{H}\sum\nolimits^H_{i=1}x_i \\ \sigma^2=\frac{1}{H}\sum\nolimits^H_{i=1}(x_i-\mu)^2 \\ y=\frac{x-\mu}{\sqrt{\sigma^2+\epsilon}}\odot \gamma + \beta</script><p> $\gamma,\beta$为可学习参数，$\epsilon$为防止除零的保护值。</p>
+</li>
+<li><p>RMSNorm (Root Mean Square Layer Normalization)于2019年提出，动机是发现LN的有效性主要来源于梯度稳定，即只有方差缩放有用、平移几乎无用，因此删去，还能带来少一次遍历的性能提升。</p>
+<script type="math/tex; mode=display">RMS(x)=\sqrt{\frac{1}{H}\sum\nolimits^H_{i=1}x_i^2+\epsilon} \\ y = \frac{x}{RMS(x)}\odot \gamma</script></li>
+<li><p>Pre-Norm vs Post-Norm：</p>
+<ul>
+<li>Post-Norm是<em>Attention is All You Need</em>原文使用的归一化位置，即在残差链接之后归一化$y=Norm(x+F(x))$，使得残差连接变得不纯粹，反而容易梯度消失（深度越大、归一化分母变得指数级增长，深层反向传播回来的梯度也被缩放多次）需要复杂的学习率预热技巧；</li>
+<li>Pre-Norm把归一化位置放在输入层前，即$y=x+F(Norm(x))$，它的梯度不会被指数衰减，因此更容易学习。不过这样容易导致最后一层前的输入x变得方差很大，因此预测层前也需要归一化；</li>
+<li>有<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2004.08249">研究</a>发现Pre-Norm的训练最终效果可能不如Post-Norm，Pre-Norm的输出相比Post-Norm不太依赖残差项，结合深层展开后的输出表达式，可能说明Pre-Norm残差连接更接近在同一层中平铺而非加深层数。</li>
+</ul>
+</li>
+</ol>
+<h5 id="2-5-1-4-注意力机制"><a href="#2-5-1-4-注意力机制" class="headerlink" title="2.5.1.4 注意力机制"></a>2.5.1.4 注意力机制</h5><blockquote>
+<p>在本文中，MLA被视为GQA的一般化，它用投影矩阵的方式替代了GQA的分割、重复，并引入了一个恒等变换技巧来可以进一步压缩KV Cache，同时采用了一种混合方法来兼容RoPE。总的来说，MLA称得上是一种非常实用的注意力变体。 —— Jianlin Su, <a target="_blank" rel="noopener" href="http://kexue.fm/archives/10091"><em>缓存与效果的极限拉扯：从MHA、MQA、GQA到MLA</em></a>，2024</p>
+</blockquote>
+<p>从最初的MHA开始，主流注意力机制的演变执着于降低KV Cache的体积同时保持较好的推理性能。</p>
+<ol>
+<li>Multi-Head Attention (MHA)来自<em>Attention is All You Need</em>，在特征维度上切分，相当于多个独立单头注意力拼接：<script type="math/tex; mode=display">x_1, x_2, ..., x_l \in \mathcal{R}^d \\ \{q,k,v\}_i^{(s)}=x_iW_{\{q,k,v\}}^{(s)}\in\mathcal{R}^{d_{\{k,v\}}},\; W_{\{q,k,v\}}\in\mathcal{R}^{d\times d_{\{k,v\}}} \\ d_k=d_v=d/h</script></li>
+<li>Multi-Query Attention (MQA)来自2019年的<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1911.02150">论文</a>，直接让所有头共享同一个KV，从而将KV Cache能减少到$1/h$，并且损失不大，参数量可以通过FFN/GLU弥补。</li>
+<li>Grouped-Query Attention (GQA)来自2023年的<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2305.13245">论文</a>，把所有头分成$h \% g = 0,\;g$个组，每组共享一对KV，从而将KV Cache减少到$g/h$，从而提供了MHA到MQA和自然过渡：<script type="math/tex; mode=display">\{k,v\}_i^{(\lceil sg/h\rceil)}=x_iW_{\{k,v\}}^{(\lceil sg/h\rceil)}\in \mathcal{R}^d_{\{k,v\}},\; W_{\{k,v\}}^{(\lceil sg/h\rceil)}\in \mathcal{R}^{d\times d_{\{d,v\}}}</script>LLAMA2/3-70B中$g=8$，因为单机上通常只能装8卡，从而尽量增大组数同时减少卡间通信。</li>
+<li><p>Multi-Head Latent Attention (MLA)来自DeepSeek-V2，希望通过投影矩阵提升GQA的能力，具体是先把$x_i$投影成任意维的$c_i$，再用$c_i$投影获得$k_i,v_i$。根据下面的推导，我们只需要存$c_i$作为Cache，当$c_i$维度为$g(d_k+d_v)$时Cache的大小就与GQA相同，但不需要更强的能力只为了减少Cache时可以降维（DeepSeek-V2为512）：</p>
+<script type="math/tex; mode=display">c_i=x_iW_c\in\mathcal{R}^{d_c},W_c\in\mathcal{R}^{d\times d_c} \\ \{k,v\}_i^{(s)}=c_iW_{\{k,v\}}\in\mathcal{R}^{d_{\{k,v\}}},W^{(s)}_{\{k,v\}} \\ q_t^{(s)}k_i^{(s)T}=x_t(W_q^{(s)}W_k^{(s)T})c_i^T</script><p>上面把$W_qW_k^T$合并从而存$c_i$代替$k_i$，至于$v_i$则将矩阵吸收进$W_o$即可，这就是理想情况下该方法的优越之处。然而上面是没考虑RoPE的，如果加了RoPE，$W_qR_{m-n}W_k$就没法固定了。因此为了保留RoPE，每个注意力头的Q、K新增$d_r$个维度来添加RoPE，即</p>
+<script type="math/tex; mode=display">\{q,k\}_i^{(s)}=[\{x_i,c_i\}W_{\{q,k\}c}^{(s)},x_iW_{\{q,k\}r}^{(s)}R_i]\in\mathcal{R}^{d_k+d_r},\;\\W_{\{q,k\}c}^{(s)}\in\mathcal{R}^{d\times d_k},W_{qr}^{(s)}\in\mathcal{d\times d_r},W_{kr}\in\mathcal{R}^{d\times d_r}</script><p>新增的$d_r=d_k/2=64$只有K Cache。此外为了减少参数量和梯度，Q也先经过一步低秩投影，即</p>
+<script type="math/tex; mode=display">c_i'=x_iW_{c'}\in\mathcal{R}^{d_{c'}},W_{c'}\in\mathcal{d\times d_{c'}}</script><p>后面的Q投影矩阵也改为C’投影矩阵，$d_{c’}=1536$。可以发现与MHA相比只是多了一步低秩投影以及只在部分新增的维度加RoPE，虽然增加了计算量，但显著减少了KV Cache，因此推理速度提升效果明显。此外，由于存的是$c_i$而非投影后的KV矩阵，增加注意力头的数量$h$并不会增加KV Cache，因此DeepSeek-V2的$h$大胆地设为128、一般开源模型的3倍。</p>
+<p>总的来说MLA相当于GQA的一种变换一般化版本，整条路径是朝着性能尽量不变、KV Cache越来越少的方向走的。</p>
+</li>
+</ol>
+<h4 id="2-5-2-MoE"><a href="#2-5-2-MoE" class="headerlink" title="2.5.2 MoE"></a>2.5.2 MoE</h4><p>部分理论分析参考自Jianlin Su的<a target="_blank" rel="noopener" href="https://kexue.fm/archives/10757">MoE环游记系列</a>博客。</p>
+<p>MoE最早可追溯到Jordan等人于1991年的论文 <em>Adaptive Mixtures of Local Experts</em>，如今LLM的稀疏门控MoE (Sparsely-Gated MoE)则来自Noam Shazeer等人于2017年的论文 <em>Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer</em>，Google则于2021年在 <a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2101.03961"><em>Switch Transformer</em></a> 中证明了MoE在Transformer中的潜力，MistralAI在2024年的 <a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2401.04088"><em>Mixtral of Experts</em></a> 中对MoE予以推广。</p>
+<p>MoE的影响主要体现在参数量与计算量的解耦，此后模型参数量可以堆至千B以提高知识容量，但推理时只激活极少专家，如13B，使得推理速度极快。</p>
+<h5 id="2-5-2-1-MoE机制"><a href="#2-5-2-1-MoE机制" class="headerlink" title="2.5.2.1 MoE机制"></a>2.5.2.1 MoE机制</h5><p>MoE层是代替前馈神经网络层（FFN）即线性层的特殊层，主要包含Router与Experts，前者为稀疏门控，后者为许多个较小的FFN，并不改变注意力层。它通过一个路由机制，计算Token对所有专家的权重，最简单的路由机制来自 <a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2401.04088"><em>Mixtral of Experts</em></a>：</p>
+<script type="math/tex; mode=display">G(x)=Softmax(TopK(W_g\cdot x))</script><p>$W_g$是Router的权重矩阵，假如选择Top-2个最大的概率值，我们就会让这两个Experts根据$G(x)$混合，而未被选中的Experts则不被计算，从而达到一种参数利用的稀疏性。</p>
+<h5 id="2-5-2-2-负载均衡"><a href="#2-5-2-2-负载均衡" class="headerlink" title="2.5.2.2 负载均衡"></a>2.5.2.2 负载均衡</h5><p>MoE训练的痛点是马太效应，在训练初期如果某些专家被频繁更新，由于它们的表现更好，就会导致路由器会在未来更倾向于把Token交给这些专家，其余专家就会被“饿死”。</p>
+<p>为此许多工作设计了各种各样用于负载均衡的辅助损失（Auxiliary Loss），比如让目标分布为均匀分布、用损失要求分配分布接近目标分布，即</p>
+<script type="math/tex; mode=display">\mathcal{L}_{aux}=\frac{1}{2}\|F-Q\|^2=\frac{1}{2}\sum\nolimits_{i=1}^{n}(F_i-1/n)^2</script><p>DeepSeek提出过 <a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2408.15664"><em>Loss-Free</em></a> 方案，它不改变Router打分结果，而是改变$argtop_k G(x)$这个方式，引入一个可学习的偏置项影响分配（$argtop_k G(x)+\beta$），但不参与权重大小的计算，从而隔离了负载均衡对于LM Loss的负面影响。这里引入偏置项的目标依旧是均匀分布，不同的是，通过损失梯度的推导可以直接获得偏置项的梯度更新方法，这里引用<a target="_blank" rel="noopener" href="https://kexue.fm/archives/10757">Jianlin Su的推导</a></p>
+<script type="math/tex; mode=display">\mathcal{L_{aux}}=\frac{1}{2}\|\beta+sg[F-\beta]-Q\|^2=\frac{1}{2}\sum\nolimits_{i=1}^{n}(\beta_i+sg[F_i-\beta_i]-1/n)^2 \\ \nabla_\beta\mathcal{L}_{aux}=\frac{1}{2}\nabla_\beta\|\beta+sg[F-\beta]-Q\|^2=F-Q \beta\leftarrow\beta-\gamma(F-Q)\;(SGD) \\ \beta\leftarrow\beta-\gamma sign(F-Q)\;(SignSGD) \\ \beta\leftarrow\beta-\gamma\frac{F-Q}{RMS(F-Q)}\;(RMS\;Adaptive)</script><p>不过均匀分布也不一定是最好的专家分布，2024年的<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2401.06066"><em>DeepSeekMoE</em></a>中还分别提出了不改变总参数量、只提升专家数量的Fine-Grained Expert，以及固定路由某些专家、在剩余专家中选剩余budget的Shared Expert，它们都能提升模型质量，<a target="_blank" rel="noopener" href="https://kexue.fm/archives/10945">Jianlin Su</a>认为这种人为的不均衡可能模拟了现实世界的非均匀性。</p>
+<h5 id="2-5-2-3-专家容量"><a href="#2-5-2-3-专家容量" class="headerlink" title="2.5.2.3 专家容量"></a>2.5.2.3 专家容量</h5><p>由于GEMM的计算效率问题，我们希望被使用的专家里，token分配还是相对均衡，因此 <a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2101.03961"><em>Switch Transformer</em></a> 固定了每个专家可以接收的token数量，即专家容量</p>
+<script type="math/tex; mode=display">expert\; capacity = (\frac{tokens\;per\;batch}{number\;of\;experts})\times capacity\;factor</script><p>capacity factor通常范围为[1, 2]，越大矩阵越大消耗算力越大，越小超出的token数可能越多。少于容量的专家会用Dummy Token补齐以对齐，而超出容量的token则不通过专家FFN计算，直接通过残差连接通往下一层。</p>
+<h4 id="2-5-3-长上下文窗口"><a href="#2-5-3-长上下文窗口" class="headerlink" title="2.5.3 长上下文窗口"></a>2.5.3 长上下文窗口</h4><p>前面的<a href="#2514-注意力机制">注意力机制</a>小节已经介绍了MQA、GQA和MLA三种减少KV Cache的方法，它们由于延续了MHA的完整SDPA机制尤其是Softmax，这导致$QK^T$计算不可免，序列计算复杂度总是平方，因此被称为<em>Full Atention</em>。</p>
+<p>下面的论文都致力于降低序列计算的复杂度，Linear Attention无心插柳、Mamba有意为之，两者都利用RNN的$O(1)$计算复杂度来改进或替代注意力层，但都具有相似的问题。</p>
+<h5 id="2-5-3-1-Linear-Attention"><a href="#2-5-3-1-Linear-Attention" class="headerlink" title="2.5.3.1 Linear Attention"></a>2.5.3.1 Linear Attention</h5><p><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2006.16236"><em>Linear Attention</em></a>于2020年发表，它的Trick在于我们不使用Softmax，改变数学公式，使用一些可以拆成两部分的核函数$\phi(x)$（文中$\phi(x)=elu(x)+1$，更早的<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1812.01243"><em>Efficient Attention</em></a>则直接用softmax，妙在可以自动归一化）衡量相似性，从而$\phi(K)^TV$可以被预计算并缓存，$\phi(Q)$只要和这个固定大小的矩阵相乘。因此计算复杂度和显存占用降为线性。</p>
+<p>正如原文标题所言，线性注意力层可以规范化成RNN表示，即</p>
+<script type="math/tex; mode=display">s_i=s_{i-1}+\phi(x_iW_K)(x_iW_V)^T \\ z_i=z_{i-1}+\phi(x_iW_K) \\ y_i=f_l(\frac{\phi(x_iW_Q)^Ts_i}{\phi(x_iW_Q)^Tz_i}+x_i)</script><p>不过<a target="_blank" rel="noopener" href="https://spaces.ac.cn/archives/8610">Jianlin Su</a>也有提到Attention自身的二次性算力增长可能需要序列长度以K为单位时才会体现，在此之前的复杂度主要在FFN层，因此仅对注意力层的改进带来的速度增益可能体感较少。此外线性注意力还有问题是每decode一个token，就相当于新$K^TV$与原来的做加法，位置越后的token见到的$\sum\nolimits_{j=1}^t K^TV$就越大，从而导致之前每个token的作用被均摊，因此后续有其他工作引入遗忘、TTT等新机制解决该问题，可以看blog。</p>
+<h5 id="2-5-3-2-Mamba"><a href="#2-5-3-2-Mamba" class="headerlink" title="2.5.3.2 Mamba"></a>2.5.3.2 Mamba</h5><p><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2312.00752"><em>Mamba</em></a>的思想来源于RNN，更准确地说来自状态空间模型（SSM）或其后继结构状态空间序列模型（S4）。SSM定义了一个线性ODE系统（A、B、C）：</p>
+<script type="math/tex; mode=display">h'(t)=Ah(t)+Bx(t),\; y(t)=Ch(t)</script><p>其中$h(t),\;x(t)$分别是状态和输入。S4加上一个量化步长$\Delta$，把状态在时间上量化，从而形成了类似线性RNN的状态转移：</p>
+<script type="math/tex; mode=display">\bar{A}=\exp(\Delta A),\;\bar{B}=(\Delta A)^{-1}(\exp(\Delta A)-I)\cdot \Delta B\;(ZOH\; descretization \;rule) \\ h_t = \bar{A}h_{t-1}+\bar{B}x_t,\; y_t=Ch_t</script><p>多步状态转移输出可以拆解成输入经过指数数列卷积，即</p>
+<script type="math/tex; mode=display">\bar{K}=(C\bar{B},C\overline{AB},...,C\bar{A}^k\bar{B},...),\;y=x * \bar{K}</script><p>这个线性系统很重要的假设是线性时不变，即任何时间的输入相同、输出也相同。为此$(\Delta,A,B,C),\;(\bar{A},\bar{B})$都应该是对任意时间都相同的。</p>
+<p>但是为了让S4对输入具有选择性，把$\Delta,B,C$都改造为了输入的线性投影：</p>
+<script type="math/tex; mode=display">B=s_B(x)=Linear_N(x),\;C=s_C(x)=Linear_N(x),\\s_{\Delta}=Broadcast_D(Linear_1(x))</script><p>A因为跟$\Delta$联动所以无需选择性，然后用这个S6模型的一步 + 卷积层 + SwiGLU 结合成一个Mamba层。此外因为无法并行，为了输入长序列的计算速度，设计了一个特殊的卷积核（OpenAI Triton实现）一次性计算所有的$\bar{A},\bar{B}$放在SRAM中、用一次并行累加扫描计算出所有的h、乘上C后才写回HBM。反向传播时则重计算各中间状态以免显存增加。</p>
+<p>优点是快，比Attention层计算复杂度仅为线性增长、不会累积Cache节省显存，因此理论上可处理无限序列，并且相比以往的RNN模型记忆力更强，但在长上下文理解、复杂逻辑推理上依旧逊色于最先进的Transformer架构模型，token处理仍无法并行。</p>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2405.21060"><em>Mamba 2</em></a>在理论上统一了Structured Masked Attention (SMA)和Mamba，并用Tensor Core加速了SSM模块计算，详细暂未了解。</p>
+<h5 id="2-5-3-3-一点感想"><a href="#2-5-3-3-一点感想" class="headerlink" title="2.5.3.3 一点感想"></a>2.5.3.3 一点感想</h5><p>Mamba将序列模型的基础问题定义为把上下文压缩为一个更小的状态，在此背景下，attention相当于没压缩（因为KV Cache线性增长），传统RNN相当于一直压成一个有限状态。</p>
+<p>这很容易让人联想到Agent可能也是一个RNN系统，LLM的上下文窗口就是它的状态budget，用户在离散的无限步骤中每轮都有输入，模型维护一个长期记忆、最近会话历史等等有限状态，这个有限状态的质量越好，输出效果就越好，因此这个RNN的状态转移方法说不定可以用数学方法表示出来。</p>
+<p>此外Mamba主要的贡献：Selective of time interval直接决定了RNN状态的更新对新输入（比如token）有多关注，从而可以自适应地记住/忘记输入序列，管理好上下文，这种机制能否迁移到Agent的记忆选取上？</p>
+<h4 id="2-5-4-开源架构拆解"><a href="#2-5-4-开源架构拆解" class="headerlink" title="2.5.4 开源架构拆解"></a>2.5.4 开源架构拆解</h4><h5 id="2-5-4-1-Llama-3"><a href="#2-5-4-1-Llama-3" class="headerlink" title="2.5.4.1 Llama 3"></a>2.5.4.1 Llama 3</h5><h5 id="2-5-4-2-DeepSeek-V3"><a href="#2-5-4-2-DeepSeek-V3" class="headerlink" title="2.5.4.2 DeepSeek-V3"></a>2.5.4.2 DeepSeek-V3</h5>
+      </section>
+
+      
+      
+        <nav class="article-nav">
+          
+          
+            <div class="article-nav-item layout-padding">
+  <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
+    
+    <div class="card-text">
+      
+        <a href="/posts/50562/" itemprop="url">
+          <h2 class="card-text--title text-ellipsis">C++复习</h2>
+        </a>
+      
+      <div class="card-text--row">上一篇</div>
+    </div>
+  </article>
+</div>
+          
+        </nav>
+      
+
+      <section class="page-message-container layout-padding">
+        
+
+
+  
+  
+    <div class="valine-container comments-container content-padding--primary soft-size--large soft-style--box">
+      <div id="valine_thread" class="valine-thread"></div>
+    </div>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/leancloud-storage@3.15.0/dist/av-min.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js"></script>
+    <script type="text/javascript">
+      new Valine({
+        el: "#valine_thread",
+        appId: "KyFX86e0JECKvlIZxD5t3gvy-gzGzoHsz",
+        appKey: "vUaIlHWvvCWkewgmtQCSLh4B",
+        placeholder: "跟我交流一下叭～",
+        avatar: "mp",
+        pageSize: 10,
+        lang: "zh-cn",
+        visitor: true,
+        recordIP: false,
+        enableQQ: false,
+        meta: ['nick', 'mail'],
+        requiredFields: ['nick'],
+        
+        // Bilibili 表情包插件
+        // 设置 Bilibili 表情包地址
+        emojiCDN: '//i0.hdslb.com/bfs/emote/', 
+        // 表情 title 和图片映射
+        emojiMaps: {
+            // 小黄脸
+            "2023": "fa6dda8b876ed38609de38aa604be5ad109b8591.png",
+            "足球": "f9157d9fa5ac3b8339cb8a8b7ad70eb40d4113c9.png",
+            "脱单doge": "bf7e00ecab02171f8461ee8cf439c73db9797748.png",
+            "微笑": "685612eadc33f6bc233776c6241813385844f182.png",
+            "口罩": "3ad2f66b151496d2a5fb0a8ea75f32265d778dd3.png",
+            "doge": "3087d273a78ccaff4bb1e9972e2ba2a7583c9f11.png",
+            "妙啊": "b4cb77159d58614a9b787b91b1cd22a81f383535.png",
+            "OK": "4683fd9ffc925fa6423110979d7dcac5eda297f4.png",
+            "星星眼": "63c9d1a31c0da745b61cdb35e0ecb28635675db2.png",
+            "辣眼睛": "35d62c496d1e4ea9e091243fa812866f5fecc101.png",
+            "吃瓜": "4191ce3c44c2b3df8fd97c33f85d3ab15f4f3c84.png",
+            "滑稽": "d15121545a99ac46774f1f4465b895fe2d1411c3.png",
+            "呲牙": "b5a5898491944a4268360f2e7a84623149672eb6.png",
+            "打call": "431432c43da3ee5aab5b0e4f8931953e649e9975.png",
+            "歪嘴": "4384050fbab0586259acdd170b510fe262f08a17.png",
+            "调皮": "8290b7308325e3179d2154327c85640af1528617.png",
+            "2022": "a783df2ce72952c44004007462324bde4b092a0c.png",
+            "虎年": "a062f5fa2bafe677e49b6963a2bbb11dd4fe1e11.png",
+            "豹富": "3d1dbe52ea16e12ff7b1c371196f728a4097fb33.png",
+            "嗑瓜子": "28a91da1685d90124cfeead74622e1ebb417c0eb.png",
+            "笑哭": "c3043ba94babf824dea03ce500d0e73763bf4f40.png",
+            "藏狐": "ba0937ef6f3ccca85e2e0047e6263f3b4da37201.png",
+            "脸红": "0922c375da40e6b69002bd89b858572f424dcfca.png",
+            "给心心": "1597302b98827463f5b75c7cac1f29ea6ce572c4.png",
+            "嘟嘟": "abd7404537d8162720ccbba9e0a8cdf75547e07a.png",
+            "哦呼": "362bded07ea5434886271d23fa25f5d85d8af06c.png",
+            "喜欢": "8a10a4d73a89f665feff3d46ca56e83dc68f9eb8.png",
+            "酸了": "92b1c8cbceea3ae0e8e32253ea414783e8ba7806.png",
+            "嫌弃": "de4c0783aaa60ec03de0a2b90858927bfad7154b.png",
+            "大哭": "2caafee2e5db4db72104650d87810cc2c123fc86.png",
+            "害羞": "9d2ec4e1fbd6cb1b4d12d2bbbdd124ccb83ddfda.png",
+            "疑惑": "b7840db4b1f9f4726b7cb23c0972720c1698d661.png",
+            "喜极而泣": "485a7e0c01c2d70707daae53bee4a9e2e31ef1ed.png",
+            "奸笑": "bb84906573472f0a84cebad1e9000eb6164a6f5a.png",
+            "笑": "81edf17314cea3b48674312b4364df44d5c01f17.png",
+            "偷笑": "6c49d226e76c42cd8002abc47b3112bc5a92f66a.png",
+            "惊讶": "f8e9a59cad52ae1a19622805696a35f0a0d853f3.png",
+            "捂脸": "6921bb43f0c634870b92f4a8ad41dada94a5296d.png",
+            "阴险": "ba8d5f8e7d136d59aab52c40fd3b8a43419eb03c.png",
+            "囧": "12e41d357a9807cc80ef1e1ed258127fcc791424.png",
+            "呆": "33ad6000d9f9f168a0976bc60937786f239e5d8c.png",
+            "抠鼻": "cb89184c97e3f6d50acfd7961c313ce50360d70f.png",
+            "大笑": "ca94ad1c7e6dac895eb5b33b7836b634c614d1c0.png",
+            "惊喜": "0afecaf3a3499479af946f29749e1a6c285b6f65.png",
+            "无语": "44667b7d9349957e903b1b62cb91fb9b13720f04.png",
+            "点赞": "1a67265993913f4c35d15a6028a30724e83e7d35.png",
+            "鼓掌": "895d1fc616b4b6c830cf96012880818c0e1de00d.png",
+            "尴尬": "cb321684ed5ce6eacdc2699092ab8fe7679e4fda.png",
+            "灵魂出窍": "43d3db7d97343c01b47e22cfabeca84b4251f35a.png",
+            "委屈": "d2f26cbdd6c96960320af03f5514c5b524990840.png",
+            "傲娇": "010540d0f61220a0db4922e4a679a1d8eca94f4e.png",
+            "疼": "905fd9a99ec316e353b9bd4ecd49a5f0a301eabf.png",
+            "冷": "cb0ebbd0668640f07ebfc0e03f7a18a8cd00b4ed.png",
+            "热": "4e58a2a6f5f1580ac33df2d2cf7ecad7d9ab3635.png",
+            "生病": "0f25ce04ae1d7baf98650986454c634f6612cb76.png",
+            "吓": "9c10c5ebc7bef27ec641b8a1877674e0c65fea5d.png",
+            "吐": "06946bfe71ac48a6078a0b662181bb5cad09decc.png",
+            "捂眼": "c5c6d6982e1e53e478daae554b239f2b227b172b.png",
+            "嘘声": "e64af664d20716e090f10411496998095f62f844.png",
+            "思考": "cfa9b7e89e4bfe04bbcd34ccb1b0df37f4fa905c.png",
+            "再见": "fc510306bae26c9aec7e287cdf201ded27b065b9.png",
+            "翻白眼": "eba54707c7168925b18f6f8b1f48d532fe08c2b1.png",
+            "哈欠": "888d877729cbec444ddbd1cf4c9af155a7a06086.png",
+            "奋斗": "bb2060c15dba7d3fd731c35079d1617f1afe3376.png",
+            "墨镜": "3a03aebfc06339d86a68c2d893303b46f4b85771.png",
+            "难过": "a651db36701610aa70a781fa98c07c9789b11543.png",
+            "撇嘴": "531863568e5668c5ac181d395508a0eeb1f0cda4.png",
+            "抓狂": "4c87afff88c22439c45b79e9d2035d21d5622eba.png",
+            "生气": "3195714219c4b582a4fb02033dd1519913d0246d.png",
+            "水稻": "d530fcaa5100ba12a17a79b55bad342d530c54e3.png",
+            "奶茶干杯": "d5a491990be551ce69f9660da948050df4eab331.png",
+            "汤圆": "93609633a9d194cf336687eb19c01dca95bde719.png",
+            "锦鲤": "643d6c19c8164ffd89e3e9cdf093cf5d773d979c.png",
+            "弹幕破百亿": "80891223ba023dff3141e377f4ea3b89918eb6a4.png",
+            "福到了": "5de5373d354c373cf1617b6b836f3a8d53c5a655.png",
+            "鸡腿": "c7860392815d345fa69c4f00ef18d67dccfbd574.png",
+            "雪花": "a41813c4edf8782047e172c884ebd4507ce5e449.png",
+            "视频卫星": "dce6fc7d6dfeafff01241924db60f8251cca5307.png",
+            "干杯": "8da12d5f55a2c7e9778dcc05b40571979fe208e6.png",
+            "黑洞": "e90ec4c799010f25391179118ccd9f66b3b279ba.png",
+            "爱心": "ed04066ea7124106d17ffcaf75600700e5442f5c.png",
+            "胜利": "b49fa9f4b1e7c3477918153b82c60b114d87347c.png",
+            "加油": "c7aaeacb21e107292d3bb053e5abde4a4459ed30.png",
+            "抱拳": "89516218158dbea18ab78e8873060bf95d33bbbe.png",
+            "响指": "1b5c53cf14336903e1d2ae3527ca380a1256a077.png",
+            "保佑": "fafe8d3de0dc139ebe995491d2dac458a865fb30.png",
+            "福": "802429a301ac5b35a0480d9526a070ce67cd8097.png",
+            "支持": "3c210366a5585706c09d4c686a9d942b39feeb50.png",
+            "拥抱": "41780a4254750cdaaccb20735730a36044e98ef3.png",
+            "跪了": "f2b3aee7e521de7799d4e3aa379b01be032698ac.png",
+            "怪我咯": "07cc6077f7f7d75b8d2c722dd9d9828a9fb9e46d.png",
+            "老鼠": "8e6fb491eb1bb0d5862e7ec8ccf9a3da12b6c155.png",
+            "牛年": "9275275ff1f2659310648221107d20bc4970f106.png",
+            "三星堆": "fc7dadaa6986e75b813aa26f3eff3281d5f1a6d1.png",
+            "洛天依": "9fe06f3594d9afaf4ee2b74770f1c3086ae0ba11.png",
+            "坎公骑冠剑_吃鸡": "c4248a7b6ab326d66c83fd1fb58f1a50f99df332.png",
+            "坎公骑冠剑_钻石": "0b97c7e50e0cc963370e62fbb9b55f51bbe7f8ab.png",
+            "坎公骑冠剑_无语": "80eba0ce64c3fc1279b4daede2f1979cb2380e78.png",
+            "来古-沉思": "4ee07ff03266d62b246be0b950bebb2abf3d997c.png",
+            "来古-呆滞": "9a70b365e523f2379f395031ceefcebb75a45903.png",
+            "来古-疑问": "032fdc0d9d9fe6334776f6c39518a959b73b98f4.png",
+            "来古-震撼": "8b40f228675602a317d32007de6b795c101135ec.png",
+            "来古-注意": "4b671ba32a2581cf40e5cd41c67b111eb8010de0.png",
+            "初音未来_大笑": "8e7f71cda83ce407b0684702983399f8ed982f17.png",
+            "原神_哇": "8188ddf95bace929d382c7a83214afde79d83bfc.png",
+            "原神_哼": "91ed33b74bc36873c3ac8b2648f70d7ab6d8ab78.png",
+            "原神_嗯": "8b0a87e414f453a29730b6e0f45ca61f2f898688.png",
+            "原神_欸嘿": "8fba438fcbe0550877b04efd768d857082307c5e.png",
+            "原神_喝茶": "1de5789fbb3526ef7823c54db7081790a38e7044.png",
+            "原神_生气": "90a38c34742899f8e84138ed55f56cad3ba611fb.png",
+            "保卫萝卜_白眼": "9fce63f38288700bf7be84f3be336cf895ba0902.png",
+            "保卫萝卜_笔芯": "5ff2ed5cb71b02010018cc5910ac7052a03769af.png",
+            "保卫萝卜_哭哭": "7d249f7c990111d3e2982f7477af15b7eb29cbd9.png",
+            "保卫萝卜_哇": "5f2370e561c32d841245f7b1aab2eef43aeb9544.png",
+            "保卫萝卜_问号": "41eb93f09fc4a4d0692a310e8a1f85ba60e96060.png",
+            "无悔华夏_不愧是你": "c58002c32ee78d45366e126f294cb3149dd64ac2.png",
+            "无悔华夏_吃瓜": "273dcff577551bafff4f1eae18561f871e73a6ba.png",
+            "无悔华夏_达咩": "cffab383f47bab7f6736ba9c8d6ac098113410d9.png",
+            "无悔华夏_点赞": "b0f2e8db405ec667c3e6aaabd7c15155b6ea8710.png",
+            "无悔华夏_好耶": "324cd79784aeb37dbf2f47f68bbe8ed5d01f975e.png",
+            "奥比岛_搬砖": "1fab697214918d91087373a999cc7ef8040ddf85.png",
+            "奥比岛_点赞": "fb0b476fe2ff30cd59385ea7d616627ac114161f.png",
+            "奥比岛_击爪": "35bba1bb8f164c5e844155548438248e6eaa8382.png",
+            "奥比岛_委屈": "fda155e7c33b40dbb94c24644e0635d47b6ef3cc.png",
+            "奥比岛_喜欢": "ed64e0c81ee194138bd9df30c65077ed978fb88c.png",
+            // tv_小电视
+            "tv_白眼": "c1d59f439e379ee50eef488bcb5e5378e5044ea4.png",
+            "tv_doge": "6ea59c827c414b4a2955fe79e0f6fd3dcd515e24.png",
+            "tv_坏笑": "1f0b87f731a671079842116e0991c91c2c88645a.png",
+            "tv_难过": "87f46748d3f142ebc6586ff58860d0e2fc8263ba.png",
+            "tv_生气": "26702dcafdab5e8225b43ffd23c94ac1ff932654.png",
+            "tv_委屈": "d04dba7b5465779e9755d2ab6f0a897b9b33bb77.png",
+            "tv_斜眼笑": "911f987aa8bc1bee12d52aafe62bc41ef4474e6c.png",
+            "tv_呆": "fe1179ebaa191569b0d31cecafe7a2cd1c951c9d.png",
+            "tv_发怒": "34ba3cd204d5b05fec70ce08fa9fa0dd612409ff.png",
+            "tv_惊吓": "0d15c7e2ee58e935adc6a7193ee042388adc22af.png",
+            "tv_呕吐": "9f996894a39e282ccf5e66856af49483f81870f3.png",
+            "tv_思考": "90cf159733e558137ed20aa04d09964436f618a1.png",
+            "tv_微笑": "70dc5c7b56f93eb61bddba11e28fb1d18fddcd4c.png",
+            "tv_疑问": "0793d949b18d7be716078349c202c15ff166f314.png",
+            "tv_大哭": "23269aeb35f99daee28dda129676f6e9ea87934f.png",
+            "tv_鼓掌": "1d21793f96ef4e6f48b23e53e3b9e42da833a0f6.png",
+            "tv_抠鼻": "c666f55e88d471e51bbd9fab9bb308110824a6eb.png",
+            "tv_亲亲": "a8111ad55953ef5e3be3327ef94eb4a39d535d06.png",
+            "tv_调皮": "b9c41de8e82dd7a8515ae5e3cb63e898bf245186.png",
+            "tv_笑哭": "1abc628f6d4f4caf9d0e7800878f4697abbc8273.png",
+            "tv_晕": "5443c22b4d07fb1907ccc610c8e6db254f2461b7.png",
+            "tv_点赞": "f85c354995bd99e28fc76c869bfe42ba6438eff4.png",
+            "tv_害羞": "a37683fb5642fa3ddfc7f4e5525fd13e42a2bdb1.png",
+            "tv_睡着": "8b196675b53af58264f383c50ad0945048290b33.png",
+            "tv_色": "61822c7e9aae5da76475e7892534545336b23a6f.png",
+            "tv_吐血": "09dd16a7aa59b77baa1155d47484409624470c77.png",
+            "tv_无奈": "ea8ed89ee9878f2fece2dda0ea8a5dbfe21b5751.png",
+            "tv_再见": "180129b8ea851044ce71caf55cc8ce44bd4a4fc8.png",
+            "tv_流汗": "cead1c351ab8d79e9f369605beb90148db0fbed3.png",
+            "tv_偷笑": "bb690d4107620f1c15cff29509db529a73aee261.png",
+            "tv_抓狂": "fe31c08edad661d63762b04e17b8d5ae3c71a757.png",
+            "tv_黑人问号": "45821a01f51bc867da9edbaa2e070410819a95b2.png",
+            "tv_困": "241ee304e44c0af029adceb294399391e4737ef2.png",
+            "tv_打脸": "56ab10b624063e966bfcb76ea5dc4794d87dfd47.png",
+            "tv_闭嘴": "c9e990da7f6e93975e25fd8b70e2e290aa4086ef.png",
+            "tv_鄙视": "6e72339f346a692a495b123174b49e4e8e781303.png",
+            "tv_腼腆": "89712c0d4af73e67f89e35cbc518420380a7f6f4.png",
+            "tv_馋": "fc7e829b845c43c623c8b490ee3602b7f0e76a31.png",
+            "tv_可爱": "9e55fd9b500ac4b96613539f1ce2f9499e314ed9.png",
+            "tv_发财": "34db290afd2963723c6eb3c4560667db7253a21a.png",
+            "tv_生病": "8b0ec90e6b86771092a498c54f09fc94621c1900.png",
+            "tv_流鼻血": "c32d39db2737f89b904ca32700d140a9241b0767.png",
+            "tv_尴尬": "7cfa62dafc59798a3d3fb262d421eeeff166cfa4.png",
+            "tv_大佬": "093c1e2c490161aca397afc45573c877cdead616.png",
+            "tv_流泪": "7e71cde7858f0cd50d74b0264aa26db612a8a167.png",
+            "tv_冷漠": "b9cbc755c2b3ee43be07ca13de84e5b699a3f101.png",
+            "tv_皱眉": "72ccad6679fea0d14cce648b4d818e09b8ffea2d.png",
+            "tv_鬼脸": "0ffbbddf8a94d124ca2f54b360bbc04feb6bbfea.png",
+            "tv_调侃": "4bc022533ef31544ca0d72c12c808cf4a1cce3e3.png",
+            "tv_目瞪口呆": "0b8cb81a68de5d5365212c99375e7ace3e7891b7.png",
+            // ... 更多表情
+        }
+        
+      });
+    </script>
+  
+
+  
+  
+
+
+      </section>
+    </div>
+    <div class="widget-info">
+      <section class="widget-author widget-item layout-margin content-padding--primary soft-size--large soft-style--box">
+  <div class="widget-body">
+    
+      <img src="/images/const/avatar.png" class="soft-size--round soft-style--box" alt="猫才毛">
+    
+    
+      <h2>猫才毛</h2>
+    
+    
+      <p>Live for what I love ~</p>
+    
+
+    <div class="count-box">
+      <div class="count-box--item">
+        <svg class="icon icon-article" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M240.51564747 647.74217627h196.07203239c16.59071043 0 30.16492806-13.57421762 30.16492805-30.16492806V165.10332731c0-33.18142087-30.16492806-60.32985613-60.32985612-60.32985611H245.04038668C225.43318342 104.7734712 210.35071939 119.85593522 210.35071939 139.46313845V617.57724821c0 16.59071043 13.57421762 30.16492806 30.16492808 30.16492806z m663.62841731-452.47392089v482.63884894c0 33.18142087-27.14843525 60.32985613-60.32985612 60.32985613H180.18579134c-33.18142087 0-60.32985613-27.14843525-60.32985612-60.32985613V195.26825538c-49.77213131 0-90.49478418 40.72265287-90.49478417 90.49478417v452.4739209c0 49.77213131 40.72265287 90.49478418 90.49478417 90.49478417h286.56681657c16.59071043 0 30.16492806 13.57421762 30.16492807 30.16492807s13.57421762 30.16492806 30.16492805 30.16492806h90.49478418c16.59071043 0 30.16492806-13.57421762 30.16492805-30.16492806s13.57421762-30.16492806 30.16492807-30.16492807h286.56681657c49.77213131 0 90.49478418-40.72265287 90.49478417-90.49478417V285.76303955c0-49.77213131-40.72265287-90.49478418-90.49478417-90.49478417zM587.41232014 647.74217627h191.54729318c19.60720323 0 34.68966726-15.08246403 34.68966729-34.68966727V134.93839925c0-16.59071043-13.57421762-30.16492806-30.16492808-30.16492805H617.57724821c-30.16492806 0-60.32985613 27.14843525-60.32985612 60.32985611v452.4739209c0 16.59071043 13.57421762 30.16492806 30.16492805 30.16492806z" fill="currentColor"></path>
+</svg>
+        <span>21</span>
+      </div>
+      <div class="count-box--item">
+        <svg class="icon icon-categories" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M900.3614811 257.09082106h-339.81629553l-67.96326003-101.9448889c-19.41807444-29.12711113-48.54518557-43.69066667-82.52681443-43.69066667H123.6385189c-53.39970333 0-97.09036999 43.69066667-97.09037113 97.09036999v582.54222222c0 53.39970333 43.69066667 97.09036999 97.09037113 97.09037002h776.7229622c53.39970333 0 97.09036999-43.69066667 97.09037113-97.09037002V354.18119104c0-53.39970333-43.69066667-97.09036999-97.09037113-97.09036998z m-97.09036999 242.72592554H220.72888889c-24.27259221 0-48.54518557-24.27259221-48.54518556-48.54518556s24.27259221-48.54518557 48.54518556-48.54518444h582.54222222c24.27259221 0 48.54518557 24.27259221 48.54518556 48.54518444s-24.27259221 48.54518557-48.54518556 48.54518556z" fill="currentColor"></path>
+</svg>
+        8
+      </div>
+      <div class="count-box--item">
+        <svg class="icon icon-tags" viewBox="0 0 1098 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M283.42180005 272q0-28.38857157-20.09142843-48.48000001t-48.47999998-20.09142842-48.48000002 20.09142842-20.09142846 48.48000001 20.09142846 48.48 48.48000002 20.09142843 48.47999998-20.09142843 20.09142843-48.48zM855.0332285 580.57142843q0 28.38857157-19.81714313 48.2057147l-263.03999997 263.58857157q-20.9142853 19.81714313-48.75428534 19.81714312-28.38857157 0-48.20571468-19.81714312l-383.04-383.58857157q-20.36571468-19.81714313-34.55999999-54.10285688t-14.19428534-62.6742853l0-222.85714313q0-27.84000002 20.36571469-48.20571469t48.2057147-20.36571466l222.85714313 0q28.38857157 0 62.6742853 14.19428529t54.65142842 34.55999999l383.04000001 382.49142843q19.81714313 20.9142853 19.81714314 48.75428532zM1060.74751475 580.57142843q0 28.38857157-19.81714313 48.2057147l-263.04 263.58857157q-20.9142853 19.81714313-48.75428531 19.81714312-19.26857155 0-31.61142843-7.47428531t-28.38857159-24.13714314l251.79428534-251.7942853q19.81714313-19.81714313 19.81714308-48.20571469 0-27.84000002-19.81714308-48.75428531l-383.04000001-382.49142845q-20.36571468-20.36571468-54.65142842-34.55999999t-62.67428532-14.19428534l120 0q28.38857157 0 62.67428532 14.19428534t54.65142842 34.55999999l383.03999998 382.49142845q19.81714313 20.9142853 19.81714314 48.75428531z" fill="currentColor"></path>
+</svg>
+        4
+      </div>
+    </div>
+  </div>
+</section>
+
+      
+<section class="widget-toc widget-item layout-margin content-padding--primary soft-size--large soft-style--box">
+  <div class="widget-title">
+    <svg class="icon icon-toc" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M134.50666666 767.46666668H460.8c27.73333333 0 50.24000001 22.50666668 50.24000001 50.23999999v50.13333333c0 27.73333333-22.50666668 50.24000001-50.24000001 50.24000001H134.50666666c-27.73333333 0-50.24000001-22.50666668-50.23999999-50.24000001v-50.13333333c0.10666668-27.73333333 22.50666668-50.24000001 50.24000001-50.24000001zM84.37333332 541.65333333h326.18666669c27.73333333 0 50.24000001 22.39999999 50.23999999 50.13333334v50.24000001c0 27.73333333-22.50666668 50.24000001-50.24000002 50.23999999H84.37333332c-27.73333333 0-50.24000001-22.50666668-50.23999999-50.23999999v-50.24000001c0-27.73333333 22.50666668-50.13333334 50.24000001-50.13333334zM134.50666666 315.83999999H460.8c27.73333333 0 50.24000001 22.50666668 50.24000001 50.24000001v50.24000001c0 27.73333333-22.50666668 50.13333334-50.24000001 50.13333333H134.50666666c-27.73333333 0-50.24000001-22.39999999-50.23999999-50.13333333v-50.24000001c0.10666668-27.84000001 22.50666668-50.24000001 50.24000001-50.23999999zM209.81333332 89.91999999h326.18666671c27.73333333 0 50.24000001 22.39999999 50.23999997 50.13333335v50.23999999c0 27.73333333-22.50666668 50.24000001-50.24000001 50.24000001H209.81333332c-27.73333333 0-50.24000001-22.50666668-50.23999999-50.24000001v-50.24000001c0-27.73333333 22.50666668-50.13333334 50.24000001-50.13333333zM692.05333333 623.36l274.66666669 176.00000002c23.36000001 14.93333333 30.08 45.97333334 15.14666666 69.33333332L954.77333334 910.93333333c-14.93333333 23.25333334-45.97333334 30.08-69.33333335 15.14666667l-274.66666666-176c-23.36000001-14.93333333-30.08-45.97333334-15.14666667-69.33333333l27.09333334-42.24000001c14.93333333-23.36000001 46.08000001-30.08 69.33333333-15.14666666z" fill="currentColor"></path>
+</svg>
+    <span>TITLES</span>
+  </div>
+  <div class="widget-body">
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Nanobot%E4%BA%A4%E4%BA%92%E6%A8%A1%E5%BC%8F%E6%B5%81%E7%A8%8B"><span class="toc-text">1. Nanobot交互模式流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E8%A1%A5%E5%85%A8"><span class="toc-text">2. 相关知识补全</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-FlashAttention"><span class="toc-text">2.1 FlashAttention</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Agent%E6%A1%86%E6%9E%B6"><span class="toc-text">2.2 Agent框架</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E4%B8%80%E4%BA%9B%E6%97%A9%E4%BA%8EAgent%E7%9A%84LLM%E5%BA%94%E7%94%A8%E6%A1%86%E6%9E%B6"><span class="toc-text">2.3 一些早于Agent的LLM应用框架</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-AI-Infra"><span class="toc-text">2.4 AI Infra</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-%E7%8E%B0%E4%BB%A3LLM%E6%A1%86%E6%9E%B6"><span class="toc-text">2.5 现代LLM框架</span></a></li></ol></li></ol>
+  </div>
+</section>
+
+
+      
+<section class="widet-notice widget-item layout-margin content-padding--primary soft-size--large soft-style--box">
+  <div class="widget-title">
+    <svg class="icon icon-notice" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M512 945.02305225v28.15620663a24.27259221 24.27259221 0 0 1-24.27259221 24.27259335H394.0352a48.54518557 48.54518557 0 0 1-41.74885888-23.78714112l-110.68302222-184.47170332a132.04290333 132.04290333 0 0 1-17.47626667-48.54518557h118.4502511a200.97706667 200.97706667 0 0 1 76.21594113 14.56355556l20.38897777 133.49925888a48.54518557 48.54518557 0 0 0 36.40888888 27.67075555l16.01991111 2.91271112a24.27259221 24.27259221 0 0 1 20.38897778 25.72894889zM997.45185223 463.45481443a194.18074112 194.18074112 0 0 1-38.8361489 116.50844445 24.75804445 24.75804445 0 0 1-36.4088889 0l-34.95253333-34.95253333a24.27259221 24.27259221 0 0 1-2.91271111-30.58346667 97.09036999 97.09036999 0 0 0 0-106.79940665 24.27259221 24.27259221 0 0 1 2.91271111-30.58346666l34.95253333-34.95253334a24.75804445 24.75804445 0 0 1 18.93262223-7.28177777 26.2144 26.2144 0 0 1 17.47626667 9.70903665A194.18074112 194.18074112 0 0 1 997.45185223 463.45481443z m-194.18074112-388.36148111v776.72296335a48.54518557 48.54518557 0 0 1-48.54518556 48.54518443h-28.64165888a48.54518557 48.54518557 0 0 1-33.98163001-14.07810332l-145.63555556-143.20829668A291.27111111 291.27111111 0 0 0 342.57730333 657.63555556H172.18370333a145.63555556 145.63555556 0 0 1-145.63555556-145.63555556v-97.09036999a145.63555556 145.63555556 0 0 1 145.63555556-145.63555556h170.3936a291.27111111 291.27111111 0 0 0 206.31703779-85.43952668l145.63555555-143.20829554a48.54518557 48.54518557 0 0 1 33.98162888-14.07810446H754.72592555a48.54518557 48.54518557 0 0 1 48.54518556 48.54518555z" fill="currentColor"></path>
+</svg>
+    <span>NOTICE</span>
+  </div>
+  <div class="widget-body">
+    <p>欢迎访问阿毛的小书桌，我偶尔会更新自己的学习内容和项目经验，也有可能闲话生活！</p>
+  </div>
+</section>
+
+
+      <section class="widget-categories widget-item layout-margin content-padding--primary soft-size--large soft-style--box">
+  <div class="widget-title">
+    <svg class="icon icon-categories" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M900.3614811 257.09082106h-339.81629553l-67.96326003-101.9448889c-19.41807444-29.12711113-48.54518557-43.69066667-82.52681443-43.69066667H123.6385189c-53.39970333 0-97.09036999 43.69066667-97.09037113 97.09036999v582.54222222c0 53.39970333 43.69066667 97.09036999 97.09037113 97.09037002h776.7229622c53.39970333 0 97.09036999-43.69066667 97.09037113-97.09037002V354.18119104c0-53.39970333-43.69066667-97.09036999-97.09037113-97.09036998z m-97.09036999 242.72592554H220.72888889c-24.27259221 0-48.54518557-24.27259221-48.54518556-48.54518556s24.27259221-48.54518557 48.54518556-48.54518444h582.54222222c24.27259221 0 48.54518557 24.27259221 48.54518556 48.54518444s-24.27259221 48.54518557-48.54518556 48.54518556z" fill="currentColor"></path>
+</svg>
+      <span>CATEGORIES</span>
+  </div>
+  <div class="widget-body">
+    <ul class="categories-list">
+      
+        <li class="categories-list-item">
+          <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+            数据结构 (1)
+          </a>
+        </li>
+        
+        <li class="categories-list-item">
+          <a href="/categories/MeshLab/">
+            MeshLab (1)
+          </a>
+        </li>
+        
+        <li class="categories-list-item">
+          <a href="/categories/%E6%95%B0%E6%8D%AE%E5%8E%8B%E7%BC%A9/">
+            数据压缩 (3)
+          </a>
+        </li>
+        
+        <li class="categories-list-item">
+          <a href="/categories/%E6%9D%82%E8%B0%88/">
+            杂谈 (3)
+          </a>
+        </li>
+        
+        <li class="categories-list-item">
+          <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+            学习笔记 (7)
+          </a>
+        </li>
+        
+        <li class="categories-list-item">
+          <a href="/categories/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/">
+            信息收集 (2)
+          </a>
+        </li>
+        
+        <li class="categories-list-item">
+          <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
+            读书笔记 (1)
+          </a>
+        </li>
+        
+        <li class="categories-list-item">
+          <a href="/categories/CG/">
+            CG (1)
+          </a>
+        </li>
+        
+    </ul>
+  </div>
+</section>
+
+      <section class="widget-tags widget-item  layout-margin content-padding--primary soft-size--large soft-style--box">
+  <div class="widget-title">
+    <svg class="icon icon-tags" viewBox="0 0 1098 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M283.42180005 272q0-28.38857157-20.09142843-48.48000001t-48.47999998-20.09142842-48.48000002 20.09142842-20.09142846 48.48000001 20.09142846 48.48 48.48000002 20.09142843 48.47999998-20.09142843 20.09142843-48.48zM855.0332285 580.57142843q0 28.38857157-19.81714313 48.2057147l-263.03999997 263.58857157q-20.9142853 19.81714313-48.75428534 19.81714312-28.38857157 0-48.20571468-19.81714312l-383.04-383.58857157q-20.36571468-19.81714313-34.55999999-54.10285688t-14.19428534-62.6742853l0-222.85714313q0-27.84000002 20.36571469-48.20571469t48.2057147-20.36571466l222.85714313 0q28.38857157 0 62.6742853 14.19428529t54.65142842 34.55999999l383.04000001 382.49142843q19.81714313 20.9142853 19.81714314 48.75428532zM1060.74751475 580.57142843q0 28.38857157-19.81714313 48.2057147l-263.04 263.58857157q-20.9142853 19.81714313-48.75428531 19.81714312-19.26857155 0-31.61142843-7.47428531t-28.38857159-24.13714314l251.79428534-251.7942853q19.81714313-19.81714313 19.81714308-48.20571469 0-27.84000002-19.81714308-48.75428531l-383.04000001-382.49142845q-20.36571468-20.36571468-54.65142842-34.55999999t-62.67428532-14.19428534l120 0q28.38857157 0 62.67428532 14.19428534t54.65142842 34.55999999l383.03999998 382.49142845q19.81714313 20.9142853 19.81714314 48.75428531z" fill="currentColor"></path>
+</svg>
+    <span>TAGS</span>
+  </div>
+  <div class="widget-body">
+    <div class="tags-cloud">
+      <a href="/tags/%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/" style="font-size: 10px;" class="tags-cloud-0">实用工具</a> <a href="/tags/%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86-%E5%8E%8B%E7%BC%A9/" style="font-size: 15px;" class="tags-cloud-5">数字图像处理 压缩</a> <a href="/tags/%E8%B5%9B%E5%8D%9A%E5%85%AB%E8%82%A1/" style="font-size: 20px;" class="tags-cloud-10">赛博八股</a> <a href="/tags/%E9%A1%B9%E7%9B%AE%E7%BB%8F%E9%AA%8C/" style="font-size: 15px;" class="tags-cloud-5">项目经验</a>
+    </div>
+  </div>
+</section>
+    </div>
+  </article>
+</div>
+
+    <!-- footer container -->
+<footer id="footer" class="footer">
+  <div class="footer-container">
+    
+    <div class="social-icons">
+      
+        
+      
+        
+      
+        
+      
+        
+          <a href="https://github.com/AmaoLearning/" class="soft-size--primary soft-style--box" target="_blank" rel="noopener noreferrer">
+            <svg class="icon icon-github" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M64.6 512c0 195.6 125.4 361.9 300.1 422.9 23.5 5.9 19.9-10.8 19.9-22.2v-77.6c-135.8 15.9-141.3-74-150.5-89-18.5-31.5-61.9-39.5-49-54.5 31-15.9 62.5 4 98.9 58 26.4 39.1 77.9 32.5 104.1 26 5.7-23.5 17.9-44.5 34.7-60.9-140.7-25.2-199.4-111.1-199.4-213.3 0-49.5 16.4-95.1 48.4-131.8-20.4-60.6 1.9-112.4 4.9-120.1 58.2-5.2 118.5 41.6 123.3 45.3 33.1-8.9 70.8-13.7 112.9-13.7 42.4 0 80.3 4.9 113.5 13.9 11.3-8.6 67.3-48.8 121.4-43.9 2.9 7.7 24.7 58.3 5.5 118.1 32.5 36.8 49 82.8 49 132.4 0 102.3-59 188.3-200.2 213.2 23.5 23.3 38.1 55.5 38.1 91.1v112.7c0.8 9 0 17.9 15.1 17.9C832.7 877 960.4 709.4 960.4 512.1c0-247.5-200.6-447.9-447.9-447.9C265 64.1 64.6 264.5 64.6 512z"></path>
+</svg>
+          </a>
+        
+      
+        
+      
+    </div>
+     
+    <p>&copy; 2026 <a href="/" target="_blank">MaoCaiMao</a></p>
+
+    
+
+    <p>Powered by <a href="https://hexo.io" target="_blank" rel="noopener noreferrer">Hexo</a> Theme - <a href="https://github.com/miiiku/flex-block" target="_blank" rel="noopener noreferrer author">flex-block</a></p>
+
+    <p>
+      <a href="javascript:;" id="theme-light">🌞 浅色</a>
+      <a href="javascript:;" id="theme-dark">🌛 深色</a>
+      <a href="javascript:;" id="theme-auto">🤖️ 自动</a>
+    </p>
+  </div>
+</footer>
+  </div>
+
+  <div class="back-to-top-fixed soft-size--round soft-style--box">
+    <svg class="icon icon-back-to-top" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+      <path d="M725.333333 426.666667c-12.8 0-21.333333-4.266667-29.866667-12.8l-213.333333-213.333333c-17.066667-17.066667-17.066667-42.666667 0-59.733333s42.666667-17.066667 59.733333 0l213.333333 213.333333c17.066667 17.066667 17.066667 42.666667 0 59.733333C746.666667 422.4 738.133333 426.666667 725.333333 426.666667z"></path>
+      <path d="M298.666667 426.666667c-12.8 0-21.333333-4.266667-29.866667-12.8-17.066667-17.066667-17.066667-42.666667 0-59.733333l213.333333-213.333333c17.066667-17.066667 42.666667-17.066667 59.733333 0s17.066667 42.666667 0 59.733333l-213.333333 213.333333C320 422.4 311.466667 426.666667 298.666667 426.666667z"></path>
+      <path d="M512 896c-25.6 0-42.666667-17.066667-42.666667-42.666667L469.333333 170.666667c0-25.6 17.066667-42.666667 42.666667-42.666667s42.666667 17.066667 42.666667 42.666667l0 682.666667C554.666667 878.933333 537.6 896 512 896z"></path>
+    </svg>
+  </div>
+
+  
+  
+
+
+
+
+
+
+<!-- copy button  -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
+
+<!-- https://clipboardjs.com/ -->
+
+
+<script type="text/javascript">
+	(function () {
+		function getCodeType (elem) {
+			const classs = Array.from(elem.classList.values());
+			if (classs && classs.length > 1) {
+				return classs[1];
+			}
+			return "plain";
+		}
+
+		window.addEventListener("DOMContentLoaded", () => {
+			const copyBtnClass = "copy-btn";
+			//  instantiate clipboardjs 
+			const clipboard = new ClipboardJS('.' + copyBtnClass);
+
+			clipboard.on('success', function (e) {
+				console.info('Action:', e.action);
+				console.info('Text:', e.text);
+				console.info('Trigger:', e.trigger);
+				if (e.trigger) {
+					e.trigger.classList.add("copied");
+					setTimeout(() => {
+						e.trigger.classList.remove("copied");
+					}, 3000);
+				}
+				e.clearSelection();
+			});
+
+			clipboard.on('error', function (e) {
+				console.error('Action:', e.action);
+				console.error('Trigger:', e.trigger);
+			});
+
+			document.querySelectorAll('figure.highlight').forEach((elem) => {
+				const codeContent = elem.querySelector("td.code");
+				const copyButton = document.createElement('button');
+				copyButton.setAttribute("class", copyBtnClass);
+				copyButton.setAttribute("title", "Copy Code");
+				copyButton.setAttribute("data-clipboard-text", codeContent.innerText);
+				elem.insertBefore(copyButton, elem.children[0]);
+			});
+		})
+	})();
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+  
+  <!-- 尾部用户自定义相关内容 -->
+</body>
+</html>
