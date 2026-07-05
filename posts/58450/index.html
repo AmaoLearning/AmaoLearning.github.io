@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2026-07-05T06:25:15.875Z" itemprop="dateUpdated">2026-07-05</time>
+              <time  class="article-updated" datetime="2026-07-05T06:27:38.786Z" itemprop="dateUpdated">2026-07-05</time>
             </h2>
           
           
@@ -168,17 +168,16 @@
 <p>git@github.com: Permission denied(publickey).fatal: Could not read from remote repository.<br>Please make sure you have the correct access rights and the repository exists.</p>
 </blockquote>
 <p>可能是因为本地的ssh-agent误关闭，可以依照<a target="_blank" rel="noopener" href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent">官方指南</a>重新启动：</p>
-<figure class="highlight bash"><figcaption><span>bash</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">eval</span> <span class="hljs-string">&quot;<span class="hljs-subst">$(ssh-agent -s)</span>&quot;</span><br>ssh-add ~/.ssh/id_ed25519 <br>   <br></code></pre></td></tr></table></figure>
-</li>
+<figure class="highlight bash"><figcaption><span>bash</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">eval</span> <span class="hljs-string">&quot;<span class="hljs-subst">$(ssh-agent -s)</span>&quot;</span><br>ssh-add ~/.ssh/id_ed25519 <br>   <br></code></pre></td></tr></table></figure></li>
+<li>远程连接Github现在只能通过SSH Access Keys或GPG Keys，Github官方有提供<a target="_blank" rel="noopener" href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent">简单的指导文档</a>，其中MacOS的指导没问题，然而根据其指导在Linux服务器上配置时发现会被拒绝，最后发现是访问实际尝试连接HTTP而非SSH服务器导致没用上私钥，因此只要仿照MacOS部分的指导在<code>~/.ssh/config</code>中写入用户名即可：</li>
 </ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">Host github.com<br>   HostName github.com<br>   User git<br>   IdentityFile ~/.ssh/id_ed25519<br>   IdentitiesOnly <span class="hljs-built_in">yes</span><br>   AddKeysToAgent <span class="hljs-built_in">yes</span><br></code></pre></td></tr></table></figure>
 <h3 id="Github设置"><a href="#Github设置" class="headerlink" title="Github设置"></a>Github设置</h3><ol>
 <li><p>国内有些服务器没办法https连接github服务器，但是可以通过ssh服务器连接。此时可以全局替换<code>https://github.com/</code>链接为ssh链接，即</p>
 <figure class="highlight scss"><figcaption><span>bash</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs scss">git config <span class="hljs-attr">--global</span> url.&quot;git<span class="hljs-keyword">@github</span>.<span class="hljs-attribute">com</span>:<span class="hljs-string">&quot;.insteadOf &quot;</span><span class="hljs-attribute">https</span>://github.com/<span class="hljs-string">&quot;</span><br></code></pre></td></tr></table></figure>
 <p>这样可以解决<code>git clone --recursive ...</code>中克隆submodule自动使用https链接导致的无法连接。</p>
 </li>
-<li>远程连接Github现在只能通过SSH Access Keys或GPG Keys，Github官方有提供<a target="_blank" rel="noopener" href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent">简单的指导文档</a>，其中MacOS的指导没问题，然而根据其指导在Linux服务器上配置时发现会被拒绝，最后发现是访问实际尝试连接HTTP而非SSH服务器导致没用上私钥，因此只要仿照MacOS部分的指导在<code>~/.ssh/config</code>中写入用户名即可：</li>
 </ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">Host github.com<br>   HostName github.com<br>   User git<br>   IdentityFile ~/.ssh/id_ed25519<br>   IdentitiesOnly <span class="hljs-built_in">yes</span><br>   AddKeysToAgent <span class="hljs-built_in">yes</span><br></code></pre></td></tr></table></figure>
 <h3 id="Github使用Trick"><a href="#Github使用Trick" class="headerlink" title="Github使用Trick"></a>Github使用Trick</h3><ol>
 <li>当本地与远端存在需要合并的冲突时，直接<code>git pull</code>会产生一个<strong>merge提交</strong>，然而使用<code>git pull --rebase</code>可以让本地新提交的节点直接连在远端节点之后，从而使提交历史只有一条branch，更简洁。</li>
 </ol>
