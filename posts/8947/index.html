@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2026-07-02T06:58:52.674Z" itemprop="dateUpdated">2026-07-02</time>
+              <time  class="article-updated" datetime="2026-07-02T07:21:57.876Z" itemprop="dateUpdated">2026-07-02</time>
             </h2>
           
           
@@ -471,6 +471,7 @@
 <p>这很容易让人联想到Agent可能也是一个RNN系统，LLM的上下文窗口就是它的状态budget，用户在离散的无限步骤中每轮都有输入，模型维护一个长期记忆、最近会话历史等等有限状态，这个有限状态的质量越好，输出效果就越好，因此这个RNN的状态转移方法说不定可以用数学方法表示出来。</p>
 <p>此外Mamba主要的贡献：Selective of time interval直接决定了RNN状态的更新对新输入（比如token）有多关注，从而可以自适应地记住/忘记输入序列，管理好上下文，这种机制能否迁移到Agent的记忆选取上？</p>
 <p>除了记忆的选取机制，结合Sensation and Perception课程的内容，其实遗忘也是人脑处理信息的一个重要机制，它是按什么优先级：发生时间、人、事件、最近被提及的时间、是否是知识……由于目前Agent记忆的增长完全取决于提示词和LLM的能力，记忆的系统机制性遗忘与LLM的处理肯定还是有差别，效果则需要Demo测试。</p>
+<p><strong>长期记忆的必要性：</strong>或许只体现在它能让Agent更像人：由自己的经历和经验塑造出的多样性极强的智能体，而非每主题刷新。</p>
 <h4 id="2-5-4-开源架构拆解"><a href="#2-5-4-开源架构拆解" class="headerlink" title="2.5.4 开源架构拆解"></a>2.5.4 开源架构拆解</h4><h5 id="2-5-4-1-Llama-3"><a href="#2-5-4-1-Llama-3" class="headerlink" title="2.5.4.1 Llama 3"></a>2.5.4.1 Llama 3</h5><h5 id="2-5-4-2-DeepSeek-V3"><a href="#2-5-4-2-DeepSeek-V3" class="headerlink" title="2.5.4.2 DeepSeek-V3"></a>2.5.4.2 DeepSeek-V3</h5>
       </section>
 
