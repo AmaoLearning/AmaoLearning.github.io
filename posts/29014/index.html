@@ -36,7 +36,7 @@
 
   
 
-  <title>难以归类的小ideas | 阿毛的小书桌</title>
+  <title>工程相关自动化工作系统调研 | 阿毛的小书桌</title>
 
   
 
@@ -118,25 +118,22 @@
     <div class="header-content">
       <div class="post-text layout-block">
         <div class="layout-margin">
-          <h1 class="title-wrap">难以归类的小ideas</h1>
+          <h1 class="title-wrap">工程相关自动化工作系统调研</h1>
           <h2 class="title-sub-wrap">
             <strong>MaoCaiMao</strong>
             <span>发布于</span>
-            <time  class="article-date" datetime="2026-01-13T16:00:00.000Z" itemprop="datePublished">2026-01-14</time>
+            <time  class="article-date" datetime="2026-07-31T16:00:00.000Z" itemprop="datePublished">2026-08-01</time>
           </h2>
-          
-            <h2 class="last-time">
-              <span>最后更新于</span>
-              <time  class="article-updated" datetime="2026-01-19T14:00:33.462Z" itemprop="dateUpdated">2026-01-19</time>
-            </h2>
           
           
           <ul class="wrap-list dark">
   
-    <li><a href="/categories/%E6%9D%82%E8%B0%88/">📒 杂谈</a></li>
+    <li><a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">📒 学习笔记</a></li>
     
 </ul>
           <ul class="wrap-list dark">
+  
+    <li><a href="/tags/%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/">🏷️ 实用工具</a></li>
   
 </ul>
         </div>
@@ -160,13 +157,16 @@
       
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
-        <p>学习中由于来自不同课程/知识的视角，经常迸发出一些小灵感，这里就用于收纳这些极其简短而难以独立成篇的idea。</p>
-<ol>
-<li>傅里叶变换在计算信号$x(t)$与基函数$e^{jwt}$的相关系数，以表现频域上的能量分布<blockquote>
-<p>《通信原理》课程提供了时域信号的相关系数（Correlation Coefficient）与内积（Inner Production）的概念，两者在数学上等同，即$<x(t),y(t)>=\int\nolimits_R x(t)y(t)^*dt$，这与傅里叶变换的公式形式相同：$\mathcal{F}[x(t)]=X(w)=\int_R x(t)e^{-jwt}dt=<x(t),e^{jwt}>$。<br>此外，维纳-辛钦定理表明平稳随机过程的自相关系数的傅里叶变换就是其功率谱密度，至于为什么尚待挖掘。</p>
+        <p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/CI/CD">CI/CD</a>：Continuous Integration and Continuous Delivery or Continuous Deployment，这种系统要求频繁合并、最小化release循环、自动化部署，通过软件构建、测试和部署流程的自动化，标准化软件的发布过程。</p>
+<h3 id="1-Github-Actions"><a href="#1-Github-Actions" class="headerlink" title="1. Github Actions"></a>1. Github Actions</h3><p>由Github事件驱动的CI/CD编排系统，核心是Github的在线事件触发机制和用户预定义Workflow。Workflow以YAML形式存储在远端仓库的<code>.github/workflows</code>中，用于声明任务依赖、执行步骤和权限。事件发生后，Github Actions调度Runner执行这些步骤。Runner可以是Github提供的临时虚拟机，也可以是用户部署的Self-hosted机器。任务执行结果通过Github API和权限控制机制反馈到仓库的Github在线页面。</p>
+<p><strong>典型PR Review工作流</strong>：</p>
+<figure class="highlight yaml"><figcaption><span>PR-Review yaml</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><br><span class="hljs-attr">name:</span> <span class="hljs-string">PR</span> <span class="hljs-string">Review</span><br><br><span class="hljs-attr">on:</span> <span class="hljs-comment"># 事件触发</span><br>    <span class="hljs-attr">pull_request:</span><br>        <span class="hljs-attr">types:</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">opened</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">synchronize</span> <span class="hljs-comment"># 新提交</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-string">reopened</span><br><br><span class="hljs-attr">jobs:</span>   <span class="hljs-comment"># Job定义</span><br><br>    <span class="hljs-attr">review:</span><br>        <span class="hljs-attr">runs-on:</span> <span class="hljs-string">ubuntu-latest</span> <span class="hljs-comment"># Github提供的临时虚拟机</span><br>        <span class="hljs-attr">permissions:</span><br>            <span class="hljs-attr">contents:</span> <span class="hljs-string">read</span><br>            <span class="hljs-attr">issues:</span> <span class="hljs-string">write</span><br>        <span class="hljs-attr">steps:</span><br>            <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">checkout</span> <span class="hljs-string">code</span><br>              <span class="hljs-attr">uses:</span> <span class="hljs-string">actions/checkout@v4</span><br>            <br>            <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Setup</span> <span class="hljs-string">Python</span><br>              <span class="hljs-attr">uses:</span> <span class="hljs-string">actions/setup-python@v5</span><br>              <span class="hljs-attr">with:</span><br>                <span class="hljs-attr">python-version:</span> <span class="hljs-string">&quot;3.11&quot;</span><br>            <br>            <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Install</span> <span class="hljs-string">Dependencies</span><br>              <span class="hljs-attr">run:</span> <span class="hljs-string">|</span><br><span class="hljs-string">                pip install -r requirements.txt</span><br><span class="hljs-string"></span>            <br>            <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Code</span> <span class="hljs-string">format</span> <span class="hljs-string">check</span><br>              <span class="hljs-attr">run:</span> <span class="hljs-string">|</span><br><span class="hljs-string">                black --check .</span><br><span class="hljs-string"></span>            <br>            <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Lint</span><br>              <span class="hljs-attr">run:</span> <span class="hljs-string">|</span><br><span class="hljs-string">                flake8 .</span><br><span class="hljs-string"></span>            <br>            <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Run</span> <span class="hljs-string">tests</span><br>              <span class="hljs-attr">run:</span> <span class="hljs-string">|</span><br><span class="hljs-string">                pytest</span><br><span class="hljs-string"></span>            <br>            <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Comment</span> <span class="hljs-string">Result</span><br>              <span class="hljs-attr">if:</span> <span class="hljs-string">always()</span><br>              <span class="hljs-attr">uses:</span> <span class="hljs-string">actions/github-script@v7</span><br>              <span class="hljs-attr">with:</span><br>                <span class="hljs-attr">script:</span> <span class="hljs-string">|</span><br><span class="hljs-string">                  github.rest.issues.createComment(&#123;</span><br><span class="hljs-string">                    owner: context.repo.owner,</span><br><span class="hljs-string">                    repo: context.repo.repo,</span><br><span class="hljs-string">                    issue_number: context.issue.number,</span><br><span class="hljs-string">                    body: &quot;Automated review finished.&quot;</span><br><span class="hljs-string">                  &#125;)</span><br></code></pre></td></tr></table></figure>
+<p>生产示例：<a target="_blank" rel="noopener" href="https://github.com/sii-system/agent-fleet/blob/main/.github/workflows/self-hosted-llm-pr-review.yml">self-hosted-llm-pr-review.yml</a></p>
+<h3 id="2-Harbor"><a href="#2-Harbor" class="headerlink" title="2. Harbor"></a>2. <a target="_blank" rel="noopener" href="https://github.com/harbor-framework/harbor">Harbor</a></h3><p>Harbor是一个自动化Agent Benchmark评测框架，通过统一构建docker镜像和安装依赖来标准化、可复现化Benchmark评测流程。比如SWE benchmark任务有以下文件：</p>
+<blockquote>
+<p>task/<br>|— issue.md          # 描述问题<br>|— repository<br>|— environment.yaml  # 描述环境，包括docker_image、denpendencies、commands等<br>|— test.sh<br>|— evaluator.py</p>
 </blockquote>
-</li>
-</ol>
+<p>Harbor会先生成一个Dockerfile、Build Image、启动Container、注入任务、启动Agent，会记录Agent调用的Tool记录、Benchmark的正确率、所消耗的资源等，但其最重要的功能还是标准化Benchmark环境部署方式，其次自动化部署、评测、记录。</p>
 
       </section>
 
@@ -174,28 +174,14 @@
       
         <nav class="article-nav">
           
-            <div class="article-nav-item layout-padding">
-  <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
-    
-    <div class="card-text">
-      
-        <a href="/posts/34023/" itemprop="url">
-          <h2 class="card-text--title text-ellipsis">亲人访谈</h2>
-        </a>
-      
-      <div class="card-text--row">下一篇</div>
-    </div>
-  </article>
-</div>
-          
           
             <div class="article-nav-item layout-padding">
   <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
     
     <div class="card-text">
       
-        <a href="/posts/29993/" itemprop="url">
-          <h2 class="card-text--title text-ellipsis">实用工具汇总</h2>
+        <a href="/posts/60493/" itemprop="url">
+          <h2 class="card-text--title text-ellipsis">机器学习手写复习笔记</h2>
         </a>
       
       <div class="card-text--row">上一篇</div>
@@ -464,6 +450,18 @@
 </section>
 
       
+<section class="widget-toc widget-item layout-margin content-padding--primary soft-size--large soft-style--box">
+  <div class="widget-title">
+    <svg class="icon icon-toc" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M134.50666666 767.46666668H460.8c27.73333333 0 50.24000001 22.50666668 50.24000001 50.23999999v50.13333333c0 27.73333333-22.50666668 50.24000001-50.24000001 50.24000001H134.50666666c-27.73333333 0-50.24000001-22.50666668-50.23999999-50.24000001v-50.13333333c0.10666668-27.73333333 22.50666668-50.24000001 50.24000001-50.24000001zM84.37333332 541.65333333h326.18666669c27.73333333 0 50.24000001 22.39999999 50.23999999 50.13333334v50.24000001c0 27.73333333-22.50666668 50.24000001-50.24000002 50.23999999H84.37333332c-27.73333333 0-50.24000001-22.50666668-50.23999999-50.23999999v-50.24000001c0-27.73333333 22.50666668-50.13333334 50.24000001-50.13333334zM134.50666666 315.83999999H460.8c27.73333333 0 50.24000001 22.50666668 50.24000001 50.24000001v50.24000001c0 27.73333333-22.50666668 50.13333334-50.24000001 50.13333333H134.50666666c-27.73333333 0-50.24000001-22.39999999-50.23999999-50.13333333v-50.24000001c0.10666668-27.84000001 22.50666668-50.24000001 50.24000001-50.23999999zM209.81333332 89.91999999h326.18666671c27.73333333 0 50.24000001 22.39999999 50.23999997 50.13333335v50.23999999c0 27.73333333-22.50666668 50.24000001-50.24000001 50.24000001H209.81333332c-27.73333333 0-50.24000001-22.50666668-50.23999999-50.24000001v-50.24000001c0-27.73333333 22.50666668-50.13333334 50.24000001-50.13333333zM692.05333333 623.36l274.66666669 176.00000002c23.36000001 14.93333333 30.08 45.97333334 15.14666666 69.33333332L954.77333334 910.93333333c-14.93333333 23.25333334-45.97333334 30.08-69.33333335 15.14666667l-274.66666666-176c-23.36000001-14.93333333-30.08-45.97333334-15.14666667-69.33333333l27.09333334-42.24000001c14.93333333-23.36000001 46.08000001-30.08 69.33333333-15.14666666z" fill="currentColor"></path>
+</svg>
+    <span>TITLES</span>
+  </div>
+  <div class="widget-body">
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Github-Actions"><span class="toc-text">1. Github Actions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Harbor"><span class="toc-text">2. Harbor</span></a></li></ol>
+  </div>
+</section>
+
 
       
 <section class="widet-notice widget-item layout-margin content-padding--primary soft-size--large soft-style--box">
