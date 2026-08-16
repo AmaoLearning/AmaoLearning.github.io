@@ -125,6 +125,11 @@
             <time  class="article-date" datetime="2026-08-09T16:00:00.000Z" itemprop="datePublished">2026-08-10</time>
           </h2>
           
+            <h2 class="last-time">
+              <span>最后更新于</span>
+              <time  class="article-updated" datetime="2026-08-16T11:35:01.990Z" itemprop="dateUpdated">2026-08-16</time>
+            </h2>
+          
           
           <ul class="wrap-list dark">
   
@@ -155,7 +160,7 @@
       
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
-        <h2 id="Lecture-1-Overview-Tokenization"><a href="#Lecture-1-Overview-Tokenization" class="headerlink" title="Lecture 1: Overview, Tokenization"></a>Lecture 1: Overview, Tokenization</h2><p>Overview: 5 assignments at <a target="_blank" rel="noopener" href="https://github.com/stanford-cs336">github</a> about</p>
+        <h2 id="Lecture-1-Overview-Tokenization"><a href="#Lecture-1-Overview-Tokenization" class="headerlink" title="Lecture 1: Overview, Tokenization"></a>Lecture 1: Overview, Tokenization</h2><h3 id="1-1-Overview"><a href="#1-1-Overview" class="headerlink" title="1.1 Overview"></a>1.1 Overview</h3><p>Overview: 5 assignments at <a target="_blank" rel="noopener" href="https://github.com/stanford-cs336">github</a> about</p>
 <ul>
 <li>basics: implement tokenizers, optimizers, transformers, loss functions</li>
 <li>systems: implement profiling harness, checkpointing, flashattention kernels, parallelism methods</li>
@@ -163,16 +168,110 @@
 <li>data: implement data extraction, filtering and deduplication</li>
 <li>alignment: implement DPO and GRPO</li>
 </ul>
-<p>Tokenizer works for:</p>
+<h3 id="1-2-Tokenizer"><a href="#1-2-Tokenizer" class="headerlink" title="1.2 Tokenizer"></a>1.2 Tokenizer</h3><p>Tokenizer works for:</p>
 <ul>
 <li>encoding unicode strings into tokens (indices)</li>
 <li>decoding tokens into unicode strings </li>
 </ul>
 <p><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=zduSFxRajkE&amp;list=PL0T54NBK7jAwc7xWoIEjDxvPzHyyByppH">Anderj Karpathy’s lecture</a></p>
-<p>Unicode and Word Tokenizer have a too large vocalbulary size (150K) and too many rarely-used tokens though they have good compression rate ( $original byte length / token length$ ).</p>
+<p>Unicode and Word Tokenizer have a too large vocalbulary size (150K) and too many rarely-used tokens though they have good compression rate ( original byte length / token length ).</p>
 <p>Byte Tokenizer has a small vocalbulary size (256) but compression rate is 1.</p>
 <p><strong>Byte Pair Encoding (BPE) Tokenizer</strong> starts from the byte vocalbulary (256), and then iterates on the byte sequence by finding the most frequent pair, adding it into the vocalbulary and translating the past token sequence into the new one. The number of iteration should be carefully chosen.</p>
 <p>Tokenizer may be abandoned from LMs by learning from bytes e2e, but for now transformers still work on chunks in some form.</p>
+<h2 id="Lecture-2-Resource-Accounting"><a href="#Lecture-2-Resource-Accounting" class="headerlink" title="Lecture 2: Resource Accounting"></a>Lecture 2: Resource Accounting</h2><h3 id="2-1-Data-types"><a href="#2-1-Data-types" class="headerlink" title="2.1 Data types"></a>2.1 Data types</h3><p>float32: single precision, 8 bits of exponent, 4 bytes.</p>
+<p>float16: half precision, 5 bits of exponent, 2 bytes. Poor dynamic range, underflow frequently.</p>
+<p>bfloat16: 8 bits of exponent, 2 bytes. More dynamic range.</p>
+<p><strong>Mix precision training</strong>: bf16 for parameters, activations and gradients, fp32 for optimizer states. <strong>Pytorch</strong> has an automatic mixed precision (AMP) library, tries to cast things to bf16 when it’s safe.</p>
+<p>fp8 (2022): E4M3 has 4 bits of exponent while E5M2 has 5 bits of exponent.</p>
+<p>nvfp4 (2025): 4 bits with a separate scale factor per block.</p>
+<p>Low bits often happen in inferencing with quantization.</p>
+<h3 id="2-2-Einops"><a href="#2-2-Einops" class="headerlink" title="2.2 Einops"></a>2.2 Einops</h3><p><strong>einops</strong>: a library for manipulating tensors where dimensions are named. </p>
+<ul>
+<li><code>einsum</code> notifies the dimension changing by naming when matrix multiplications and transposing happen.</li>
+<li><code>reduce</code> notifies the dimension changing by naming when summing happens.</li>
+<li><code>rearrange</code> notifyes the dimension changing by naming when matrix rearranging (mostly about spliting and grouping a specific dimension) happens.</li>
+</ul>
+<h3 id="2-3-FLOP"><a href="#2-3-FLOP" class="headerlink" title="2.3 FLOP"></a>2.3 FLOP</h3><p><strong>FLOP</strong>: a floating-point operation like addition or multiplication. FLOPs is the number of FLOP done while FLOP/s or FLOPS is the number of FLOP per second (used to measuring hardwares). Sometimes hardwares have performances with sparsity like 50%, which means the real performance should be weighted by sparsity.</p>
+<p>FLOPs for a MatMul is <code>2 * B * D * K</code> when x (B x D) @ w (D x K) and there are a multiplication and a addition for all triples (Fused Multiply-Add like <code>a * b + c</code>). MatMuls often need quite more FLOPs than elementwise operation (O(B D) for a B x D matrix) and addition of two matrices (<code>B * D</code> for two B x D matrices), hence we usually account MatMuls only. <code>2 * B * D * K</code> can also be seen as <code>2 * #tokens * parameters</code> where B is the number of data points and (D K) is the number of parameters. FLOPs for a backward pass is twice as FLOPs for a borward pass like <code>4 * B * D * D</code>.</p>
+<p>From FLOPS to actual wall-clock time: </p>
+<ul>
+<li>time it with cuda synchronization and divide FLOPS with real time.</li>
+<li>or use the specification sheet for promised FLOP/s (depends on hardware and data type).</li>
+</ul>
+<p><strong>Model FLOPs utilization (MFU)</strong>: <code>actual FLOP/s / promised FLOP/s</code>. MFU $\geq$ 0.5 is quite good (even higher when MatMuls dominate).</p>
+<h3 id="2-4-Arithmetic-Intensity"><a href="#2-4-Arithmetic-Intensity" class="headerlink" title="2.4 Arithmetic Intensity"></a>2.4 Arithmetic Intensity</h3><p>Accelerator intensity: FLOP/s / bytes_per_sec</p>
+<p>Arithmetic intensity: FLOPS / bytes</p>
+<p>Bottelneck:</p>
+<ul>
+<li>Memory-bound: communication time (bytes input and output / bytes_per_sec) &gt; computation time (flops / FLOP/s). Also arithmetic intensity &lt; accelerator intensity.</li>
+<li>Compute-bound: communication time &lt; computation time, also arithmetic intensity accelerator intensity.</li>
+</ul>
+<p>Training Transformers involves big matrix multiplications (compute-bound when batch size is large enough) while inference involves matrix-vector product (memory-bound).</p>
+<h3 id="2-5-Memory"><a href="#2-5-Memory" class="headerlink" title="2.5 Memory"></a>2.5 Memory</h3><ul>
+<li>Parameters: <code>2 * D * D * L</code> (2 bytes for bf16)</li>
+<li>Activations: <code>2 * B * D * L</code> (2 bytes for bf16)</li>
+<li>Gradients: <code>2 * Parameters</code> (2 bytes for bf16)</li>
+<li>Optimizer States: <code>4 * Parameters</code> (4 bytes for fp32 of stability). 4 bytes/parameter for AdaGrad to store second moments, and Adam requires 8 bytes/parameters for storing first and second moments.</li>
+</ul>
+<p>Compute FLOPS (one step for training) = forward pass + backward pass = Parameters + Gradients = <code>6 * D * D * L</code>.</p>
+<p>Memory Optimizaitons:</p>
+<ul>
+<li>Gradient accumulation (micro batch): compute gradients on micro batches and accumulate them. Every batch_size / micro_batch_size steps, update the parameters and zero out the gradients.</li>
+<li>Activation checkpointing (recompute): keep only activations at subset of layers in a forward pass, and recompute the missing activations from the last checkpoint in the backward pass.<ul>
+<li>Store all layers: activation memory is O(L) and no recomputation.</li>
+<li>Store no activations: activation memory is O(1) and compute is O($L^2$) as it recomputes from the start for each layer.</li>
+<li>Store every $\sqrt(L)$ layers: activation memory is O($\sqrt(L)$) and O($\sqrt(L)$) recomputation as it recomputes from a layer with distance $\sqrt(L)$ at most.</li>
+</ul>
+</li>
+</ul>
+<h2 id="Lecture-3-Architectures"><a href="#Lecture-3-Architectures" class="headerlink" title="Lecture 3: Architectures"></a>Lecture 3: Architectures</h2><p>There are common senses (from afterhand proofs) and disagreements.</p>
+<h3 id="3-1-Pre-vs-post-norm-common-sense"><a href="#3-1-Pre-vs-post-norm-common-sense" class="headerlink" title="3.1 Pre-vs-post norm (common sense)"></a>3.1 Pre-vs-post norm (common sense)</h3><p>Pre-norm: $x_{l+1}=x_l+FFN(LayerNorm(x_l))$. No affection on the main residual signal path hence improving stability and larger LRs for large networks though it’s originally stated to be used to remove warmup. Gradient spikes are also reduced. Almost all modern LMs use pre-norm except BERT.</p>
+<p>Post-norm: $x_{l+1}=LayerNorm(x_l+FFN(x_l))$. </p>
+<p>Non-residual post-norm: $x_{l+1}=x_l+LayerNorm(FFN(x_l))$. Also no offensive to the main residual signal path. Used by Grok, Gemma 2 and Olmo 2 while the former 2 combine it with pre-norm (double norm).</p>
+<h3 id="3-2-LayerNorm-vs-RMSNorm-common-sense"><a href="#3-2-LayerNorm-vs-RMSNorm-common-sense" class="headerlink" title="3.2 LayerNorm vs RMSNorm (common sense)"></a>3.2 LayerNorm vs RMSNorm (common sense)</h3><p>RMSNorm computes faster than LayerNorm and has roughly the same performance. It gets rid of small operations of GPU to increase arithmetic intensity in runtime (different from FLOPS), also reduces data movement.</p>
+<p>Details can be seen in another <a href="https://amaolearning.github.io/posts/8947/#2-5-现代LLM框架">blog</a>.</p>
+<p>Bias terms are dropped in modern implementations of Transformer for simplicity in memory and optimization stability.</p>
+<h3 id="3-3-Activations"><a href="#3-3-Activations" class="headerlink" title="3.3 Activations"></a>3.3 Activations</h3><p>Gated activations: equiping GLUs with gates such as</p>
+<script type="math/tex; mode=display">FF_{ReGLU}(x)=(max(0,xW_1) \otimes xV)W_2</script><p>GeGLU used Gemma and SwiGLU used by LLaMa. Gating is usually helpful at performance according to experiments of Sheezer at 2020 and so on.</p>
+<p>Gated FFN has 3 matrices comparing to 2 matrices of FFN. To ensure the #parameters be the same, the dimension of FFN ($d_{ff}$) is 2/3 of the original.</p>
+<h3 id="3-4-Serial-vs-Parallel-layers"><a href="#3-4-Serial-vs-Parallel-layers" class="headerlink" title="3.4 Serial vs Parallel layers"></a>3.4 Serial vs Parallel layers</h3><p>According to PaLM:</p>
+<ul>
+<li>Serial layers: $x_{l+1}=x_l+MLP(LayerNorm(x+Attention(LayerNorm(x))))$. Most </li>
+<li>Parallel layers: $x_{l+1}=x_l+MLP(LayerNorm(x))+Attention(LayerNorm(x))$. Originally in GPT-J (a variation of GPT-3) for faster training but tends to perform worse than serial ones possibly due to less depth.</li>
+</ul>
+<h3 id="3-5-Position-embeddings"><a href="#3-5-Position-embeddings" class="headerlink" title="3.5 Position embeddings"></a>3.5 Position embeddings</h3><p>Transformers need position embeddings because the SDPA itself doesn’t account for positions.</p>
+<p>Sine embeddings (original transformer), absolute embeddings (GPT-1/2/3), relative embeddings (Google T5).</p>
+<p>Rotary position embeddings (RoPE, used by most LMs now): rotate every 2 dimensions of a vector at difference frequencies according to the dimension. It promises the embeddings to be invariant in absolute positions and the inner products to be invariant in relative position.</p>
+<p>A lot of these embeddings can work, such as propotinal RoPE of Gemma 4.</p>
+<p>Details shown in <a href="https://amaolearning.github.io/posts/8947/#2-5-现代LLM框架">blog</a>.</p>
+<h3 id="3-6-Hyperparameters"><a href="#3-6-Hyperparameters" class="headerlink" title="3.6 Hyperparameters"></a>3.6 Hyperparameters</h3><p><strong>Feedforward - model dimension ratio</strong>: for ReGLU, what’s out dimension of $W_1$ or the internal hidden dimension of FFN ($d_{ff}$), and out dimension of $W_2$ or the main stream dimension ($d_{model}$)?</p>
+<pre><code>$$d_&#123;ff&#125;=4d_&#123;model&#125;$$
+</code></pre><p>except for:</p>
+<ul>
+<li>GLU variants: scale down by 2/3 hence $d_{ff}=\frac{8}{3}d_{model}$. Mistral-7B uses 3.5 instead.</li>
+<li>T5: $d_{ff}=65536,\;d_{model}=1024$ since they state accelerators are most efficient for matrix multiplications in FFN. But in T5 v1.1 it’s 2.5 and Gemma 2 it’s 8x while in Gemma 3/4 it’s 4x.</li>
+</ul>
+<p><strong>Head_dim * num_heads - model-dim radio</strong>: since multi-head self-attention is released,</p>
+<pre><code>$$d_&#123;head&#125; * num_heads = d_&#123;model&#125;$$
+</code></pre><p><strong>Aspect ratios</strong>: how deep and how wide should a model be? We can fix $d_model / n_layer$ to a constant which most models use around <strong>100</strong>. Deeper models are much more harder to parallelize.</p>
+<p><strong>Vocabulary sizes</strong>: monolingual models are about 30-50k vocab, while multilingual / production systems are about 100-250k vocab.</p>
+<h3 id="3-7-Regularization"><a href="#3-7-Regularization" class="headerlink" title="3.7 Regularization"></a>3.7 Regularization</h3><p>Dropout loses favor these years because people have a lot more data than parameters and there are rare overfittings, but weight decay stays.</p>
+<p>[Andriushchenko et al 2023] finds weight decay doesn’t control overfitting, but interacts with learning rates where larger LR decay results in minimum training loss.</p>
+<h3 id="3-8-Stability"><a href="#3-8-Stability" class="headerlink" title="3.8 Stability"></a>3.8 Stability</h3><p>Stability issues usually arise from a few suspects:</p>
+<p><strong>Softmaxes</strong>: exponents and divisions. Used before output and in attention.</p>
+<ul>
+<li><p>Ouput softmax stability - the <strong>‘z loss’</strong>:<br>penalizes $\log^2(Z)$ instead of $\log(Z)$ to encourage $Z(x)$ to be close to 0, where $\log(P(x))=\log(\frac{e^{U_r(x)}}{Z(x)})=U_r(x)-\log(Z(x))$ and [Devlin 2014] makes $L=\log(P(x))-\alpha\log^2(Z(x))$. Also seen in DCLM, OLMo 2/3.</p>
+</li>
+<li><p>Attention softmax stability - the <strong>‘QK norm’</strong>:<br>adds layernorms on QK before they multiply with each other. Originally from vision and multimodel models, and seen in most LMs nowadays such as Gemma 2/4, Qwen 3.</p>
+</li>
+</ul>
+<p>We can sense from here that throwing a norm to where is instable is usually helpful.</p>
+<p><strong>Logit soft-capping</strong>: soft-capping logits to some maximum value via <code>tanh</code>. It’s a very strong stabilization introduced in Gemma but must work with QK-norm or other operations to save performance.</p>
+<h3 id="3-9-Attention-for-Serving"><a href="#3-9-Attention-for-Serving" class="headerlink" title="3.9 Attention for Serving"></a>3.9 Attention for Serving</h3><p>In prefill, arithmetic operations are $bnd^2$ and memory accesses are $bnd+bhn^2+d^2$, where b is batch size, n is sequence length and d is model dimension.</p>
+<p>In serving, we store KVs in memory for efficiency (KV Cache), which makes the arithmetic intensity small. Arithmetic operations are the same, but memory accesses are raised to $bn^2d+nd^2$.</p>
+<p><strong>MQA</strong>: multiple queries use just one dimension for keys and values. KV head_num is set to 1.</p>
+<p><strong>GQA</strong>: multiple queries use fewer dimension for keys and values. KV head_num is set to larger than 1 less than Q head_num. Fast with minor loss in performance. Adopted by most LMs.</p>
+<p><strong>Sparse / sliding window attention (SWA)</strong>: does attention in local range. Current standard trick is to <strong>interleave ‘full’ and ‘local’ attention</strong>. There is NoPE (no positional embedding but causal bitmasks) for long-range info and RoPE + SWA for short-range info. Qwen 3.5/Qwen 3 Next uses gated delta rule instead of sparse attention. DeepSeek V3.2 introduces DSA for cheap attention by training a indexer to find most influential tokens needed. This area is still popular for exploring long context capability.</p>
 
       </section>
 
@@ -464,7 +563,7 @@
     <span>TITLES</span>
   </div>
   <div class="widget-body">
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-1-Overview-Tokenization"><span class="toc-text">Lecture 1: Overview, Tokenization</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-1-Overview-Tokenization"><span class="toc-text">Lecture 1: Overview, Tokenization</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-Overview"><span class="toc-text">1.1 Overview</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-Tokenizer"><span class="toc-text">1.2 Tokenizer</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-2-Resource-Accounting"><span class="toc-text">Lecture 2: Resource Accounting</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Data-types"><span class="toc-text">2.1 Data types</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Einops"><span class="toc-text">2.2 Einops</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-FLOP"><span class="toc-text">2.3 FLOP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-Arithmetic-Intensity"><span class="toc-text">2.4 Arithmetic Intensity</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-Memory"><span class="toc-text">2.5 Memory</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-3-Architectures"><span class="toc-text">Lecture 3: Architectures</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-Pre-vs-post-norm-common-sense"><span class="toc-text">3.1 Pre-vs-post norm (common sense)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-LayerNorm-vs-RMSNorm-common-sense"><span class="toc-text">3.2 LayerNorm vs RMSNorm (common sense)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-Activations"><span class="toc-text">3.3 Activations</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-Serial-vs-Parallel-layers"><span class="toc-text">3.4 Serial vs Parallel layers</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-Position-embeddings"><span class="toc-text">3.5 Position embeddings</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-6-Hyperparameters"><span class="toc-text">3.6 Hyperparameters</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-7-Regularization"><span class="toc-text">3.7 Regularization</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-8-Stability"><span class="toc-text">3.8 Stability</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-9-Attention-for-Serving"><span class="toc-text">3.9 Attention for Serving</span></a></li></ol></li></ol>
   </div>
 </section>
 
