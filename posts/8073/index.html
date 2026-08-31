@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2026-08-30T17:48:39.507Z" itemprop="dateUpdated">2026-08-31</time>
+              <time  class="article-updated" datetime="2026-08-31T00:42:35.854Z" itemprop="dateUpdated">2026-08-31</time>
             </h2>
           
           
@@ -415,8 +415,33 @@
 <p><strong>Model parallelism</strong>: splits up params but communicates activations compared to <em>ZeRO stage 3</em>. Includes PP, TP, SP, EP.</p>
 <p><strong>Pipeline parallelism</strong>: </p>
 <ul>
-<li><em>Naive</em>: use <em>micro-batches</em> to reduce bubbles, but bubbles still exist when a forward pass ends and a backward pass begins. The ratio of bubble time to useful compute is $frac</li>
+<li><em>Naive</em>: use <em>micro-batches</em> to reduce bubbles, but bubbles still exist when a forward pass ends and a backward pass begins. The ratio of bubble time to useful compute is (#stages - 1) / #micro  (hence batch size should be large when #stages scales). Good because only communicate activations in a point-to-point way. </li>
+<li><em>1F1B</em>: nearly zeros out the bubbles by computing a foward pass of micro batch B and next a backward pass of micro batch A to be feed the neighbors. However, the optimizer step is always to be synchronized so bubbles exist.</li>
 </ul>
+<p><strong>Tensor parallelism</strong>:</p>
+<ul>
+<li><em>Forward pass</em>: 1 <em>all-reduce</em> after the computation.</li>
+<li><em>Backward pass</em>: 1 <em>all-reduce</em> before the computation.</li>
+<li><em>Split</em>: columnwise in QKV, rowwise in attention output, replicated in norms, routers, etc.</li>
+<li><em>Pros</em>: no bubble, no complexity and no batch size requirements.</li>
+<li><em>Cons</em>: much larger communication. Hence only used within a node (8 at most for GPUs, more for TPUs).</li>
+</ul>
+<p><em>Activation memory</em> is dynamic and huge. TP splits out only the matrix multiplies in attention and MLP but not LayerNorm, Dropout and inputs to attention and MLP.</p>
+<p><strong>Sequence parallelism</strong>: splits up LayerNorm and Dropout layers along the sequence axis by <code>reduce-scatter</code>ing TP’s output to LayerNorm and Dropout layers and `all-gather*ing their output for next TP’s input. TP + SP fully divides the memory of all tensors.</p>
+<p><strong>Expert parallelism</strong>: better than TP in router dispatching, MoE and combining, but complicated in implementation (e.g., DeepEP and HybridEP). EP dispatchs experts to different DP ranks. High TP in attention, low TP in MLP and EP in MoE MLP.</p>
+<p><strong>Context parallelism</strong>: extends the maximum context length with Ring Attention.</p>
+
+    <figure class="figure-image">
+      <img src="/images/2026/cs336/parallelism.jpg" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+<p>Scaling strategies from <a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2104.04473">Narayanan 2021</a>:</p>
+<ol>
+<li>TP fisrt up to 8, then caps out at 8.</li>
+<li>PP goes up to make the model fit.</li>
+<li>DP gradually decreases with scale, with the largest model having DP=6 (initially 32).</li>
+</ol>
 
       </section>
 
