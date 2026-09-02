@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2026-08-31T00:42:35.854Z" itemprop="dateUpdated">2026-08-31</time>
+              <time  class="article-updated" datetime="2026-08-31T00:43:54.077Z" itemprop="dateUpdated">2026-08-31</time>
             </h2>
           
           
@@ -427,7 +427,7 @@
 <li><em>Cons</em>: much larger communication. Hence only used within a node (8 at most for GPUs, more for TPUs).</li>
 </ul>
 <p><em>Activation memory</em> is dynamic and huge. TP splits out only the matrix multiplies in attention and MLP but not LayerNorm, Dropout and inputs to attention and MLP.</p>
-<p><strong>Sequence parallelism</strong>: splits up LayerNorm and Dropout layers along the sequence axis by <code>reduce-scatter</code>ing TP’s output to LayerNorm and Dropout layers and `all-gather*ing their output for next TP’s input. TP + SP fully divides the memory of all tensors.</p>
+<p><strong>Sequence parallelism</strong>: splits up LayerNorm and Dropout layers along the sequence axis by <em>reduce-scatter</em>ing TP’s output to LayerNorm and Dropout layers and <em>all-gather</em>ing their output for next TP’s input. TP + SP fully divides the memory of all tensors.</p>
 <p><strong>Expert parallelism</strong>: better than TP in router dispatching, MoE and combining, but complicated in implementation (e.g., DeepEP and HybridEP). EP dispatchs experts to different DP ranks. High TP in attention, low TP in MLP and EP in MoE MLP.</p>
 <p><strong>Context parallelism</strong>: extends the maximum context length with Ring Attention.</p>
 
