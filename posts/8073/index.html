@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2026-08-31T00:43:54.077Z" itemprop="dateUpdated">2026-08-31</time>
+              <time  class="article-updated" datetime="2026-09-06T14:08:15.611Z" itemprop="dateUpdated">2026-09-06</time>
             </h2>
           
           
@@ -442,6 +442,134 @@
 <li>PP goes up to make the model fit.</li>
 <li>DP gradually decreases with scale, with the largest model having DP=6 (initially 32).</li>
 </ol>
+<h2 id="Lecture-9-Scaling-Laws"><a href="#Lecture-9-Scaling-Laws" class="headerlink" title="Lecture 9: Scaling Laws"></a>Lecture 9: Scaling Laws</h2><h3 id="9-1-Early-works-data-scaling"><a href="#9-1-Early-works-data-scaling" class="headerlink" title="9.1 Early works (data scaling)"></a>9.1 Early works (data scaling)</h3><p>Training a classifier on a huge training set is expensive, so we want to detect the tendency in a small size.</p>
+<ol>
+<li><em>Learning Curves: Asymptotic Values and Rate of Convergence</em>, Cortes et al 1993. </li>
+<li>Log-linear scaling with data, Banko and Brill et al 2001.</li>
+<li>Power law relation between data and downstream performance, Kolachina et al 2012.</li>
+<li>Predictable scaling on MT, LM, Speech and hypothesized scaling shape (slow, power-law, inrreducible), Hestness et al 2017.</li>
+</ol>
+<h3 id="9-2-Neural-scaling-behaviors"><a href="#9-2-Neural-scaling-behaviors" class="headerlink" title="9.2 Neural scaling behaviors"></a>9.2 Neural scaling behaviors</h3><p>The paper, <a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2001.08361"><em>Scaling Laws for Neural Language Models</em></a>, Kaplan+ et al 2020, OpenAI, found the power-scaling relationship between test losses and compute, dataset size and parameters.</p>
+
+    <figure class="figure-image">
+      <img src="/images/2026/cs336/scaling-law.png" alt="" loading="lazy" />
+      <figcaption></figcaption>
+    </figure>
+  
+<p><strong>Data scaling laws</strong>: simple formula that maps data size to error. Expected to be monotonic, logistic-like curves.</p>
+<blockquote>
+<p><strong>Example</strong>:<br>Here are n numbers ($x_1, x_2, …, x_n \sim \mathcal{N}(\mu, \sigma^2)$). Estimate the mean as $\hat{\mu}=\frac{\sum\nolimits_i x_i}$.<br>Error $E[(\hat{\mu}-\mu)^2]=\frac{\sigma^2}{n}, hence $\log(E)=-\log n +2\log\sigma$.<br>Any polynomial rate $\frac{1}{n^\alpha}$ is a scaling law.</p>
+</blockquote>
+<p><strong>Related questions</strong>:</p>
+<ol>
+<li>Data mixing law: hard to select data mixture via scaling (Ye et al 2024), and the practice is to just take the best small dataset (Magnusson et al 2025).</li>
+<li>Data repetition: loss goes down and up with increasing epoches. The slope doesn’t change with scaling but the intercept (Kim et al 2025).</li>
+<li>Data selection: data filtering should be less aggresive if the compute is growing (Goyal et al 2024).</li>
+</ol>
+<p><strong>Model scaling</strong>:</p>
+<ol>
+<li><em>Architecture</em>: train a bunch of small models to figure out the trends;<ul>
+<li>LSTM has worse slope and intercept with scaling (Kaplan+ et al 2021);</li>
+<li>Cross-architecture scaling (Tay et al 2022).</li>
+</ul>
+</li>
+<li><em>Optimizer choise</em>: Adam has a similar slope with SGD but a better intercept than it (in recurrent highway nets, Hestness+ et al 2017).</li>
+<li><em>Depth / Width</em>: <ul>
+<li>1 layer much worse than 2;</li>
+<li>Adding more layers has less and less return in slope;</li>
+<li>Different size of models has a similar optimal aspect ratio (width / depth);</li>
+<li>Exclude embedding then we’ll see the scaling (Kaplan+ et al 2020); </li>
+<li>In MoEs, larger sparsity makes the optimal total parameters larger, while the optimal active parameters smaller (Abnar et al 2025).</li>
+</ul>
+</li>
+<li><em>Batch size</em>: there is a critical batch size, smaller than which we have a perfect scaling, while larger than which it’s an ineffective scaling. It seems that smaller the target loss you want, larger the critical batch size we need. We can compute by<ol>
+<li>Pick a target loss and train to get the steps needed (S) and examples needed (E);</li>
+<li>Sweep over batches;</li>
+<li>The curve follows roughly $\frac{S}{S_{min}-1}=(\frac{E}{E_{min}-1)^{-1};</li>
+<li>$B_{crit}=\frac{E_{min}}{S_{min}}$ (McCandlish et al 2018, OpenAI).</li>
+</ol>
+</li>
+<li><em>Learning rates</em>: wider the model is, smaller the learning rate, usually as a function of 1 / width (Yang et al 2022);</li>
+</ol>
+<div class="admonition warning"><p class="admonition-title">Caution
+</p><p>Scaling is preditable on pre-training perplexity, but no as good in downstream metrics (Tay et al 2023).</p>
+</div>
+
+<p><strong>Key takeaways</strong>: because of the belief on scaling laws, we must do a few smaller experiments to predict the possible gap between hyperparameters, and choose the optimal based on the scaling law prediction, such as optimizer choice, model depth and architecture choice, etc.</p>
+<p><strong>Model / Dataset Size</strong>: here are joint data-model scaling laws, from Rosenfeld+ et al 2020, <script type="math/tex">Error=n^{-\alpha}+m^{-\beta}+C</script> and from Kaplan+ et al 2020, <script type="math/tex">Error=[m^{-\alpha}+n^{-1}]^\beta</script>.</p>
+<p>Kaplan claims: $N_{opt}=C^{0.73}, D_{opt}=C^{0.27}$, so tokens per param decreases with C.</p>
+<p>However, Chinchilla (Hoffman et al 2022) argues the fit is quite off and the multiplier should be about 20. It has 3 methods with different assumptions.</p>
+<ol>
+<li><em>Minimum over runs</em>: the envelope of minimal loss per FLOP over the union of all training curves is a power law. A bit tricky because the definition of a envelope is ambiguous;</li>
+<li><em>IsoFLOPS</em>: pick a range of FLOP budgets, vary the total parameter count and take the minimum over these convex shapes. These minima form a power law. May be the most practical and straight-forward one;</li>
+<li><em>Joint fits</em>: run a bunch of models on the size-data grid, choose dots with the same FLOPs and use least squares to fit a joint scaling law. A bit tricky because the curve fitting is of multiple choices. Slightly flawed in Hoffman’s paper hence its metrics are different from method 1 and 2.</li>
+</ol>
+<p>Chinchilla aims to tell you what gives the best model for fixed training compute, but we should ‘over’ train since most of the compute in a real deployment is inference. For example, Mistral 7B trains 110 tokens / param, Llama 3 70B trains 215 tokens / param, etc.</p>
+<p>Porian et al 2024 found Kaplan removed the last layer param from the parameter count, warmup was too high at small compute budgets and decay might be not critical if batch / LR was properlly tuned.</p>
+<h2 id="Lecture-10-Inference"><a href="#Lecture-10-Inference" class="headerlink" title="Lecture 10: Inference"></a>Lecture 10: Inference</h2><h3 id="10-1-Inference-workload"><a href="#10-1-Inference-workload" class="headerlink" title="10.1 Inference workload"></a>10.1 Inference workload</h3><p><strong>Metrics</strong>:</p>
+<ol>
+<li><em>Time-to-first-token (TTFT)</em>: how long user waits before any generation happens (for interactive applications);</li>
+<li><em>Latency (seconds/token)</em>: how fast tokens appear for <em>one</em> query (for interactive applications);</li>
+<li><em>Throughput (tokens/second)</em>: how fast tokens appear for <em>many</em> queries (for batch processing).</li>
+</ol>
+<p>Two stages of inference:</p>
+<ol>
+<li><strong>Prefill</strong>: given a prompt, encode into vectors (parallelizable like in training because of causal masks);</li>
+<li><strong>Generation</strong>: generate new response tokens (sequential because future tokens isn’t predictable).</li>
+</ol>
+<p><strong>Arithmetic intensity</strong>:</p>
+<blockquote>
+<p><em>MLP</em> (bf16)</p>
+<ol>
+<li>Read $X$ (B x T x D) from HBM: <code>bytes += 2*B*T*D</code>;</li>
+<li>Read $W_{up}$ (D x F), $W_{gate}$ (D x F), $W_{down}$ (F x D) from HBM: <code>bytes += 3*2*D*F</code>;</li>
+<li>Compute $U=X @ W_{up}$: <code>flops += 2*B*T*D*F</code>;</li>
+<li>Write $U$ (B x T x F) to HBM: <code>bytes += 2*B*T*F</code>;</li>
+<li>Compute $G=X @ W_{gate}$: <code>flops += 2*B*T*D*F</code>;</li>
+<li>Write $G$ (B x T x F) to HBM: <code>bytes += 2*B*T*F</code>;</li>
+<li>Compute $Y=GeLU(G) @ U @ W_{down}$: <code>flops += 2*B*T*D*F</code>;</li>
+<li>Write $Y$ (B x T x D) to HBM: <code>bytes += 2*B*T*D</code>;<br><code>intensity = flops / bytes = B*T</code> (assume <code>B*T</code> much smaller than D and F).</li>
+</ol>
+<p><em>Attention</em> (bf16, here S is number of previous tokens, T is number of next tokens)</p>
+<ol>
+<li>Read $Q$ (B x T x D), $K$ (B x S x D), $V$ (B x S x D) from HBM: <code>bytes += 2*B*T*D + 2*B*S*D + 2*B*S*D</code>;</li>
+<li>Compute $A=Q @ K$: <code>flops += 2*B*S*T*D</code>;</li>
+<li>Compute $Y=softmax(A) @ V$: <code>flops += 2*B*S*T*D</code>;</li>
+<li>Write $Y$ (B x T x D) to HBM: <code>bytes += 2*B*T*D</code>;<br><code>intensity = flops / bytes = S*T / (S+T)</code>.</li>
+</ol>
+</blockquote>
+<ol>
+<li>Prefill MLP intensity: B x S (prompt length); Prefill attention intensity: S/2; Compute-bound.</li>
+<li>Generation MLP intensity: B; generation attention intensity: T/(T+1) &lt; 1(impossible to improve); Memory-bound.</li>
+</ol>
+<p><strong>Latency and Throughput</strong>: when batch size (B) grows, latency gets worse (in linear) but throughput grows (worse than linear, $\frac{100x}{x+10}$-like).</p>
+<h3 id="10-2-Lossy-shorcuts"><a href="#10-2-Lossy-shorcuts" class="headerlink" title="10.2 Lossy shorcuts"></a>10.2 Lossy shorcuts</h3><p><strong>Reduce KV cache size</strong>: </p>
+<ol>
+<li><em>MQA, GQA, MLA</em> decrease both memory and latency but enlarge throughput;</li>
+<li><em>Cross layer attention (CLA)</em> computes KV cache for only a subset of layers and reuse them in other layers;</li>
+<li><em>Sliding window attention (SWA)</em> only store KV cache for the last fixed number of tokens, however hurting the accuracy. Hence we interleave SWA layers and global attention layers;</li>
+<li><em>Linear attention</em> and its variants (<em>Mamba</em>, etc) compress full KV cache into a fixed-length latent vector to keep memory low. They are more RNN than attention.</li>
+<li><em>Diffusion models</em>: <a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2502.09992">LLaDA</a>, <a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2602.06036">DFlash</a>, etc.</li>
+</ol>
+<p>e.g. DeepSeek-V4:</p>
+<ul>
+<li>Compressed sparse attention (CSA): compresses every m tokens into 1;</li>
+<li>DeepSeek sparse attention (DSA): selects the top k KV compressed tokens, combines them with sliding window KV tokens;</li>
+<li>Heavily compressed attention (HCA): compresses even more.</li>
+</ul>
+<p><strong>Quantization</strong>: reduce the precision to save memory for high throughput.</p>
+<ol>
+<li><em>Quantization-aware training (QAT)</em>: during training, quantize-and-dequantize during forward pass to simulate quantization errors (like in rate-aware training of 3DGS). Cons are the requirement of expensive large-scale training;</li>
+<li><em>Post-training quantization (PTQ)</em>: run on sample data to determine scale and zero point for each layer or tensor. <em>GPTQ</em> (Frantar et al 2022) use Hessian information to update non-quantized weights for quantization error;</li>
+<li><em>Activation-aware quantization (AWQ)</em>: based on observation that some activation channels are large and then weights that hit those matter more, allocate more precision to those salient weights (fp16 for the salient, int3 for the rest).</li>
+</ol>
+<p><strong>Model pruning</strong> (Muralidharan et al 2024, NVIDIA): rip out parts of an expensive model to make it cheaper, fix it up with distillation and iterate. The ripped are chosen based on activation-based importance scores (e.g, attention weights) on a small calibration dataset.</p>
+<h3 id="10-3-Double-checking-shortcuts"><a href="#10-3-Double-checking-shortcuts" class="headerlink" title="10.3 Double-checking shortcuts"></a>10.3 Double-checking shortcuts</h3><p><strong>Speculative sampling</strong> (leviathan et al 2022, chen et al 2023): since prefill is compute-bound and gives probabilities, use the target model to check a few tokens guessed by a small draft model.</p>
+<p>In practice, make draft model close to target with distillation.</p>
+<p>Medusa (Cai et al 2024) makes draft model generated multiple tokens in parallel, and EAGLE (Li+ et al 2024) makes draft model take high-level features from target model.</p>
+<h3 id="10-4-Handle-dynamic-workloads"><a href="#10-4-Handle-dynamic-workloads" class="headerlink" title="10.4 Handle dynamic workloads"></a>10.4 Handle dynamic workloads</h3><p><strong>Continuous batching</strong>: originally in a batch, request prompts are of various lengths and ends in different lengths hence padding is necessary. However in non-attention computation, we can concatenate all the sequences together.</p>
+<p><strong>PagedAttention</strong>: moreover, we split KV cache into pages to better sharing of KV prefixes.</p>
+<p>Details in another <a href="https://amaolearning.github.io/posts/8947/#2-4-AI-Infra">blog</a>.</p>
 
       </section>
 
@@ -733,7 +861,7 @@
     <span>TITLES</span>
   </div>
   <div class="widget-body">
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-1-Overview-Tokenization"><span class="toc-text">Lecture 1: Overview, Tokenization</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-Overview"><span class="toc-text">1.1 Overview</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-Tokenizer"><span class="toc-text">1.2 Tokenizer</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-2-Resource-Accounting"><span class="toc-text">Lecture 2: Resource Accounting</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Data-types"><span class="toc-text">2.1 Data types</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Einops"><span class="toc-text">2.2 Einops</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-FLOP"><span class="toc-text">2.3 FLOP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-Arithmetic-Intensity"><span class="toc-text">2.4 Arithmetic Intensity</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-Memory"><span class="toc-text">2.5 Memory</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-3-Architectures"><span class="toc-text">Lecture 3: Architectures</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-Pre-vs-post-norm-common-sense"><span class="toc-text">3.1 Pre-vs-post norm (common sense)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-LayerNorm-vs-RMSNorm-common-sense"><span class="toc-text">3.2 LayerNorm vs RMSNorm (common sense)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-Activations"><span class="toc-text">3.3 Activations</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-Serial-vs-Parallel-layers"><span class="toc-text">3.4 Serial vs Parallel layers</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-Position-embeddings"><span class="toc-text">3.5 Position embeddings</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-6-Hyperparameters"><span class="toc-text">3.6 Hyperparameters</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-7-Regularization"><span class="toc-text">3.7 Regularization</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-8-Stability"><span class="toc-text">3.8 Stability</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-9-Attention-for-Serving"><span class="toc-text">3.9 Attention for Serving</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-4-Attention-Alternatives"><span class="toc-text">Lecture 4: Attention Alternatives</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-Linear-Attention"><span class="toc-text">4.1 Linear Attention</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-Mixture-of-Experts-MoE"><span class="toc-text">4.2 Mixture of Experts (MoE)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-5-GPUs-TPUs"><span class="toc-text">Lecture 5: GPUs, TPUs</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-GPU"><span class="toc-text">5.1 GPU</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-TPU"><span class="toc-text">5.2 TPU</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-Make-ML-Workloads-Fast"><span class="toc-text">5.3 Make ML Workloads Fast</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-FlashAttention"><span class="toc-text">5.4 FlashAttention</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-6-Kernels-Triton-XLA"><span class="toc-text">Lecture 6: Kernels, Triton, XLA</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-CUDA-Overview"><span class="toc-text">6.1 CUDA Overview</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-Benchmarking-profiling"><span class="toc-text">6.2 Benchmarking, profiling</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-Triton"><span class="toc-text">6.3 Triton</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-7-Parallellism"><span class="toc-text">Lecture 7: Parallellism</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-Building-Blocks"><span class="toc-text">7.1 Building Blocks</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-Distributed-Training"><span class="toc-text">7.2 Distributed Training</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-8-Train-with-Parallelism"><span class="toc-text">Lecture 8: Train with Parallelism</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-Multi-machine-scaling"><span class="toc-text">8.1 Multi-machine scaling.</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-Standard-LLM-parallelization-primitives"><span class="toc-text">8.2 Standard LLM parallelization primitives</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-1-Overview-Tokenization"><span class="toc-text">Lecture 1: Overview, Tokenization</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-Overview"><span class="toc-text">1.1 Overview</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-Tokenizer"><span class="toc-text">1.2 Tokenizer</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-2-Resource-Accounting"><span class="toc-text">Lecture 2: Resource Accounting</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Data-types"><span class="toc-text">2.1 Data types</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Einops"><span class="toc-text">2.2 Einops</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-FLOP"><span class="toc-text">2.3 FLOP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-Arithmetic-Intensity"><span class="toc-text">2.4 Arithmetic Intensity</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-Memory"><span class="toc-text">2.5 Memory</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-3-Architectures"><span class="toc-text">Lecture 3: Architectures</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-Pre-vs-post-norm-common-sense"><span class="toc-text">3.1 Pre-vs-post norm (common sense)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-LayerNorm-vs-RMSNorm-common-sense"><span class="toc-text">3.2 LayerNorm vs RMSNorm (common sense)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-Activations"><span class="toc-text">3.3 Activations</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-Serial-vs-Parallel-layers"><span class="toc-text">3.4 Serial vs Parallel layers</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-Position-embeddings"><span class="toc-text">3.5 Position embeddings</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-6-Hyperparameters"><span class="toc-text">3.6 Hyperparameters</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-7-Regularization"><span class="toc-text">3.7 Regularization</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-8-Stability"><span class="toc-text">3.8 Stability</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-9-Attention-for-Serving"><span class="toc-text">3.9 Attention for Serving</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-4-Attention-Alternatives"><span class="toc-text">Lecture 4: Attention Alternatives</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-Linear-Attention"><span class="toc-text">4.1 Linear Attention</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-Mixture-of-Experts-MoE"><span class="toc-text">4.2 Mixture of Experts (MoE)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-5-GPUs-TPUs"><span class="toc-text">Lecture 5: GPUs, TPUs</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-GPU"><span class="toc-text">5.1 GPU</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-TPU"><span class="toc-text">5.2 TPU</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-Make-ML-Workloads-Fast"><span class="toc-text">5.3 Make ML Workloads Fast</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-FlashAttention"><span class="toc-text">5.4 FlashAttention</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-6-Kernels-Triton-XLA"><span class="toc-text">Lecture 6: Kernels, Triton, XLA</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-CUDA-Overview"><span class="toc-text">6.1 CUDA Overview</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-Benchmarking-profiling"><span class="toc-text">6.2 Benchmarking, profiling</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-Triton"><span class="toc-text">6.3 Triton</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-7-Parallellism"><span class="toc-text">Lecture 7: Parallellism</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-Building-Blocks"><span class="toc-text">7.1 Building Blocks</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-Distributed-Training"><span class="toc-text">7.2 Distributed Training</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-8-Train-with-Parallelism"><span class="toc-text">Lecture 8: Train with Parallelism</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-Multi-machine-scaling"><span class="toc-text">8.1 Multi-machine scaling.</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-Standard-LLM-parallelization-primitives"><span class="toc-text">8.2 Standard LLM parallelization primitives</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-9-Scaling-Laws"><span class="toc-text">Lecture 9: Scaling Laws</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#9-1-Early-works-data-scaling"><span class="toc-text">9.1 Early works (data scaling)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-2-Neural-scaling-behaviors"><span class="toc-text">9.2 Neural scaling behaviors</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-10-Inference"><span class="toc-text">Lecture 10: Inference</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#10-1-Inference-workload"><span class="toc-text">10.1 Inference workload</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-2-Lossy-shorcuts"><span class="toc-text">10.2 Lossy shorcuts</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-3-Double-checking-shortcuts"><span class="toc-text">10.3 Double-checking shortcuts</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-4-Handle-dynamic-workloads"><span class="toc-text">10.4 Handle dynamic workloads</span></a></li></ol></li></ol>
   </div>
 </section>
 
