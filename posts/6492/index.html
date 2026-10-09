@@ -125,6 +125,11 @@
             <time  class="article-date" datetime="2026-09-30T12:44:51.896Z" itemprop="datePublished">2026-09-30</time>
           </h2>
           
+            <h2 class="last-time">
+              <span>最后更新于</span>
+              <time  class="article-updated" datetime="2026-10-09T12:55:53.086Z" itemprop="dateUpdated">2026-10-09</time>
+            </h2>
+          
           
           <ul class="wrap-list dark">
   
@@ -175,6 +180,49 @@
 <p><strong>下次排查顺序</strong></p>
 <p>先确认失败是在桌面端点击“允许”时，还是手机端连接时。对照报错时间，同时检查独立后台服务和桌面应用的日志：超时先查直连与代理路径；若出现 <code>409 Remote app server already online</code>，检查是否有另一个服务使用同一远控身份。后台进程显示 <code>running</code>、单条网络连接已建立，都不能代替桌面端启用和手机端实际连接的验证。</p>
 <p>当前有效配置：Clash Party“系统代理”和“虚拟网卡”均开启；独立 Codex 后台服务仍运行，但其远控功能关闭，由 ChatGPT 桌面应用提供远控。</p>
+<h2 id="2-ChatGPT-桌面端无法加载“工作”模式的网络访问设置"><a href="#2-ChatGPT-桌面端无法加载“工作”模式的网络访问设置" class="headerlink" title="2. ChatGPT 桌面端无法加载“工作”模式的网络访问设置"></a>2. ChatGPT 桌面端无法加载“工作”模式的网络访问设置</h2><p>日期：2026-10-09</p>
+<p>环境：macOS 26.5.1、ChatGPT 桌面端 26.1007.21159、Clash Party 1.9.5、Mihomo v1.19.31。</p>
+<p><strong>问题现象</strong></p>
+<p>ChatGPT 桌面端显示：</p>
+<blockquote>
+<p>无法加载或保存“工作”模式的网络访问设置。请重新加载，然后重试。</p>
+</blockquote>
+<p>应用无法正常使用对话，重新加载和多次重启后仍出现相同错误。“网络访问设置”是失败的账户设置项；这条提示本身不能说明应该修改工作模式的权限。</p>
+<p><strong>根因与证据</strong></p>
+<p>本次修复指向 <strong>Clash 的 DNS 配置及 DNS 查询路径问题</strong>：调整 DNS 后，用户确认桌面端恢复。排查时同时观察到解析失败、设备校验失败和 Cloudflare 验证挑战，需分别解释：</p>
+<ol>
+<li><strong>账户设置读取被设备校验失败阻断。</strong> 应用资源代码显示，工作模式网络访问开关读取 <code>/settings/user</code> 中的 <code>enable_flora_network_access</code>。桌面端日志反复记录 <code>devicecheck_registration_http_failed</code> 和 <code>DeviceCheck registration failed (403)</code>，涉及 <code>/settings/user</code>、<code>/me</code> 等请求。外层日志将这些请求记为 <code>status=500</code>，不能直接当作设置服务自身的普通 HTTP 500 故障。</li>
+<li><strong>云端后端域名解析失败。</strong> 日志反复出现 <code>getaddrinfo ENOTFOUND codex-cloud-backend.chatgpt.com</code>，约每 20 秒重试一次。本机只读测试也无法解析 <code>chatgpt.com</code> 和 <code>codex-cloud-backend.chatgpt.com</code>，而 <code>www.apple.com</code>、<code>www.baidu.com</code> 可以解析。这证明存在针对这些域名的解析故障，但未直接证明是哪台上游 DNS 返回了错误结果。</li>
+<li><strong>经代理访问仍可能遇到 Cloudflare 校验。</strong> 故障期间，通过 <code>127.0.0.1:7890</code> 访问 ChatGPT 主站和云端后端均收到 HTTP 403，响应头包含 <code>cf-mitigated: challenge</code>；应用日志也有 <code>cloudflare_challenge</code>。这证明请求到达了 Cloudflare 并遇到挑战，不能仅凭这一点认定节点被封，也不能断言全部 DeviceCheck 失败都由该挑战造成。</li>
+<li><strong>开启系统代理或 TUN，不等于 DNS 路径正确。</strong> Clash 的 DNS 覆写曾处于关闭状态；运行配置和 DNS 覆写页面的参数并不总是相同。排查中曾确认 TUN 已创建 <code>utun1500</code>，但后续日志仍有解析和设置加载错误。仅看开关、进程运行或节点延迟，不能证明应用已恢复。</li>
+</ol>
+<p>证据来源：桌面端日志 <code>~/Library/Logs/com.openai.codex/2026/10/09/</code>，Clash 日志 <code>~/Library/Application Support/mihomo-party/logs/</code>，以及本机 DNS、HTTPS 和配置检查。以上属于故障当时的证据，不代表之后每次失败都具有相同原因。</p>
+<p><strong>解决方法</strong></p>
+<p>用户实际执行以下组合操作后，确认问题解决：</p>
+<ol>
+<li>在 Clash Party 中开启 <strong>DNS 覆写</strong>，让覆写页面的 DNS 配置参与实际运行。</li>
+<li>删除“真实 IP 回应”列表中单独的 <code>*</code>，保留 <code>+.lan</code>、<code>+.local</code> 等确有需要的例外。</li>
+<li>开启 <strong>遵守规则</strong>，即 <code>dns.respect-rules</code>；保留独立的“代理服务器域名解析”配置，供代理节点自身的域名解析使用。</li>
+<li><p>将 <strong>默认解析服务器（<code>dns.nameserver</code>）</strong> 改成经现有代理组查询的加密 DNS，每条填入一个输入框：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">https://1.1.1.1/dns-query#亏本机场<br>https://8.8.8.8/dns-query#亏本机场<br></code></pre></td></tr></table></figure>
+<p><code>#亏本机场</code> 指定 DNS 连接使用该代理组；其他配置应替换为自己的实际代理组名称。这里修改的是 <code>nameserver</code>，不是名称相近的 <code>default-nameserver</code>，后者用于解析 DNS 服务器本身的域名。</p>
+</li>
+</ol>
+<p>该组合操作的恢复结果由用户确认，没有逐项回退验证，因此不能认定每一项单独都是必要条件，也不能把恢复单独归因于换节点。事后检查已确认 DNS 覆写开启、运行配置中的 <code>nameserver</code> 为上述两条；但该次配置快照仍显示 <code>respect-rules: false</code>、<code>fake-ip-filter</code> 含 <code>*</code>，与用户报告的操作过程存在差异。记录应保留这个证据边界，后续复现时需确认设置是否保存、重新生成并被内核加载。</p>
+<p>修复应通过应用内 DNS 覆写或持久配置完成。<code>work/config.yaml</code> 是生成的运行配置，适合用来核对生效结果，直接编辑可能被后续重新生成覆盖。DNS 格式及代理组后缀参见 <a target="_blank" rel="noopener" href="https://wiki.metacubex.one/config/dns/">Mihomo DNS 官方文档</a>。</p>
+<p><strong>附带问题：启用 TUN 时 <code>chown</code> 被拒绝</strong></p>
+<p>过程中另出现：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs text">chown: /Applications/Clash Party.app/Contents/Resources/sidecar/mihomo: Operation not permitted<br>kTCCServiceSystemPolicyAppBundles denied by TCC for chown<br></code></pre></td></tr></table></figure>
+<p>系统日志确认这是 macOS TCC 的“应用管理”保护拒绝修改应用包，管理员身份也不能自动绕过。只读检查当时发现内核文件已经是 <code>root:admin</code>、权限为 <code>6755</code>，内核以 root 运行，<code>utun1500</code> 为 <code>UP / RUNNING</code>；所以这条权限错误不能用来断定 TUN 未启动。只有确实需要修改应用包且权限准备失败时，才检查“系统设置 → 隐私与安全性 → 应用管理”。本次恢复确认后的界面显示 TUN 关闭，不应将启用 TUN 或扩大应用管理权限列为这次 DNS 修复的必需步骤。</p>
+<p><strong>下次排查顺序</strong></p>
+<ol>
+<li><strong>先记录报错时间和实际失败请求。</strong> 检查桌面端日志，区分 <code>/settings/user</code> 读取失败、DeviceCheck 校验失败、DNS 失败和 Cloudflare 403，不只依据界面文案判断。</li>
+<li><strong>检查域名解析。</strong> 对 <code>chatgpt.com</code>、<code>codex-cloud-backend.chatgpt.com</code> 与普通可访问域名作对照；有 <code>ENOTFOUND</code> 时优先检查 DNS 覆写是否开启、解析服务器及其查询出口。</li>
+<li><strong>核对设置是否真正生效。</strong> 比较 DNS 设置页面、生成的 <code>work/config.yaml</code> 与内核日志，检查 <code>nameserver</code>、<code>respect-rules</code> 和 <code>fake-ip-filter</code>。修改后确认保存及加载，避免页面上已改但实际配置不同。</li>
+<li><strong>检查代理分流和 HTTPS。</strong> 确认 ChatGPT/OpenAI 域名走预期代理，留意 <code>ws.chatgpt.com</code> 被分到 <code>DIRECT</code> 后超时。DNS 正常后如果仍遇到 Cloudflare 挑战，再比较节点；节点延迟正常不能代替 ChatGPT 的实际访问验证。</li>
+<li><strong>按连接路径判断是否需要 TUN。</strong> 系统代理只覆盖使用它的连接。后台进程未使用系统代理时再检查 TUN、实际路由及 DNS 接管；权限错误单独根据 TCC 日志、文件属性和网卡状态排查。</li>
+<li><strong>最后验证产品功能。</strong> 重新加载或启动桌面端，确认设置能加载、对话可以正常发送并收到回复，同时检查新日志。一次 HTTP 请求可达、内核进程运行或配置语法正确，都不足以证明对话功能已恢复。</li>
+</ol>
 
       </section>
 
@@ -466,7 +514,7 @@
     <span>TITLES</span>
   </div>
   <div class="widget-body">
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-ChatGPT-Work-%E6%A1%8C%E9%9D%A2%E7%AB%AF%E8%BF%9C%E6%8E%A7%E6%97%A0%E6%B3%95%E5%90%AF%E7%94%A8"><span class="toc-text">1. ChatGPT Work 桌面端远控无法启用</span></a></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-ChatGPT-Work-%E6%A1%8C%E9%9D%A2%E7%AB%AF%E8%BF%9C%E6%8E%A7%E6%97%A0%E6%B3%95%E5%90%AF%E7%94%A8"><span class="toc-text">1. ChatGPT Work 桌面端远控无法启用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-ChatGPT-%E6%A1%8C%E9%9D%A2%E7%AB%AF%E6%97%A0%E6%B3%95%E5%8A%A0%E8%BD%BD%E2%80%9C%E5%B7%A5%E4%BD%9C%E2%80%9D%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%BD%91%E7%BB%9C%E8%AE%BF%E9%97%AE%E8%AE%BE%E7%BD%AE"><span class="toc-text">2. ChatGPT 桌面端无法加载“工作”模式的网络访问设置</span></a></li></ol>
   </div>
 </section>
 
