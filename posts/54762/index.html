@@ -125,6 +125,11 @@
             <time  class="article-date" datetime="2026-11-14T16:00:00.000Z" itemprop="datePublished">2026-11-15</time>
           </h2>
           
+            <h2 class="last-time">
+              <span>最后更新于</span>
+              <time  class="article-updated" datetime="2026-11-16T10:24:58.386Z" itemprop="dateUpdated">2026-11-16</time>
+            </h2>
+          
           
           <ul class="wrap-list dark">
   
@@ -172,7 +177,7 @@
 <p>幸运的是, 现在我刚好具备耐造和完全权限的裸金属作为实验环境, 应该配合小实验以及工作实践学习.</p>
 <h2 id="1-Control-Group-v2"><a href="#1-Control-Group-v2" class="headerlink" title="1. Control Group v2"></a>1. Control Group v2</h2><h3 id="1-1-cgroup-是什么"><a href="#1-1-cgroup-是什么" class="headerlink" title="1.1 cgroup 是什么?"></a>1.1 cgroup 是什么?</h3><p>cgroup 是分层级地组织进程和分发系统资源的内核机制, 复数形式是 cgroups. 它由两个部分组成: <strong>core</strong> 和 <strong>controllers</strong>, 前者主要负责组织进程, 后者有很多, 分别负责分配不同类型的系统资源.</p>
 <p>cgroups 通常形成一个树结构, 在 core 方面, 每个进程只有唯一的 cgroup 归属, 而进程下的所有线程都属于同一个 cgroup, 子进程的 cgroup 归属与父进程相同; 在 controllers 方面, cgroup 内开启的 controllers 会影响所有子层级 cgroup 中的进程.</p>
-<h3 id="1-2-基础操作"><a href="#1-2-基础操作" class="headerlink" title="1.2 基础操作"></a>1.2 基础操作</h3><p>参考资料: <a target="_blank" rel="noopener" href="https://fzakaria.com/2025/05/26/linux-cgroup-from-first-principles">Linux cgroup from first principles - Farid Zakaria</a></p>
+<h3 id="1-2-cgroup-v2-配置面板与树形结构"><a href="#1-2-cgroup-v2-配置面板与树形结构" class="headerlink" title="1.2 cgroup v2 配置面板与树形结构"></a>1.2 cgroup v2 配置面板与树形结构</h3><p>参考资料: <a target="_blank" rel="noopener" href="https://fzakaria.com/2025/05/26/linux-cgroup-from-first-principles">Linux cgroup from first principles - Farid Zakaria</a></p>
 <p>内核提供的 cgroup 管理接口接在一个目录上, 我们这样来查看:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">&gt; findmnt -t cgroup2<br>/sys/fs/cgroup<br></code></pre></td></tr></table></figure>
 <p>用户实际正在使用的最高层位置可以如下查看:</p>
@@ -181,15 +186,17 @@
 <blockquote>
 <p>这里可以对 Unix 的设计哲学 “everything is a file” 可见一斑, Linux kernel 的交互 UI 就是一堆可读写的文件.</p>
 </blockquote>
-<p>当我们往新建的 cgroup (如 <code>/sys/fs/cgroup/demo</code>) 写入用户进程时, 需要 <code>sudo</code>, 因为这是把用户所属的 cgroup <code>.../session-1125.scope</code> 下的进程移交给另一个 cgroup, 而它们的共同祖先为 <code>.../cgroup</code>, 用户没有权限写它. 此外我们还发现除了 <code>.../cgroup</code> 这个根外, 所有进程都写在树的叶目录下, 这是 cgroup v2 重要的设计原则 <strong>no internal process constraint</strong>, 以避免父子 cgroup 中的进程竞争资源.</p>
-<p>常见的设置:</p>
+<p>当我们往新建的 cgroup (如 <code>/sys/fs/cgroup/demo</code>) 写入用户进程时, 需要 <code>sudo</code>, 因为这是把用户所属的 cgroup <code>.../session-1125.scope</code> 下的进程移交给另一个 cgroup, 而它们的共同祖先为 <code>.../cgroup</code>, 用户没有权限写它. 此外我们还发现除了 <code>.../cgroup</code> 这个根外, 所有进程都写在树的叶目录下, 这是 cgroup v2 controllers 重要的设计原则 <strong>no internal process constraint</strong>, 以避免父子 cgroup 中的进程竞争资源.</p>
+<p>cgroup v2 controllers 另一重要的设计原则是 <strong>top-down constraint</strong>, 资源从父组分配给子组, 控制子组的 interface 存在于父组中. 如果父组没有某种 controller 如 <code>cpu</code>, 子组默认就会自由竞争对应的父组资源; 如果子组启用了某种 controller, 父组就必须开启相同的 controller. <code>cgroup.subtree_control</code> 用于控制子组的 controllers 开启或关闭, 比如</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">&gt; <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;+cpu +io -memory&quot;</span> &gt; /sys/fs/cgroup/demo/cgroup.subtree_control<br></code></pre></td></tr></table></figure>
+<p>常见的设置用例:</p>
 <div class="table-container">
 <table>
 <thead>
 <tr>
-<th>interface</th>
-<th>meaning</th>
-<th>example</th>
+<th>Interface</th>
+<th>Meaning</th>
+<th>Example</th>
 </tr>
 </thead>
 <tbody>
@@ -201,14 +208,65 @@
 </tr>
 <tr>
 <td><code>cpu.max</code></td>
-<td>maximum cpu time usage for all processes in this cgroup in total</td>
+<td>maximum CPU cycles usage for all processes in this cgroup in total</td>
 <td><code>1000 100000</code> i.e 1000 $\mu s$ in 100000 $\mu s$</td>
 <td></td>
 </tr>
 </tbody>
 </table>
 </div>
-<h3 id="1-3-Resource-Distribution-Models"><a href="#1-3-Resource-Distribution-Models" class="headerlink" title="1.3 Resource Distribution Models"></a>1.3 Resource Distribution Models</h3>
+<h3 id="1-3-Resource-Distribution-Models"><a href="#1-3-Resource-Distribution-Models" class="headerlink" title="1.3 Resource Distribution Models"></a>1.3 Resource Distribution Models</h3><p>cgroup controller 有四类资源分配模型:</p>
+<p>Model | Meaning | Range | Default | Can be overcommited? | Example<br>Weights | Distribute the parent’s resource to all active children by weight | <code>[1, 10000]</code> | <code>100</code> | No | <code>cpu.weight</code> proportionally distributes CPU cycles.<br>Limits | Limit the amount of resource that all children can use in total | <code>[0, max]</code> | <code>max</code> | Yes | <code>io.max</code> limits the maximum BPS and/or IOPS that can be consumed on an IO device.<br>Protections | Protect the amount of resource by a best effort | <code>[0, max]</code> | <code>0</code> | Yes | <code>memory.low</code> implements best-effort memory protection.<br>Allocations | Exclusively allocate a certain amount of a finite resource to a child | <code>[0, max]</code> | <code>0</code> | No | <code>cpuset.cpus.exclusive</code> allocate vCPUs exclusively to its children.</p>
+<blockquote>
+<p><code>BPS</code> stands for <code>read/write bytes per second</code>; <code>IOPS</code> stands for <code>read/write IO operations per second</code>.</p>
+</blockquote>
+<p><strong>Overcommit</strong> 是指子分支的 limits 或 protections 之和可以超过父组的 limits 或 protections. 该机制是合理的, 因为它使得其他子分支空闲时, 活跃的子分支便可以用到尽可能多的父组配额, 而当子分支都活跃时, 资源则通过 weights 来公平分配.</p>
+<h3 id="1-4-CPUSETS"><a href="#1-4-CPUSETS" class="headerlink" title="1.4 CPUSETS"></a>1.4 CPUSETS</h3><p>CPUSET 可以给 cgroup 划定任务允许运行的范围, 也可以把一些 CPU 划成独立的资源池. 下面逐一解释重要的 interface.</p>
+<p><strong>划定任务允许运行的范围</strong>:</p>
+<p><code>cpuset.cpus</code> 限定 cgroup 内任务可以使用的 CPU 范围, 但是不提供独占, 所以与兄弟组的范围可以有重叠, 也可能受到来自其他组的资源竞争. 它默认留空, 表示继承父组设置.</p>
+<p><code>cpuset.cpus.effective</code> 表示 cgroup 层面实际可用范围. 它可能受到资源分配池和独占组的影响, 所以范围不一定等于 <code>cpuset.cpus</code>.</p>
+<p><code>cpuset.mems</code> 限定任务使用的 NUMA 内存节点编号, 上限依旧由 <code>memory.max</code> 处理, 最好在任务启动前配置好以免修改触发页面迁移.</p>
+<p><strong>划定独立资源池</strong>:</p>
+<p>CPUSET 定义了三种 partition (分区), 可以理解为独立的 CPU 资源池. 分区从某个分区起点 cgroup 开始包含该组和它的普通后代, 如果某个后代另建了分区, 就从那里分出去. 三种分区分别是:</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Meaning</th>
+<th>Auto load-balancing policy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>member</code></td>
+<td>Non-root member of a partition</td>
+<td>Depends on its partition</td>
+</tr>
+<tr>
+<td><code>root</code></td>
+<td>Start a new partition</td>
+<td>Usually on</td>
+</tr>
+<tr>
+<td><code>isolated</code></td>
+<td>Start a new isolated partition</td>
+<td>Off</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>这里的 <code>root</code> 指分区根, 与 root 用户和文件系统没有关系, 非顶层 cgroup 都可以成为分区根. 顶层 cgroup <code>/sys/fs/cgroup</code> 一定是 <code>root</code>, 而新创建的 cgroup 默认为 <code>member</code>. 理解 <code>root</code> 与 <code>member</code> 之间的关系可以看下面这棵树:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs ruby"><span class="hljs-symbol">cgroup:</span> root, <span class="hljs-number">0</span>-<span class="hljs-number">7</span><br>|<span class="hljs-params"></span><br><span class="hljs-params"></span>|-worker-<span class="hljs-symbol">a:</span> member<br>|<span class="hljs-params">-worker-b: root, 2-5</span><br><span class="hljs-params">    </span>|-worker-b-<span class="hljs-number">1</span>: member, <span class="hljs-number">2</span>-<span class="hljs-number">3</span><br>    |<span class="hljs-params">-worker-b-2: member, 3-5</span><br></code></pre></td></tr></table></figure>
+<p><code>worker-a</code> 中的普通用户任务不能使用 <code>worker-b</code> 的 CPU 2-5, 即使后者空闲, 这些 CPU 也不会自动借给 <code>worker-a</code>, 只能使用 CPU 0-1、6-7. <code>worker-b-1</code> 和 <code>worker-b-2</code> 都属于 <code>worker-b</code> 分区, 它们共享 CPU 3, 由各自的 <code>cpuset.cpus</code> 限定运行范围.</p>
+<p><code>cpuset.cpus.exclusive</code> 负责划定 <code>root</code> 组的独占 CPU 范围, 同样有 <code>.effective</code> 表示实际有效范围. 注意如果 <code>.cpus.effective</code> 和 <code>.cpus.exclusive.effective</code> 任一为空, 或者父组本身无效, 就会报 <code>root invalid (&lt;reason&gt;)</code>.</p>
+<p><code>isolated</code> 会关闭分区内的自动调度负载均衡, 保持最低限度的线程调度, 线程分配则需要手动执行.</p>
+<p>最后, 需要注意 CPUSET 分配的是逻辑 CPU (virtual CPU), 如果两个分区分别拿到同一物理核的两个 SMT 线程, 它们可能会互相干扰, 此时需要结合 CPU topology 安排分区.</p>
+<h3 id="1-5-待补充功能"><a href="#1-5-待补充功能" class="headerlink" title="1.5 待补充功能"></a>1.5 待补充功能</h3><ul>
+<li><code>local</code> and <code>remote</code> partition</li>
+<li>Organizing threads</li>
+</ul>
+
       </section>
 
       
@@ -499,7 +557,7 @@
     <span>TITLES</span>
   </div>
   <div class="widget-body">
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%89%8D%E8%A8%80"><span class="toc-text">0. 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0-1-%E5%86%99%E5%9C%A8%E5%89%8D%E9%9D%A2"><span class="toc-text">0.1 写在前面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0-2-%E6%80%9D%E8%B7%AF"><span class="toc-text">0.2 思路</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Control-Group-v2"><span class="toc-text">1. Control Group v2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-cgroup-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">1.1 cgroup 是什么?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C"><span class="toc-text">1.2 基础操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-Resource-Distribution-Models"><span class="toc-text">1.3 Resource Distribution Models</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E5%89%8D%E8%A8%80"><span class="toc-text">0. 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0-1-%E5%86%99%E5%9C%A8%E5%89%8D%E9%9D%A2"><span class="toc-text">0.1 写在前面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0-2-%E6%80%9D%E8%B7%AF"><span class="toc-text">0.2 思路</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Control-Group-v2"><span class="toc-text">1. Control Group v2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-cgroup-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">1.1 cgroup 是什么?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-cgroup-v2-%E9%85%8D%E7%BD%AE%E9%9D%A2%E6%9D%BF%E4%B8%8E%E6%A0%91%E5%BD%A2%E7%BB%93%E6%9E%84"><span class="toc-text">1.2 cgroup v2 配置面板与树形结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-Resource-Distribution-Models"><span class="toc-text">1.3 Resource Distribution Models</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-CPUSETS"><span class="toc-text">1.4 CPUSETS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-%E5%BE%85%E8%A1%A5%E5%85%85%E5%8A%9F%E8%83%BD"><span class="toc-text">1.5 待补充功能</span></a></li></ol></li></ol>
   </div>
 </section>
 
