@@ -127,7 +127,7 @@
           
             <h2 class="last-time">
               <span>最后更新于</span>
-              <time  class="article-updated" datetime="2026-11-16T10:24:58.386Z" itemprop="dateUpdated">2026-11-16</time>
+              <time  class="article-updated" datetime="2026-11-17T10:41:23.353Z" itemprop="dateUpdated">2026-11-17</time>
             </h2>
           
           
@@ -183,6 +183,9 @@
 <p>用户实际正在使用的最高层位置可以如下查看:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">&gt; <span class="hljs-built_in">cat</span> /proc/self/cgroup<br>0::/user.slice/user-1005.slice/session-1126.scope<br></code></pre></td></tr></table></figure>
 <p>拼接起来就是 <code>/sys/fs/cgroup/user.slice/user-1005.slice/session-1125.scope</code>, 从 <code>.../cgroup</code> 到 scope 的每一层目录都有很多 controller configs, 实际使用的可以在 <code>cgroup.controllers</code> 中查看, 如 <code>cpuset cpu io memory hugetlb pids rdma misc dmem</code>.</p>
+<p>类似地, 我们可以根据 PID 查看进程所在的 cgroup:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">&gt; <span class="hljs-built_in">cat</span> /proc/&lt;PID&gt;/cgroup<br>...<br>0::/demo/test-cgroup<br>&gt; <span class="hljs-built_in">cat</span> /proc/&lt;ZOMBIE_PID&gt;/cgroup<br>...<br>0::/demo/test-cgroup (deleted)<br></code></pre></td></tr></table></figure>
+<p>cgroup v2 条目格式就是<code>0::$PATH</code>.</p>
 <blockquote>
 <p>这里可以对 Unix 的设计哲学 “everything is a file” 可见一斑, Linux kernel 的交互 UI 就是一堆可读写的文件.</p>
 </blockquote>
